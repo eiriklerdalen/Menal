@@ -1,4 +1,22 @@
+import { useEffect, useState } from "react";
+
+type Entry = {
+  id: number;
+  profile_id: number;
+  date: string;
+  rating: number;
+};
+
 function App() {
+  const [entries, setEntries] = useState<Entry[]>([]);
+
+  useEffect(() => {
+    fetch("http://10.0.0.74:3000/entries")
+      .then((res) => res.json())
+      .then((data) => setEntries(data))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <>
     <div className='app-layout'>
@@ -14,52 +32,92 @@ function App() {
 
       <main className="main-content">
         <h1>Something</h1>
-        <CalendarHeatMap />
+        <CalendarHeatMap entries={entries}/>
       </main>
     </div>
     </>
   )
 }
 
-const week_1 = [
-    { date: "2026-06-01", rating: 1, trained: true },
-    { date: "2026-06-02", rating: 2, trained: false },
-    { date: "2026-06-03", rating: 3, trained: true },
-    { date: "2026-06-04", rating: 4, trained: true },
-    { date: "2026-06-05", rating: 5, trained: true },
-    { date: "2026-06-06", rating: 6, trained: true },
-    { date: "2026-06-07", rating: 6, trained: true },
-  ];
+function getRatingForDate(date: string, entries: Entry[]) {
+  const entry = entries.find((entry) => entry.date === date);
+  if (entry) {
+    return entry.rating
+  }
+  return 0
+}
 
-const week_2 = [
-    { date: "08-06-2026", rating: 0, trained: true},
-    { date: "09-06-2026", rating: 0, trained: true},
-    { date: "10-06-2026", rating: 0, trained: true},
-    { date: "11-06-2026", rating: 0, trained: true},
-    { date: "12-06-2026", rating: 0, trained: true},
-    { date: "13-06-2026", rating: 0, trained: true},
-    { date: "14-06-2026", rating: 0, trained: true},
-]
+function getLastYear(entries: Entry[]) {
+  const today = new Date();
+  const daysIntoWeek = today.getDay()
 
-const weeks = [
-  week_1,
-  week_2
-]
+  // Opprinnelig egen funskjon
+  const currWeek = [];
 
-function CalendarHeatMap() {
+  for (let i = 0; i <= daysIntoWeek; i++) {
+    const date = new Date(today);
+
+    date.setDate(today.getDate() - daysIntoWeek + i)
+
+    const formattedDate = date.toISOString().split('T')[0];
+
+    currWeek.push({
+      date: formattedDate,
+      rating: getRatingForDate(formattedDate, entries)
+    });
+  }
+
+  // Opprinnelig egen funksjon
+  const days = [];
+
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - daysIntoWeek); 
+
+  for (let i = 364; i >= 1; i--) {
+    const date = new Date(startOfWeek);
+    date.setDate(startOfWeek.getDate() - i)
+
+    const formattedDate = date.toISOString().split('T')[0];
+
+    days.push({
+      date: formattedDate,
+      rating: getRatingForDate(formattedDate, entries)
+    });
+  }
+
+  const weeks: { date: string; rating: number; }[][] = [];
+
+  for (let i = 0; i < days.length; i += 7) {
+    weeks.push(days.slice(i, i + 7));
+  }
+
+  return [
+    ...weeks,
+    currWeek
+  ]
+}
+
+//const weeks = getLastYear()
+
+function CalendarHeatMap({ entries }: {entries: Entry[]}) {
+  const weeks = getLastYear(entries)
   return (
-    <div className="heatmap">
-      {weeks.map((week) => (
-        <div className="week">
-          {week.map((day) => (
-            <div
-              key={day.date}
-              className={`day rating-${day.rating}`}
-              title={`${day.date}: ${day.rating}/6`}
-            />
-          ))}
-        </div>
-      ))}
+    <div className="calendar">
+      <p className="calendarName">How was your day?</p>
+
+      <div className="heatmap">
+        {weeks.map((week) => (
+          <div className="week">
+            {week.map((day) => (
+              <div
+                key={day.date}
+                className={`day rating-${day.rating}`}
+                title={`${day.date}: ${day.rating}/6`}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

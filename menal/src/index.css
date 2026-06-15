@@ -54,8 +54,21 @@ body {
   padding: 32px;
 }
 
-.heatmap {
+.calendar {
   display: flex;
+  flex-direction: column;
+  padding-left: 50px;
+}
+
+.calendarName {
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.heatmap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
   gap: 1px;
 }
 
