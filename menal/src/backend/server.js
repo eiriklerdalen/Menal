@@ -43,6 +43,25 @@ app.get("/entries", (req, res) => {
     res.json(entries);
 });
 
+app.get("/profiles/:profileId/entries/:date", (req, res) => {
+    const { profileId, date } = req.params;
+
+    console.log("profileId:", profileId);
+    console.log("date:", date);
+
+    const entries = db.prepare(`
+        SELECT entries.*
+        FROM entries
+        JOIN calendars
+            ON entries.calendar_id = calendars.id
+        WHERE calendars.profile_id = ?
+        AND entries.date = ?
+    `).all(profileId, date);
+
+    res.json(entries);
+    console.log("THIS:", entries)
+});
+
 app.get("/calendars", (req, res) => {
     const calendars = db.prepare(`
         SELECT *

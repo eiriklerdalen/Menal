@@ -7,6 +7,13 @@ type Calendar = {
   name: string;
 };
 
+type Entry = {
+  id: number;
+  calendar_id: number;
+  date: string;
+  rating: number;
+};
+
 function LogPage() {
     /* Date selector */
     const { date } = useParams();
@@ -42,12 +49,41 @@ function LogPage() {
 
     /* Calendar updates*/
     const [calendars, setCalendars] = useState<Calendar[]>([]);
-      useEffect(() => {
+    useEffect(() => {
         fetch("http://10.0.0.74:3000/calendars")
-          .then((res) => res.json())
-          .then((data) => setCalendars(data))
-          .catch((err) => console.log(err));
-      }, []);
+            .then((res) => res.json())
+            .then((data) => setCalendars(data))
+            .catch((err) => console.log(err));
+    }, []);
+
+    const [entries, setEntries] = useState<Entry[]>([]);
+    useEffect(() => {
+        fetch(`http://10.0.0.74:3000/profiles/1/entries/${selectedDate}`)
+            .then((res) => res.json())
+            .then((data) => setEntries(data))
+    }, [selectedDate]);
+
+    function getRatingsForCalendar(calendarID: number) {
+        const entry = entries.find((e) =>
+            e.calendar_id === calendarID
+        );
+
+        if (entry) {
+            return entry.rating
+        } else {
+            return "0"
+        }
+    }
+
+    function loadEntries(date: string) {
+        fetch(`http://10.0.0.74:3000/profiles/1/entries/${date}`)
+            .then((res) => res.json())
+            .then((data) => setEntries(data))
+            .catch((err) => console.log(err));
+    }
+    useEffect(() => {
+        loadEntries(selectedDate);
+    }, [selectedDate]);
 
     return (
         <div>
@@ -72,14 +108,21 @@ function LogPage() {
                 <div className="calendar-buttons">
                     {calendars.map((calendar) => (
                         <div key={calendar.id}>
-                            <p>{calendar.name}</p>
+                            <div className="rating-header">
+                                <p>{calendar.name}</p>
+                                <div className={`selected-rating rating-${getRatingsForCalendar(calendar.id)}`}>
+                                </div>
+                            </div>
 
                             {[1, 2, 3, 4, 5, 6].map((rating) => (
                                 <button 
+                                className={`rating-${rating}`}
                                 key={rating}
-                                onClick={() => saveEntry(calendar.id, rating)}
+                                onClick={() => {
+                                    saveEntry(calendar.id, rating)
+                                        .then(() => loadEntries(selectedDate));
+                                }}
                                 >
-                                    {rating}
                                 </button>
                             ))}
                         </div>
@@ -110,7 +153,7 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
 function saveEntry(calendarId: number, rating: number) {
     const today = new Date().toISOString().split("T")[0]; /* Endre til valgte dato! */
 
-    fetch("http://10.0.0.74:3000/entries", {
+    return fetch("http://10.0.0.74:3000/entries", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",

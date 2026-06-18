@@ -8,7 +8,10 @@ function App() {
   return (
     <div className="app-layout">
       <aside className="sidebar">
-        <h1>Menal</h1>
+        <h1
+          className="menal-title"
+          onClick={() => navigate("/")}
+        >Menal</h1>
 
         <nav>
           <button onClick={() => navigate("/log")}>Logg</button>
