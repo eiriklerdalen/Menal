@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 type Calendar = {
   id: number;
@@ -8,8 +9,10 @@ type Calendar = {
 
 function LogPage() {
     /* Date selector */
+    const { date } = useParams();
+
     const [selectedDate, setSelectedDate] = useState(
-        new Date().toISOString().split("T")[0]
+        date ?? new Date().toISOString().split("T")[0]
     );
 
     /* Journal updates */

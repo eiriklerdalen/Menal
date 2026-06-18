@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Calendar = {
   id: number;
@@ -110,6 +111,8 @@ function getLastYear(entries: Entry[]) {
 }
 
 function CalendarHeatMap({ entries, name }: {entries: Entry[], name: string}) {
+  const navigate = useNavigate();
+
   const weeks = getLastYear(entries)
   return (
     <div className="calendar">
@@ -123,6 +126,7 @@ function CalendarHeatMap({ entries, name }: {entries: Entry[], name: string}) {
                 key={day.date}
                 className={`day rating-${day.rating}`}
                 title={`${day.date}: ${day.rating}/6`}
+                onClick={() => navigate(`/log/${day.date}`)}
               />
             ))}
           </div>
