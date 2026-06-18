@@ -35,6 +35,10 @@ body {
   gap: 10px;
 }
 
+.menal-title {
+  align-content: center; /* Fiks til midten av sidebar! */
+}
+
 .sidebar button {
   text-align: left;
   padding: 10px;
@@ -54,6 +58,7 @@ body {
   padding: 32px;
 }
 
+/* Calendars */
 .calendar {
   display: flex;
   flex-direction: column;
@@ -92,3 +97,43 @@ body {
 .rating-4 { background: #ebc908; }
 .rating-5 { background: #6eab12; }
 .rating-6 { background: #45bf55; }
+
+/* Logging */
+
+.date-selector {
+  padding-top: 25px;
+  border: none;
+  font-size: 18px;
+  font-family: var(--quicksand);
+}
+
+.log-entry {
+  padding-top: 25px;
+}
+
+.journal-input {
+  width: 90%;
+  margin-left: 30px;
+  height: 400px;
+  border-style: none;
+  resize: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  font-family: var(--quicksand);
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.journal-input:focus {
+  border-color:aquamarine;
+}
+
+.calendar-buttons {
+  display: flex;
+  gap: 64px;
+}
+
+.calendar-buttons button {
+  margin: 4px;
+}

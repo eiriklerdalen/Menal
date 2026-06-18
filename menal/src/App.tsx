@@ -1,5 +1,6 @@
 import { useState } from "react";
 import CalendarPage from "./pages/calendars";
+import LogPage from "./pages/log";
 
 function App() {
 
@@ -11,7 +12,7 @@ function App() {
   }
 
   if (page === "log") {
-    return <h1>Logger</h1>
+    return <LogPage/>
   }
 
   if (page === "calendars") {
@@ -27,7 +28,7 @@ function App() {
     <>
     <div className='app-layout'>
       <aside className='sidebar'>
-        <h1>Menal</h1>
+        <h1 className="menal-title">Menal</h1>
 
         <nav>
           <button onClick={() => setPage("log")}>Logg</button>

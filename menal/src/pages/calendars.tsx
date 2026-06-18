@@ -1,28 +1,54 @@
 import { useEffect, useState } from "react";
 
-type Entry = {
+type Calendar = {
   id: number;
   profile_id: number;
+  name: string;
+};
+
+type Entry = {
+  id: number;
+  calendar_id: number;
   date: string;
   rating: number;
 };
 
 function CalendarsPage() {
-    const [entries, setEntries] = useState<Entry[]>([]);
-    
-    useEffect(() => {
-    fetch("http://10.0.0.74:3000/entries")
-        .then((res) => res.json())
-        .then((data) => setEntries(data))
-        .catch((err) => console.error(err));
-    }, []);
+  const [calendars, setCalendars] = useState<Calendar[]>([]);
+  useEffect(() => {
+    fetch("http://10.0.0.74:3000/calendars")
+      .then((res) => res.json())
+      .then((data) => setCalendars(data))
+      .catch((err) => console.log(err));
+  }, []);
 
-    return (
-    <>
-        <h1>Kalendre</h1>
-        <CalendarHeatMap entries={entries} />
-    </>
-    );
+  const [entries, setEntries] = useState<Entry[]>([]);
+  useEffect(() => {
+  fetch("http://10.0.0.74:3000/entries")
+      .then((res) => res.json())
+      .then((data) => setEntries(data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  return (
+  <>
+      <h1>Kalendre</h1>
+      {calendars.map((calendar) => {
+        const calendarEntries = entries.filter(
+          (entry) => entry.calendar_id === calendar.id
+        );
+
+        return (
+        <div key={calendar.id}>
+          <CalendarHeatMap
+            entries={calendarEntries}
+            name={calendar.name}
+            />
+        </div>
+        )
+      })}
+  </>
+  );
 }
 
 function getRatingForDate(date: string, entries: Entry[]) {
@@ -83,11 +109,11 @@ function getLastYear(entries: Entry[]) {
   ]
 }
 
-function CalendarHeatMap({ entries }: {entries: Entry[]}) {
+function CalendarHeatMap({ entries, name }: {entries: Entry[], name: string}) {
   const weeks = getLastYear(entries)
   return (
     <div className="calendar">
-      <p className="calendarName">How was your day?</p>
+      <p className="calendarName">{name}</p>
 
       <div className="heatmap">
         {weeks.map((week) => (
