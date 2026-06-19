@@ -77,12 +77,29 @@ function LogPage() {
 
     function loadEntries(date: string) {
         fetch(`http://10.0.0.74:3000/profiles/1/entries/${date}`)
-            .then((res) => res.json())
-            .then((data) => setEntries(data))
-            .catch((err) => console.log(err));
+        .then((res) => res.json())
+        .then((data) => {
+            const entriesWithDefaults = calendars.map((calendar) => {
+                const existingEntry = data.find(
+                    (entry: Entry) => entry.calendar_id === calendar.id
+                );
+
+                return existingEntry ?? {
+                    id: 0,
+                    calendar_id: calendar.id,
+                    date,
+                    rating: 0,
+                };
+            });
+
+            setEntries(entriesWithDefaults);
+        })
+        .catch((err) => console.log(err));
     }
     useEffect(() => {
-        loadEntries(selectedDate);
+        if (calendars.length > 0) {
+            loadEntries(selectedDate);
+        }
     }, [selectedDate]);
 
     return (
@@ -110,8 +127,7 @@ function LogPage() {
                         <div key={calendar.id}>
                             <div className="rating-header">
                                 <p>{calendar.name}</p>
-                                <div className={`selected-rating rating-${getRatingsForCalendar(calendar.id)}`}>
-                                </div>
+                                <div className={`selected-rating rating-${getRatingsForCalendar(calendar.id)}`}/>
                             </div>
 
                             {[1, 2, 3, 4, 5, 6].map((rating) => (
@@ -119,8 +135,14 @@ function LogPage() {
                                 className={`rating-${rating}`}
                                 key={rating}
                                 onClick={() => {
-                                    saveEntry(calendar.id, rating)
-                                        .then(() => loadEntries(selectedDate));
+                                    setEntries((prevEntries) =>
+                                        prevEntries.map((entry) =>
+                                            entry.calendar_id === calendar.id
+                                                ? { ...entry, rating }
+                                                : entry
+                                        )
+                                    );
+                                    saveEntry(calendar.id, rating, selectedDate)
                                 }}
                                 >
                                 </button>
@@ -150,9 +172,7 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
         .catch((err) => console.log(err))
 }
 
-function saveEntry(calendarId: number, rating: number) {
-    const today = new Date().toISOString().split("T")[0]; /* Endre til valgte dato! */
-
+function saveEntry(calendarId: number, rating: number, date: string) {
     return fetch("http://10.0.0.74:3000/entries", {
         method: "POST",
         headers: {
@@ -160,7 +180,7 @@ function saveEntry(calendarId: number, rating: number) {
         },
         body: JSON.stringify({
             calendar_id: calendarId,
-            date: today,
+            date: date,
             rating: rating,
         }),
     })

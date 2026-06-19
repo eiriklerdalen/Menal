@@ -59,7 +59,6 @@ app.get("/profiles/:profileId/entries/:date", (req, res) => {
     `).all(profileId, date);
 
     res.json(entries);
-    console.log("THIS:", entries)
 });
 
 app.get("/calendars", (req, res) => {
