@@ -25,7 +25,7 @@ function CalendarsPage() {
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
-    fetch("http://10.0.0.74:3000/entries")
+    fetch("http://10.0.0.74:3000/profiles/1/entries")
         .then((res) => res.json())
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));

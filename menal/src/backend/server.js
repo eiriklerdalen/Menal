@@ -10,44 +10,47 @@ app.use(cors());
 app.use(express.json());
 
 // GET -------------------------------------
-app.get("/journal_entries", (req, res) => {
+app.get("/profiles/:profileId/journal_entries", (req, res) => {
+    const profileId = Number(req.params.profileId);
+
     const journal_entries = db.prepare(`
         SELECT *
         FROM journal_entries
-        WHERE profile_id = 1
-    `).all();
+        WHERE profile_id = ?
+    `).all(profileId);
 
-    res.json(journal_entries)
+    res.json(journal_entries);
 });
 
-app.get("/journal_entries/:date", (req, res) => {
+app.get("/profiles/:profileId/journal_entries/:date", (req, res) => {
+    const profileId = Number(req.params.profileId);
+
     const entry = db.prepare(`
         SELECT *
         FROM journal_entries
-        WHERE profile_id = 1
+        WHERE profile_id = ?
         AND date = ?    
-    `).get(req.params.date);
+    `).get(profileId, req.params.date);
 
     res.json(entry);
 })
 
-app.get("/entries", (req, res) => {
+app.get("/profiles/:profileId/entries", (req, res) => {
+    const profileId = Number(req.params.profileId);
+
     const entries = db.prepare(`
         SELECT entries.*
         FROM entries
         JOIN calendars
             ON entries.calendar_id = calendars.id
-        WHERE calendars.profile_id = 1
-    `).all();
+        WHERE calendars.profile_id = ?
+    `).all(profileId);
 
     res.json(entries);
 });
 
 app.get("/profiles/:profileId/entries/:date", (req, res) => {
     const { profileId, date } = req.params;
-
-    console.log("profileId:", profileId);
-    console.log("date:", date);
 
     const entries = db.prepare(`
         SELECT entries.*
@@ -72,7 +75,8 @@ app.get("/calendars", (req, res) => {
 });
 
 // POST ------------------------------------
-app.post("/journal_entries", (req, res) => {
+app.post("/profiles/:profileId/journal_entries", (req, res) => {
+    const profileId = Number(req.params.profileId);
     const { profile_id, date, journal_text } = req.body;
 
     const stmt = db.prepare(`
@@ -80,9 +84,9 @@ app.post("/journal_entries", (req, res) => {
         VALUES (?, ?, ?)
         ON CONFLICT(profile_id, date)
         DO UPDATE SET journal_text = excluded.journal_text;    
-    `)
+    `);
 
-    const result = stmt.run(profile_id, date, journal_text)
+    const result = stmt.run(profile_id, date, journal_text);
 
     res.json({
         id: result.lastInsertRowid,
@@ -92,7 +96,9 @@ app.post("/journal_entries", (req, res) => {
     });
 });
 
-app.post("/entries", (req, res) => {
+app.post("/profiles/:profileId/entries", (req, res) => {
+    const profileId = Number(req.params.profileId);
+
     const { calendar_id, date, rating } = req.body;
 
     const stmt = db.prepare(`

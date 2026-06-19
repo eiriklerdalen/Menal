@@ -32,7 +32,7 @@ function LogPage() {
      }, [text]);
 
     async function loadJournalEntry(date: string) {
-        const res = await fetch(`http://10.0.0.74:3000/journal_entries/${date}`);
+        const res = await fetch(`http://10.0.0.74:3000/profiles/1/journal_entries/${date}`);
 
         const entry = await res.json();
 
@@ -156,7 +156,7 @@ function LogPage() {
 }
 
 async function saveJournalEntry(profileID: number, date: string, text: string) {
-    await fetch("http://10.0.0.74:3000/journal_entries", {
+    await fetch("http://10.0.0.74:3000/profiles/1/journal_entries", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -172,8 +172,8 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
         .catch((err) => console.log(err))
 }
 
-function saveEntry(calendarId: number, rating: number, date: string) {
-    return fetch("http://10.0.0.74:3000/entries", {
+async function saveEntry(calendarId: number, rating: number, date: string) {
+    return await fetch("http://10.0.0.74:3000/profiles/1/entries", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
