@@ -1,5 +1,6 @@
 import CalendarPage from "./pages/calendars";
 import LogPage from "./pages/log";
+import NewCalendarPage from "./pages/newCalendar"
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/log" element={<LogPage />} />
             <Route path="/log/:date" element={<LogPage />} />
             <Route path="/calendars" element={<CalendarPage />} />
+            <Route path="/calendars/new" element={<NewCalendarPage />} />
             <Route path="/settings" element={<h1>Innstillinger</h1>} />
         </Routes>
       </main>

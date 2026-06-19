@@ -104,6 +104,15 @@ body {
 .rating-5 { background: #6EEB83; }
 .rating-6 { background: #2ECC71; }
 
+.add-calendar-container {
+  display: flex;
+  justify-content: center;
+}
+
+.add-calendar {
+  
+}
+
 /* Logging */
 .date-selector {
   padding-top: 25px;
@@ -147,7 +156,6 @@ body {
   border-width: 1px;
   margin: 4px;
 }
-
 
 .calendar-buttons {
   display: flex;

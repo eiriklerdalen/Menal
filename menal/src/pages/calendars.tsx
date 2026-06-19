@@ -15,9 +15,11 @@ type Entry = {
 };
 
 function CalendarsPage() {
+  const navigate = useNavigate();
+
   const [calendars, setCalendars] = useState<Calendar[]>([]);
   useEffect(() => {
-    fetch("http://10.0.0.74:3000/calendars")
+    fetch("http://10.0.0.74:3000/profiles/1/calendars")
       .then((res) => res.json())
       .then((data) => setCalendars(data))
       .catch((err) => console.log(err));
@@ -31,6 +33,7 @@ function CalendarsPage() {
         .catch((err) => console.error(err));
   }, []);
 
+
   return (
   <>
       <h1>Kalendre</h1>
@@ -40,14 +43,21 @@ function CalendarsPage() {
         );
 
         return (
-        <div key={calendar.id}>
-          <CalendarHeatMap
-            entries={calendarEntries}
-            name={calendar.name}
-            />
-        </div>
+          <>
+            <div key={calendar.id}>
+              <CalendarHeatMap
+                entries={calendarEntries}
+                name={calendar.name}
+                />
+            </div>
+          </>
         )
       })}
+      <div className="add-calendar-container">
+        <button onClick={() => navigate("/calendars/new")}>
+          Add Calendar
+        </button>
+      </div>
   </>
   );
 }

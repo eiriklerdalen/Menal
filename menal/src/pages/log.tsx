@@ -50,7 +50,7 @@ function LogPage() {
     /* Calendar updates*/
     const [calendars, setCalendars] = useState<Calendar[]>([]);
     useEffect(() => {
-        fetch("http://10.0.0.74:3000/calendars")
+        fetch("http://10.0.0.74:3000/profiles/1/calendars")
             .then((res) => res.json())
             .then((data) => setCalendars(data))
             .catch((err) => console.log(err));

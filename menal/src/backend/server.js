@@ -64,12 +64,14 @@ app.get("/profiles/:profileId/entries/:date", (req, res) => {
     res.json(entries);
 });
 
-app.get("/calendars", (req, res) => {
+app.get("/profiles/:profileId/calendars", (req, res) => {
+    const profileId = Number(req.params.profileId);
+
     const calendars = db.prepare(`
         SELECT *
         FROM calendars
-        WHERE profile_id = 1
-    `).all();
+        WHERE profile_id = ?
+    `).all(profileId);
 
     res.json(calendars)
 });
@@ -118,6 +120,34 @@ app.post("/profiles/:profileId/entries", (req, res) => {
     });
 });
 
+app.post("/profiles/:profileId/calendars", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const { name } = req.body;
+
+    const stmt = db.prepare(`
+        INSERT INTO calendars (profile_id, name)
+        VALUES (?, ?)
+    `).run(profileId, name);
+
+    res.json({
+        id: lastInsertRowid,
+        profileId,
+        name
+    });
+});
+
+app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const calendarId = Number(req.params.calendarId);
+
+    db.prepare(`
+        DELETE FROM calendars
+        WHERE id = ?
+        and profile_id = ?
+    `).run(calendarId, profileId);
+
+    res.json({ success: true })
+});
 
 // RUN
 app.listen(3000, "0.0.0.0", () => {
