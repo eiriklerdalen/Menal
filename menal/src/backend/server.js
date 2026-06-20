@@ -9,7 +9,7 @@ const db = new Database("menal.db");
 app.use(cors());
 app.use(express.json());
 
-// GET -------------------------------------
+// GET --------------------------------------------------------------------------------------------------------------------
 app.get("/profiles/:profileId/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
 
@@ -76,7 +76,7 @@ app.get("/profiles/:profileId/calendars", (req, res) => {
     res.json(calendars)
 });
 
-// POST ------------------------------------
+// POST -------------------------------------------------------------------------------------------------------------------
 app.post("/profiles/:profileId/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
     const { profile_id, date, journal_text } = req.body;
@@ -122,19 +122,22 @@ app.post("/profiles/:profileId/entries", (req, res) => {
 
 app.post("/profiles/:profileId/calendars", (req, res) => {
     const profileId = Number(req.params.profileId);
-    const { name } = req.body;
+    const { name, max_rating } = req.body;
 
-    const stmt = db.prepare(`
-        INSERT INTO calendars (profile_id, name)
-        VALUES (?, ?)
-    `).run(profileId, name);
+    const result = db.prepare(`
+        INSERT INTO calendars (profile_id, name, max_rating)
+        VALUES (?, ?, ?)
+    `).run(profileId, name, max_rating);
 
     res.json({
-        id: lastInsertRowid,
+        id: result.lastInsertRowid,
         profileId,
-        name
+        name,
+        max_rating
     });
 });
+
+// DELETE -----------------------------------------------------------------------------------------------------------------
 
 app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
     const profileId = Number(req.params.profileId);

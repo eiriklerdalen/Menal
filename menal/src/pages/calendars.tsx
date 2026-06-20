@@ -5,6 +5,7 @@ type Calendar = {
   id: number;
   profile_id: number;
   name: string;
+  max_rating: number;
 };
 
 type Entry = {

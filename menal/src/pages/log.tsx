@@ -5,6 +5,7 @@ type Calendar = {
   id: number;
   profile_id: number;
   name: string;
+  max_rating: number;
 };
 
 type Entry = {
@@ -130,7 +131,7 @@ function LogPage() {
                                 <div className={`selected-rating rating-${getRatingsForCalendar(calendar.id)}`}/>
                             </div>
 
-                            {[1, 2, 3, 4, 5, 6].map((rating) => (
+                            {Array.from({ length: calendar.max_rating}, (_, i) => i + 1).map((rating) => (
                                 <button 
                                 className={`rating-${rating}`}
                                 key={rating}

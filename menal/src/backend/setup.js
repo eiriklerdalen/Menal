@@ -3,19 +3,29 @@ import Database from 'better-sqlite3'
 const db = new Database('menal.db');
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS profiles (
+  CREATE TABLE profiles (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS calendars (
+  CREATE TABLE calendars (
     id INTEGER PRIMARY KEY,
     profile_id INTEGER NOT NULL,
     name TEXT NOT NULL,
+    max_rating INTEGER NOT NULL DEFAULT 6,
     FOREIGN KEY (profile_id) REFERENCES profiles(id)
   );
 
-  CREATE TABLE IF NOT EXISTS entries (
+  CREATE TABLE calendar_rating_colors (
+    id INTEGER PRIMARY KEY,
+    calendar_id INTEGER NOT NULL,
+    rating INTEGER NOT NULL,
+    color TEXT NOT NULL,
+    UNIQUE(calendar_id, rating),
+    FOREIGN KEY (calendar_id) REFERENCES calendars(id)
+  );
+
+  CREATE TABLE entries (
     id INTEGER PRIMARY KEY,
     calendar_id INTEGER NOT NULL,
     date TEXT NOT NULL,
@@ -24,7 +34,7 @@ db.exec(`
     FOREIGN KEY (calendar_id) REFERENCES calendars(id)
   );
   
-  CREATE TABLE IF NOT EXISTS journal_entries (
+  CREATE TABLE journal_entries (
     id INTEGER PRIMARY KEY,
     profile_id INTEGER NOT NULL,
     date TEXT NOT NULL,
@@ -40,28 +50,13 @@ db.exec(`
 
   INSERT OR IGNORE INTO calendars (id, profile_id, name)
   VALUES
-    (1, 1, 'How was your day?'),
-    (2, 1, 'Training'),
-    (3, 1, 'Sleep'),
-    (4, 1, 'Productivity');
+    (1, 1, 'How was your day?');
 
   INSERT OR IGNORE INTO entries (id, calendar_id, date, rating)
   VALUES
     (1, 1, '2026-06-08', 5),
     (2, 1, '2026-06-09', 3),
-    (3, 1, '2026-06-12', 6),
-
-    (4, 2, '2026-06-08', 6),
-    (5, 2, '2026-06-09', 0),
-    (6, 2, '2026-06-12', 6),
-
-    (7, 3, '2026-06-08', 4),
-    (8, 3, '2026-06-09', 2),
-    (9, 3, '2026-06-12', 5),
-
-    (10, 4, '2026-06-08', 3),
-    (11, 4, '2026-06-09', 5),
-    (12, 4, '2026-06-12', 4);
+    (3, 1, '2026-06-12', 6);
 
   INSERT OR IGNORE INTO journal_entries (id, profile_id, date, journal_text)
   VALUES
