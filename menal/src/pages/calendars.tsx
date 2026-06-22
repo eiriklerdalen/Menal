@@ -50,7 +50,8 @@ function CalendarsPage() {
               <CalendarHeatMap
                 entries={calendarEntries}
                 name={calendar.name}
-                />
+                variant="default"
+              />
             </div>
           </>
         )

@@ -65,15 +65,15 @@ function getLastYear(entries: Entry[]) {
   ]
 }
 
-function CalendarHeatMap({ entries, name }: {entries: Entry[], name: string}) {
+function CalendarHeatMap({ entries, name, variant }: {entries: Entry[], name: string, variant?: string}) {
   const navigate = useNavigate();
 
   const weeks = getLastYear(entries)
   return (
-    <div className="calendar">
-      <p className="calendarName">{name}</p>
+    <div className={`calendar ${variant}`}>
+      <p className={`calendarName ${variant}`}>{name}</p>
 
-      <div className="heatmap">
+      <div className={`heatmap ${variant}`}>
         {weeks.map((week) => (
           <div className="week">
             {week.map((day) => (

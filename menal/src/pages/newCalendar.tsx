@@ -84,12 +84,34 @@ function NewCalendarPage() {
 
             <div className="calendar-preview">
                 <CalendarHeatMap
-                    entries={ previewEntries }
-                    name={ "preview"}
+                    entries={ generatePreviewEntries(maxRating, 120) }
+                    name="preview"
+                    variant="preview"
                 />
             </div>
         </>
     );
+}
+
+function generatePreviewEntries(maxRating: number, days: number): Entry[] {
+    const entries: Entry[] = [];
+
+    for (let i = 0; i <= days; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        
+        const dateString = date.toISOString().split("T")[0];
+        const randomRating = Math.floor(Math.random() * maxRating) + 1;
+
+        entries.push({
+            id: i,
+            calendar_id: 0,
+            date: dateString,
+            rating: randomRating,
+        });
+    }
+
+    return entries
 }
 
 const preset_1 = [
@@ -149,11 +171,5 @@ const presets: Record<number, string[]> = {
     6: preset_6,
     7: preset_7,
 }
-
-const previewEntries: Entry[] = [
-    { id: 0, calendar_id: 0, date: "2026-06-01", rating: 1 },
-    { id: 0, calendar_id: 0, date: "2026-06-02", rating: 2 },
-    { id: 0, calendar_id: 0, date: "2026-06-03", rating: 3 },
-];
 
 export default NewCalendarPage

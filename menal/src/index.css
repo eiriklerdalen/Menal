@@ -60,21 +60,31 @@ body {
 }
 
 /* Calendars */
-.calendar {
+.calendar.default {
   display: flex;
   flex-direction: column;
   padding-left: 50px;
 }
 
-.calendarName {
+.calendarName.default {
   margin-bottom: 12px;
   text-align: left;
 }
 
-.heatmap {
+.heatmap.default {
   width: 100%;
   display: flex;
   justify-content: center;
+  gap: 1px;
+}
+
+.calendarName.preview {
+  display: none;
+}
+
+.heatmap.preview {
+  width: 100%;
+  display: flex;
   gap: 1px;
 }
 
@@ -88,7 +98,6 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 3px;
-  background: #ddd;
 }
 
 .day:hover {
