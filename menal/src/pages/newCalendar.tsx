@@ -40,55 +40,62 @@ function NewCalendarPage() {
         <>
             <h1>Ny kalender</h1>
 
-            <div className="calendar-name-input">
-                <p>Navn:</p>
-                <input
-                    value={calendarName}
-                    onChange={(e) => setCalendarName(e.target.value)}
-                />
+            <div className="calendar-settings">
+                <div className="calendar-name-input">
+                    <p>Navn:</p>
+                    <input
+                        value={calendarName}
+                        onChange={(e) => setCalendarName(e.target.value)}
+                    />
+                </div>
+
+                <div className="calendar-rating-input">
+                    <p>Vurderingsskala:</p>
+
+                    {[1, 2, 3, 4, 5, 6, 7].map((rating) => (
+                                    <button 
+                                        key={rating}
+                                        className="new-rating"
+                                        onClick={() => setMaxRating(rating)}
+                                    >
+                                        {rating}
+                                    </button>
+                                ))}            
+                </div>
             </div>
 
-            <div className="calendar-rating-input">
-                <p>Vurderingsskala:</p>
+            <div className="color-settings">
+                <div className="scales-color-selector">
+                    <p>Farger:</p>
+                    <div className="color-buttons">
+                        {Array.from({ length: maxRating }, (_, i) => i + 1).map((rating) => (
+                            <button
+                                key={rating}
+                                style={{ backgroundColor: colors[rating - 1] }}
+                            >
+                                {rating}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                {[1, 2, 3, 4, 5, 6, 7].map((rating) => (
-                                <button 
-                                    key={rating}
-                                    className="new-rating"
-                                    onClick={() => setMaxRating(rating)}
-                                >
-                                    {rating}
-                                </button>
-                            ))}            
+                <div className="calendar-preview">
+                    <CalendarHeatMap
+                        entries={ generatePreviewEntries(maxRating, 365) }
+                        name="preview"
+                        variant="preview"
+                        colors={ colors }
+                    />
+                </div>
             </div>
 
-            <div className="scales-color-selector">
-                <p>Farger:</p>
-                {Array.from({ length: maxRating }, (_, i) => i + 1).map((rating) => (
+             <div className="create-new-calendar">
                     <button
-                        key={rating}
-                        style={{ backgroundColor: colors[rating - 1] }}
+                        onClick={() => createCalendar()}
                     >
-                        {rating}
+                        Opprett
                     </button>
-                ))}
-            </div>
-
-            <div className="create-new-calendar">
-                <button
-                    onClick={() => createCalendar()}
-                >
-                    Opprett
-                </button>
-            </div>
-
-            <div className="calendar-preview">
-                <CalendarHeatMap
-                    entries={ generatePreviewEntries(maxRating, 120) }
-                    name="preview"
-                    variant="preview"
-                />
-            </div>
+                </div>
         </>
     );
 }
@@ -101,7 +108,7 @@ function generatePreviewEntries(maxRating: number, days: number): Entry[] {
         date.setDate(date.getDate() - i);
         
         const dateString = date.toISOString().split("T")[0];
-        const randomRating = Math.floor(Math.random() * maxRating) + 1;
+        const randomRating = Math.floor(Math.random() * (maxRating + 1));
 
         entries.push({
             id: i,

@@ -65,7 +65,7 @@ function getLastYear(entries: Entry[]) {
   ]
 }
 
-function CalendarHeatMap({ entries, name, variant }: {entries: Entry[], name: string, variant?: string}) {
+function CalendarHeatMap({ entries, name, variant, colors }: {entries: Entry[], name: string, variant?: string, colors: string[]}) {
   const navigate = useNavigate();
 
   const weeks = getLastYear(entries)
@@ -79,7 +79,13 @@ function CalendarHeatMap({ entries, name, variant }: {entries: Entry[], name: st
             {week.map((day) => (
               <div
                 key={day.date}
-                className={`day rating-${day.rating}`}
+                className={`day rating-${day.rating} ${variant}`}
+                style = {{
+                  backgroundColor:
+                    day.rating === 0
+                      ? "gray"
+                      : colors[day.rating - 1]
+                }}
                 title={`${day.date}: ${day.rating}/6`}
                 onClick={() => navigate(`/log/${day.date}`)}
               />

@@ -76,6 +76,20 @@ app.get("/profiles/:profileId/calendars", (req, res) => {
     res.json(calendars)
 });
 
+app.get("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const calendarId = Number(req.params.calendarId);
+
+    const colors = db.prepare(`
+        SELECT *
+        FROM calendar_rating_colors
+        WHERE calendar_id = ?
+        ORDER BY rating
+    `).all(calendarId);
+
+    res.json(colors);
+})
+
 // POST -------------------------------------------------------------------------------------------------------------------
 app.post("/profiles/:profileId/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);

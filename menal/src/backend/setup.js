@@ -58,6 +58,19 @@ db.exec(`
     (2, 1, '2026-06-09', 3),
     (3, 1, '2026-06-12', 6);
 
+  INSERT OR IGNORE INTO calendar_rating_colors (
+    calendar_id,
+    rating,
+    color
+  )
+  VALUES
+      (1, 1, '#FF4D4D'),
+      (1, 2, '#FF8A3D'),
+      (1, 3, '#FFD93D'),
+      (1, 4, '#C7F464'),
+      (1, 5, '#6EEB83'),
+      (1, 6, '#2ECC71');
+
   INSERT OR IGNORE INTO journal_entries (id, profile_id, date, journal_text)
   VALUES
     (1, 1, '2026-06-17', 'Spiste kinesisk til middag.'),

@@ -15,7 +15,7 @@ body {
   letter-spacing: 0.2px;
 }
 
-/* Layout */
+/* Layout -----------------------------------------------------------------------------------------------------------------*/
 .app-layout {
   display: flex;
   width: 100%;
@@ -59,7 +59,7 @@ body {
   padding: 32px;
 }
 
-/* Calendars */
+/* Calendars --------------------------------------------------------------------------------------------------------------*/
 .calendar.default {
   display: flex;
   flex-direction: column;
@@ -106,24 +106,13 @@ body {
 }
 
 .rating-0 {background: gray;}
-.rating-1 { background: #FF4D4D; }
-.rating-2 { background: #FF8A3D; }
-.rating-3 { background: #FFD93D; }
-.rating-4 { background: #C7F464; }
-.rating-5 { background: #6EEB83; }
-.rating-6 { background: #2ECC71; }
 
 .add-calendar-container {
   display: flex;
   justify-content: center;
 }
 
-/* New Calendar */
-.calendar-name-input {
-  display: flex;
-}
-
-/* Logging */
+/* Logging ----------------------------------------------------------------------------------------------------------------*/
 .date-selector {
   padding-top: 25px;
   border: none;
@@ -181,4 +170,92 @@ body {
 
 .calendar-buttons button:hover {
   transform: scale(1.2);
+}
+
+/* New Calendar -----------------------------------------------------------------------------------------------------------*/
+.calendar-settings {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 100px;
+}
+
+.calendar-name-input {
+  display: flex;
+  flex: 1;
+
+  justify-content: center;
+  gap: 10px;
+
+  border-radius: 15px;
+  background: white;
+  border-width: 1px;
+  border-color: lightgray;
+  border-style: solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-name-input input {
+  width: 50%;
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  border-radius: 5px;
+  border-width: 0.5px;
+  border-color: lightgray;
+}
+
+.calendar-rating-input {
+  display: flex;
+  flex: 1;
+
+  justify-content: center;
+  gap: 10px;
+
+  border-radius: 15px;
+  border-width: 1px;
+  border-color: lightgray;
+  border-style: solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-rating-input button {
+  width: 40px;
+  height: 40px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  border-width: 1px;
+  border-radius: 10px;
+
+  background-color: white;
+  border-color: black;
+}
+
+.color-settings {
+    display: flex;
+    gap: 20px;
+}
+
+.scales-color-selector {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 20px;
+}
+
+.color-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.scales-color-selector button{
+  width: 40px;
+  height: 40px;
+}
+
+.calendar-preview {
+  display: flex;
+  flex: 1;
 }
