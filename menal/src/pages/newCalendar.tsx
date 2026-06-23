@@ -65,11 +65,14 @@ function NewCalendarPage() {
                                             <button 
                                                 key={rating}
                                                 className="new-rating"
+                                                style={{
+                                                    backgroundColor:
+                                                        maxRating === rating ? "#2ECC71" : "white"
+                                                }}
                                                 onClick={() => {
                                                     setMaxRating(rating)
                                                     setPreviewEntries(generatePreviewEntries(rating, 365))
                                                 }}
-
                                             >
                                                 {rating}
                                             </button>
