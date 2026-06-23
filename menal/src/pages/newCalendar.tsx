@@ -39,7 +39,9 @@ function NewCalendarPage() {
     }
 
     const colors = presets[maxRating];
-
+    const [previewEntries, setPreviewEntries] = useState(
+        generatePreviewEntries(maxRating, 365)
+    );
 
     return (
         <>
@@ -63,7 +65,11 @@ function NewCalendarPage() {
                                             <button 
                                                 key={rating}
                                                 className="new-rating"
-                                                onClick={() => setMaxRating(rating)}
+                                                onClick={() => {
+                                                    setMaxRating(rating)
+                                                    setPreviewEntries(generatePreviewEntries(rating, 365))
+                                                }}
+
                                             >
                                                 {rating}
                                             </button>
@@ -91,7 +97,7 @@ function NewCalendarPage() {
                         <p>Forhåndsvisning:</p>
                         <div className="preview-heatmap">
                             <CalendarHeatMap
-                                entries={ generatePreviewEntries(maxRating, 365) }
+                                entries={ previewEntries }
                                 name="preview"
                                 variant="preview"
                                 colors={ colors }
