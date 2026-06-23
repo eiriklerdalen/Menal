@@ -21,7 +21,7 @@ function CalendarsPage() {
 
   const [calendars, setCalendars] = useState<Calendar[]>([]);
   useEffect(() => {
-    fetch("http://10.0.0.74:3000/profiles/1/calendars")
+    fetch("http://10.0.0.76:3000/profiles/1/calendars")
       .then((res) => res.json())
       .then((data) => setCalendars(data))
       .catch((err) => console.log(err));
@@ -29,7 +29,7 @@ function CalendarsPage() {
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
-    fetch("http://10.0.0.74:3000/profiles/1/entries")
+    fetch("http://10.0.0.76:3000/profiles/1/entries")
         .then((res) => res.json())
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));
@@ -63,6 +63,7 @@ function CalendarsPage() {
                 name={ calendar.name }
                 variant="default"
                 colors={ calendarColors[calendar.id] ?? [] }
+                numDays={364}
               />
             </div>
           </>
@@ -78,7 +79,7 @@ function CalendarsPage() {
 }
 
 function loadColors(calendarId: number) {
-    return fetch(`http://10.0.0.74:3000/profiles/1/calendars/${calendarId}/colors`)
+    return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/colors`)
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }

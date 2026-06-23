@@ -33,7 +33,7 @@ function LogPage() {
      }, [text]);
 
     async function loadJournalEntry(date: string) {
-        const res = await fetch(`http://10.0.0.74:3000/profiles/1/journal_entries/${date}`);
+        const res = await fetch(`http://10.0.0.76:3000/profiles/1/journal_entries/${date}`);
 
         const entry = await res.json();
 
@@ -51,7 +51,7 @@ function LogPage() {
     /* Calendar updates*/
     const [calendars, setCalendars] = useState<Calendar[]>([]);
     useEffect(() => {
-        fetch("http://10.0.0.74:3000/profiles/1/calendars")
+        fetch("http://10.0.0.76:3000/profiles/1/calendars")
             .then((res) => res.json())
             .then((data) => setCalendars(data))
             .catch((err) => console.log(err));
@@ -59,7 +59,7 @@ function LogPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(`http://10.0.0.74:3000/profiles/1/entries/${selectedDate}`)
+        fetch(`http://10.0.0.76:3000/profiles/1/entries/${selectedDate}`)
             .then((res) => res.json())
             .then((data) => setEntries(data))
     }, [selectedDate]);
@@ -77,7 +77,7 @@ function LogPage() {
     }
 
     function loadEntries(date: string) {
-        fetch(`http://10.0.0.74:3000/profiles/1/entries/${date}`)
+        fetch(`http://10.0.0.76:3000/profiles/1/entries/${date}`)
         .then((res) => res.json())
         .then((data) => {
             const entriesWithDefaults = calendars.map((calendar) => {
@@ -157,7 +157,7 @@ function LogPage() {
 }
 
 async function saveJournalEntry(profileID: number, date: string, text: string) {
-    await fetch("http://10.0.0.74:3000/profiles/1/journal_entries", {
+    await fetch("http://10.0.0.76:3000/profiles/1/journal_entries", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -174,7 +174,7 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
 }
 
 async function saveEntry(calendarId: number, rating: number, date: string) {
-    return await fetch("http://10.0.0.74:3000/profiles/1/entries", {
+    return await fetch("http://10.0.0.76:3000/profiles/1/entries", {
         method: "POST",
         headers: {
         "Content-Type": "application/json",

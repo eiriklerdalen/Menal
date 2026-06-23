@@ -15,7 +15,7 @@ function getRatingForDate(date: string, entries: Entry[]) {
   return 0
 }
 
-function getLastYear(entries: Entry[]) {
+function getLastYear(entries: Entry[], numDays: number) {
   const today = new Date();
   const daysIntoWeek = today.getDay()
 
@@ -41,7 +41,7 @@ function getLastYear(entries: Entry[]) {
   const startOfWeek = new Date(today);
   startOfWeek.setDate(today.getDate() - daysIntoWeek); 
 
-  for (let i = 364; i >= 1; i--) {
+  for (let i = numDays; i >= 1; i--) {
     const date = new Date(startOfWeek);
     date.setDate(startOfWeek.getDate() - i)
 
@@ -65,10 +65,10 @@ function getLastYear(entries: Entry[]) {
   ]
 }
 
-function CalendarHeatMap({ entries, name, variant, colors }: {entries: Entry[], name: string, variant?: string, colors: string[]}) {
+function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: Entry[], name: string, variant?: string, colors: string[], numDays: number}) {
   const navigate = useNavigate();
 
-  const weeks = getLastYear(entries)
+  const weeks = getLastYear(entries, numDays)
   return (
     <div className={`calendar ${variant}`}>
       <p className={`calendarName ${variant}`}>{name}</p>

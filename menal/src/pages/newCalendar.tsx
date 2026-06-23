@@ -16,7 +16,7 @@ function NewCalendarPage() {
     const [maxRating, setMaxRating] = useState(7);
 
     function createCalendar() {
-        fetch("http://10.0.0.74:3000/profiles/1/calendars", {
+        fetch("http://10.0.0.76:3000/profiles/1/calendars", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -38,64 +38,72 @@ function NewCalendarPage() {
 
     return (
         <>
-            <h1>Ny kalender</h1>
+            <div className="new-calendar-page">
+                <h1>Ny kalender</h1>
 
-            <div className="calendar-settings">
-                <div className="calendar-name-input">
-                    <p>Navn:</p>
-                    <input
-                        value={calendarName}
-                        onChange={(e) => setCalendarName(e.target.value)}
-                    />
-                </div>
+                <div className="calendar-settings">
+                    <div className="calendar-name-input">
+                        <p>Navn:</p>
+                        <input
+                            value={calendarName}
+                            onChange={(e) => setCalendarName(e.target.value)}
+                        />
+                    </div>
 
-                <div className="calendar-rating-input">
-                    <p>Vurderingsskala:</p>
+                    <div className="calendar-rating-input">
+                        <p>Vurderingsskala:</p>
 
-                    {[1, 2, 3, 4, 5, 6, 7].map((rating) => (
-                                    <button 
-                                        key={rating}
-                                        className="new-rating"
-                                        onClick={() => setMaxRating(rating)}
-                                    >
-                                        {rating}
-                                    </button>
-                                ))}            
-                </div>
-            </div>
-
-            <div className="color-settings">
-                <div className="scales-color-selector">
-                    <p>Farger:</p>
-                    <div className="color-buttons">
-                        {Array.from({ length: maxRating }, (_, i) => i + 1).map((rating) => (
-                            <button
-                                key={rating}
-                                style={{ backgroundColor: colors[rating - 1] }}
-                            >
-                                {rating}
-                            </button>
-                        ))}
+                        <div className="rating-buttons">
+                            {[1, 2, 3, 4, 5, 6, 7].map((rating) => (
+                                            <button 
+                                                key={rating}
+                                                className="new-rating"
+                                                onClick={() => setMaxRating(rating)}
+                                            >
+                                                {rating}
+                                            </button>
+                                        ))}        
+                        </div>
                     </div>
                 </div>
 
-                <div className="calendar-preview">
-                    <CalendarHeatMap
-                        entries={ generatePreviewEntries(maxRating, 365) }
-                        name="preview"
-                        variant="preview"
-                        colors={ colors }
-                    />
+                <div className="color-settings">
+                    <div className="scales-color-selector">
+                        <p>Farger:</p>
+                        <div className="color-buttons">
+                            {Array.from({ length: maxRating }, (_, i) => i + 1).map((rating) => (
+                                <button
+                                    key={rating}
+                                    style={{ backgroundColor: colors[rating - 1] }}
+                                >
+                                    {rating}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="calendar-preview">
+                        <p>Forhåndsvisning:</p>
+                        <div className="preview-heatmap">
+                            <CalendarHeatMap
+                                entries={ generatePreviewEntries(maxRating, 365) }
+                                name="preview"
+                                variant="preview"
+                                colors={ colors }
+                                numDays={182}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="create-new-calendar-button">
+                        <button
+                            onClick={() => createCalendar()}
+                        >
+                            Opprett
+                        </button>
                 </div>
             </div>
-
-             <div className="create-new-calendar">
-                    <button
-                        onClick={() => createCalendar()}
-                    >
-                        Opprett
-                    </button>
-                </div>
         </>
     );
 }
