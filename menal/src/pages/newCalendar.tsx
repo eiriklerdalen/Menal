@@ -16,6 +16,11 @@ function NewCalendarPage() {
     const [maxRating, setMaxRating] = useState(7);
 
     function createCalendar() {
+        if (calendarName.trim() === "") {
+            alert("Kalenderen må ha et navn.");
+            return;
+        }
+
         fetch("http://10.0.0.76:3000/profiles/1/calendars", {
             method: "POST",
             headers: {

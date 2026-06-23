@@ -138,6 +138,12 @@ app.post("/profiles/:profileId/calendars", (req, res) => {
     const profileId = Number(req.params.profileId);
     const { name, max_rating } = req.body;
 
+    if (!name || name.trim() === "") {
+        return res.status(400).json({
+            error: "Calendar name is required"
+        });
+    }
+
     const result = db.prepare(`
         INSERT INTO calendars (profile_id, name, max_rating)
         VALUES (?, ?, ?)
