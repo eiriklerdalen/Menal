@@ -74,7 +74,7 @@ function LogPage() {
         if (entry) {
             return entry.rating
         } else {
-            return "0"
+            return 0
         }
     }
 
@@ -105,6 +105,24 @@ function LogPage() {
         }
     }, [selectedDate]);
 
+    const [calendarColors, setCalendarColors] = useState<
+        Record<number, string[]>
+    >({});
+        useEffect(() => {
+        calendars.forEach((calendar) => {
+            fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendar.id}/colors`)
+                .then((res) => res.json())
+                .then((data) => {
+                    setCalendarColors((prev) => ({
+                        ...prev,
+                        [calendar.id]: data.map(
+                            (row: { color: string }) => row.color
+                        ),
+                    }));
+                });
+        });
+    }, [calendars]);
+
     return (
         <div>
             <h1>Logg dagen</h1>
@@ -126,17 +144,32 @@ function LogPage() {
                 </label>
 
                 <div className="calendar-buttons">
-                    {calendars.map((calendar) => (
-                        <div key={calendar.id}>
+                    {calendars.map((calendar) => {
+                        const currentRating = getRatingsForCalendar(calendar.id);
+                        
+                        return (
+                            <div key={calendar.id}>
                             <div className="rating-header">
                                 <p>{calendar.name}</p>
-                                <div className={`selected-rating rating-${getRatingsForCalendar(calendar.id)}`}/>
+                                <div 
+                                    className="selected-rating"
+                                    style={{
+                                        backgroundColor:   
+                                            currentRating === 0
+                                                ? "gray"
+                                                : calendarColors[calendar.id]?.[currentRating - 1] ?? "lightgray"
+                                    }}
+                                />
                             </div>
 
                             {Array.from({ length: calendar.max_rating}, (_, i) => i + 1).map((rating) => (
                                 <button 
                                 className={`rating-${rating}`}
                                 key={rating}
+                                style={{
+                                    backgroundColor:
+                                        calendarColors[calendar.id]?.[rating-1] ?? "lightgray"
+                                }}
                                 onClick={() => {
                                     setEntries((prevEntries) =>
                                         prevEntries.map((entry) =>
@@ -148,10 +181,12 @@ function LogPage() {
                                     saveEntry(calendar.id, rating, selectedDate)
                                 }}
                                 >
+                                    {rating}
                                 </button>
                             ))}
                         </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
         </div>
