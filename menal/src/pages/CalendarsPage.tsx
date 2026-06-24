@@ -56,7 +56,7 @@ function CalendarsPage() {
         );
 
         return (
-          <>
+          <div className="heatmap-instance">
             <div key={calendar.id}>
               <CalendarHeatMap
                 entries={ calendarEntries }
@@ -66,7 +66,7 @@ function CalendarsPage() {
                 numDays={364}
               />
             </div>
-          </>
+          </div>
         )
       })}
       <div className="add-calendar-container">
