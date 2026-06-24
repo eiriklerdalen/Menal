@@ -1,4 +1,6 @@
 .heatmap-instance {
+  position: relative;
+
   margin-bottom: 20px;
   padding: 20px;
 
@@ -55,7 +57,46 @@
 
 .rating-0 {background: gray;}
 
-.add-calendar-container {
-  display: flex;
-  justify-content: center;
+.delete-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+
+  border: none;
+  background: transparent;
+
+  color: #999;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+.add-calendar-container button {
+  width: 100%;
+
+  padding: 16px;
+
+  border: none;
+  border-radius: 15px;
+
+  background: #2ECC71;
+  color: white;
+
+  font-family: var(--quicksand);
+  font-size: 20px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  transition: all 0.15s ease;
+}
+
+.add-calendar-container button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }

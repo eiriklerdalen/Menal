@@ -79,14 +79,16 @@ function CalendarsPage() {
                 numDays={364}
               />
             </div>
-            <button
-              className="delete-button"
-              onClick={() => {
-                deleteCalendar(calendar.id)
-              }}
-            >
-              Slett
-            </button>
+            <div className="delete-button-container">
+              <button
+                className="delete-button"
+                onClick={() => {
+                  deleteCalendar(calendar.id)
+                }}
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )
       })}
