@@ -169,12 +169,15 @@ function LogPage() {
                     />
                 </label>
 
-                <div className="calendar-buttons">
+                <div className="calendar-buttons">                    
                     {calendars.map((calendar) => {
                         const currentRating = getRatingsForCalendar(calendar.id);
                         
                         return (
-                            <div key={calendar.id}>
+                            <div 
+                                className="rating-container"
+                                key={calendar.id}
+                            >
                             <div className="rating-header">
                                 <p>{calendar.name}</p>
                                 <div 
@@ -188,22 +191,34 @@ function LogPage() {
                                 />
                             </div>
 
-                            {Array.from({ length: calendar.max_rating}, (_, i) => i + 1).map((rating) => (
-                                <button 
-                                className={`rating-${rating}`}
-                                key={rating}
-                                style={{
-                                    backgroundColor:
-                                        calendarColors[calendar.id]?.[rating-1] ?? "lightgray"
-                                }}
-                                onClick={() => {
-                                    updateEntry(calendar.id, rating, selectedDate);
-                                    saveEntry(calendar.id, rating, selectedDate);
-                                }}
+                            <div className="rating-button-row">
+                                <button
+                                    className="reset-button rating-button" 
+                                    onClick={() => {
+                                        updateEntry(calendar.id, 0, selectedDate);
+                                        saveEntry(calendar.id, 0, selectedDate);
+                                    }}
                                 >
-                                    {rating}
+                                    0
                                 </button>
-                            ))}
+
+                                {Array.from({ length: calendar.max_rating}, (_, i) => i + 1).map((rating) => (
+                                    <button 
+                                        className="rating-button"
+                                        key={rating}
+                                        style={{
+                                            backgroundColor:
+                                                calendarColors[calendar.id]?.[rating-1] ?? "lightgray"
+                                        }}
+                                        onClick={() => {
+                                            updateEntry(calendar.id, rating, selectedDate);
+                                            saveEntry(calendar.id, rating, selectedDate);
+                                        }}
+                                    >
+                                        {rating}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                         )
                     })}
