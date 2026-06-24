@@ -180,6 +180,16 @@ app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
     const calendarId = Number(req.params.calendarId);
 
     db.prepare(`
+        DELETE FROM entries
+        WHERE calendar_id = ?    
+    `).run(calendarId);
+
+    db.prepare(`
+        DELETE FROM calendar_rating_colors
+        WHERE calendar_id = ?
+    `).run(calendarId);
+
+    db.prepare(`
         DELETE FROM calendars
         WHERE id = ?
         and profile_id = ?

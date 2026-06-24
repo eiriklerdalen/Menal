@@ -49,6 +49,17 @@ function CalendarsPage() {
       });
   }, [calendars]);
 
+  function deleteCalendar(calendarId: number) {
+    fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setCalendars((prev) => prev.filter((calendar) => calendar.id !== calendarId));
+      })
+      .catch((err) => console.log(err));
+  }
+
   return (
   <>
       <h1>Kalendre</h1>
@@ -68,6 +79,14 @@ function CalendarsPage() {
                 numDays={364}
               />
             </div>
+            <button
+              className="delete-button"
+              onClick={() => {
+                deleteCalendar(calendar.id)
+              }}
+            >
+              Slett
+            </button>
           </div>
         )
       })}
