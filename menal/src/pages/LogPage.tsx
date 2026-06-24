@@ -152,14 +152,16 @@ function LogPage() {
     console.log(calendarColors)
 
     return (
-        <div>
+        <div className="log-page">
             <h1>Logg dagen</h1>
-            <input
-                className="date-selector"
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-            />
+            <div className="data-selector-container">
+                <input
+                    className="date-selector"
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                />
+            </div>
 
             <div className="log-entry">
                 <label>

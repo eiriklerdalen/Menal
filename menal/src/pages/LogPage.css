@@ -1,8 +1,27 @@
+.log-page {
+  width: min(95%, 1800px);
+  margin: 0 auto;
+}
+
+.date-selector-container {
+  padding: 20px;
+
+  border-radius: 15px;
+  background: white;
+  border: 1px solid lightgray;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  margin-bottom: 24px;
+}
+
 .date-selector {
-  padding-top: 25px;
-  border: none;
-  font-size: 18px;
+  padding: 10px 14px;
+
+  border-radius: 10px;
+  border: 1px solid lightgray;
+
   font-family: var(--quicksand);
+  font-size: 16px;
 }
 
 .log-entry {
@@ -58,6 +77,7 @@
 .calendar-buttons {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .rating-button-row {
