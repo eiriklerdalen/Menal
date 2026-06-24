@@ -1,3 +1,4 @@
+import DashboardPage from "./pages/DashboardPage";
 import CalendarPage from "./pages/CalendarsPage";
 import LogPage from "./pages/LogPage";
 import NewCalendarPage from "./pages/NewCalendarPage"
@@ -15,6 +16,7 @@ function App() {
         >Menal</h1>
 
         <nav>
+          <button onClick={() => navigate("/dashboard")}>Dashbord</button>
           <button onClick={() => navigate("/log")}>Logg</button>
           <button onClick={() => navigate("/calendars")}>Kalendre</button>
           <button onClick={() => navigate("/settings")}>Innstillinger</button>
@@ -24,6 +26,7 @@ function App() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<h1>Velkommen tilbake!</h1>} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/log" element={<LogPage />} />
             <Route path="/log/:date" element={<LogPage />} />
             <Route path="/calendars" element={<CalendarPage />} />

@@ -49,7 +49,15 @@ function CalendarsPage() {
       });
   }, [calendars]);
 
-  function deleteCalendar(calendarId: number) {
+  function deleteCalendar(calendarId: number, calendarName: string) {
+    const shouldDelete = confirm(`
+      Er du sikker på at du vil slette ${calendarName}?
+    `);
+
+    if (!shouldDelete) {
+      return;
+    }
+
     fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}`, {
       method: "DELETE",
     })
@@ -83,7 +91,7 @@ function CalendarsPage() {
               <button
                 className="delete-button"
                 onClick={() => {
-                  deleteCalendar(calendar.id)
+                  deleteCalendar(calendar.id, calendar.name)
                 }}
               >
                 ✕
