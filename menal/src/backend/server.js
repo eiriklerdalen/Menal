@@ -157,6 +157,22 @@ app.post("/profiles/:profileId/calendars", (req, res) => {
     });
 });
 
+app.post("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
+    const calendarId = Number(req.params.calendarId);
+    const { colors } = req.body;
+
+    const stmt = db.prepare(`
+        INSERT INTO calendar_rating_colors (calendar_id, rating, color)
+        VALUES (?, ?, ?)
+    `);
+
+    colors.forEach((color, index) => {
+        stmt.run(calendarId, index + 1, color);
+    });
+
+    res.json({ success: true });
+})
+
 // DELETE -----------------------------------------------------------------------------------------------------------------
 
 app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {

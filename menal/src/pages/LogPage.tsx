@@ -149,6 +149,8 @@ function LogPage() {
         });
     }
 
+    console.log(calendarColors)
+
     return (
         <div>
             <h1>Logg dagen</h1>

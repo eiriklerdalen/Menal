@@ -34,10 +34,19 @@ function NewCalendarPage() {
             }),
         })
             .then((res) => res.json())
-            .then((data) => console.log("Created: ", data))
+            .then((data) => {
+                return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${data.id}/colors`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        colors: colors,
+                    }),
+                });
+            })
+            .then(() => navigate("/calendars"))
             .catch((err) => console.log(err));
-
-        navigate("/calendars");
     }
 
     const colors = presets[maxRating];
