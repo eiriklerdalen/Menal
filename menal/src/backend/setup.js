@@ -48,15 +48,18 @@ db.exec(`
   INSERT OR IGNORE INTO profiles (id, name)
   VALUES (1, 'Eirik');  
 
-  INSERT OR IGNORE INTO calendars (id, profile_id, name)
+  INSERT OR IGNORE INTO calendars (id, profile_id, name, max_rating)
   VALUES
-    (1, 1, 'How was your day?');
+    (1, 1, 'Hvordan var dagen din?', 6),
+    (2, 1, 'Trente du?', 1);
 
   INSERT OR IGNORE INTO entries (id, calendar_id, date, rating)
   VALUES
     (1, 1, '2026-06-08', 5),
     (2, 1, '2026-06-09', 3),
-    (3, 1, '2026-06-12', 6);
+    (3, 1, '2026-06-12', 6),
+    (4, 2, '2026-06-20', 1),
+    (5, 2, '2026-06-22', 1);
 
   INSERT OR IGNORE INTO calendar_rating_colors (
     calendar_id,
@@ -69,7 +72,8 @@ db.exec(`
       (1, 3, '#FFD93D'),
       (1, 4, '#C7F464'),
       (1, 5, '#6EEB83'),
-      (1, 6, '#2ECC71');
+      (1, 6, '#2ECC71'),
+      (2, 1, '#2ECC71');
 
   INSERT OR IGNORE INTO journal_entries (id, profile_id, date, journal_text)
   VALUES

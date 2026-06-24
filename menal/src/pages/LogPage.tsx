@@ -122,6 +122,32 @@ function LogPage() {
                 });
         });
     }, [calendars]);
+    
+    function updateEntry(calendarId: number, rating: number, date: string) {
+        setEntries((prevEntries) => {
+            const exists = prevEntries.some(
+                (entry) => entry.calendar_id === calendarId
+            );
+
+            if (exists) {
+                return prevEntries.map((entry) =>
+                    entry.calendar_id === calendarId
+                        ? { ...entry, rating }
+                        : entry
+                );
+            }
+
+            return [
+                ...prevEntries,
+                {
+                    id: 0,
+                    calendar_id: calendarId,
+                    date,
+                    rating,
+                },
+            ];
+        });
+    }
 
     return (
         <div>
@@ -171,14 +197,8 @@ function LogPage() {
                                         calendarColors[calendar.id]?.[rating-1] ?? "lightgray"
                                 }}
                                 onClick={() => {
-                                    setEntries((prevEntries) =>
-                                        prevEntries.map((entry) =>
-                                            entry.calendar_id === calendar.id
-                                                ? { ...entry, rating }
-                                                : entry
-                                        )
-                                    );
-                                    saveEntry(calendar.id, rating, selectedDate)
+                                    updateEntry(calendar.id, rating, selectedDate);
+                                    saveEntry(calendar.id, rating, selectedDate);
                                 }}
                                 >
                                     {rating}
