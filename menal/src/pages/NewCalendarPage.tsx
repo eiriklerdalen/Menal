@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CalendarHeatMap from "../components/CalendarHeatMap";
+
+import "/src/pages/NewCalendarPage.css";
 
 type Entry = {
   id: number;

@@ -1,6 +1,6 @@
-import CalendarPage from "./pages/calendars";
-import LogPage from "./pages/log";
-import NewCalendarPage from "./pages/newCalendar"
+import CalendarPage from "./pages/CalendarsPage";
+import LogPage from "./pages/LogPage";
+import NewCalendarPage from "./pages/NewCalendarPage"
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 function App() {

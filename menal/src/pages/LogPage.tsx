@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+import "/src/pages/LogPage.css";
+
 type Calendar = {
   id: number;
   profile_id: number;

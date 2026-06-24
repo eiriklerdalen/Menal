@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CalendarHeatMap from "../components/CalendarHeatMap";
 
+import "/src/pages/CalendarsPage.css";
+
 type Calendar = {
   id: number;
   profile_id: number;
