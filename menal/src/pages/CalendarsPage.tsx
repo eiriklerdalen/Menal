@@ -97,6 +97,14 @@ function CalendarsPage() {
                 ✕
               </button>
             </div>
+            <div className="edit-button-container">
+              <button
+                className="edit-button"
+                onClick={() => navigate(`/calendars/${calendar.id}/edit`)}
+              >
+                ✎
+              </button>
+            </div>
           </div>
         )
       })}

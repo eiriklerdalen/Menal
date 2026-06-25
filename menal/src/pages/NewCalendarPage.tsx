@@ -65,6 +65,7 @@ function NewCalendarPage() {
                         <input
                             value={calendarName}
                             onChange={(e) => setCalendarName(e.target.value)}
+                            placeholder="For eksempel: Trening"
                         />
                     </div>
 

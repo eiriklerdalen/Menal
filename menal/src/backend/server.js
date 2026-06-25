@@ -76,6 +76,20 @@ app.get("/profiles/:profileId/calendars", (req, res) => {
     res.json(calendars)
 });
 
+app.get("/profiles/:profileId/calendars/:calendarId", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const calendarId = Number(req.params.calendarId);
+
+    const calendar = db.prepare(`
+        SELECT id, profile_id, name, max_rating
+        FROM calendars
+        WHERE id = ?
+        AND profile_id = ?
+    `).get(calendarId, profileId);
+
+    res.json(calendar);
+})
+
 app.get("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
     const profileId = Number(req.params.profileId);
     const calendarId = Number(req.params.calendarId);
@@ -197,6 +211,45 @@ app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
 
     res.json({ success: true })
 });
+
+// PATCH ------------------------------------------------------------------------------------------------------------------
+app.patch("/profiles/:profileId/calendars/:calendarId", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const calendarId = Number(req.params.calendarId);
+
+    const { name } = req.body;
+    
+    db.prepare(`
+        UPDATE calendars
+        SET name = ?
+        WHERE id = ?
+        AND profile_id = ?
+    `).run(name, calendarId, profileId);
+
+    res.json({ success: true });
+})
+
+// PUT --------------------------------------------------------------------------------------------------------------------
+app.put("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
+    const calendarId = Number(req.params.calendarId);
+    const { colors } = req.body;
+
+    db.prepare(`
+        DELETE FROM calendar_rating_colors
+        WHERE calendar_id = ?
+    `).run(calendarId);
+
+    const stmt = db.prepare(`
+        INSERT INTO calendar_rating_colors (calendar_id, rating, color)
+        VALUES (?, ?, ?)
+    `);
+
+    colors.forEach((color, index) => {
+        stmt.run(calendarId, index + 1, color);
+    });
+
+    res.json({ success: true });
+})
 
 // RUN
 app.listen(3000, "0.0.0.0", () => {

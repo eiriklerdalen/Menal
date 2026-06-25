@@ -4,6 +4,24 @@
     margin: 0 auto;
 }
 
+.color-picker-button {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.color-picker-button input {
+    display: none;
+}
+
 .heatmap-color-preview {
     border-radius: 15px;   
     background: white;
@@ -11,4 +29,32 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     padding: 20px;
+    margin-bottom: 20px;
+}
+
+.save-button {
+  width: 100%;
+
+  padding: 16px;
+
+  border: none;
+  border-radius: 15px;
+
+  background: #2ECC71;
+  color: white;
+
+  font-family: var(--quicksand);
+  font-size: 20px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  transition: all 0.15s ease;
+}
+
+.create-new-calendar-button button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
