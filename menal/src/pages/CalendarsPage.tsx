@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CalendarHeatMap from "../components/CalendarHeatMap";
+
+import SortableCalendarItem from "../components/SortableCalendarItem";
 
 import "/src/pages/CalendarsPage.css";
+import { DndContext } from "@dnd-kit/core";
+import { SortableContext } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
+import type { DragEndEvent } from "@dnd-kit/core";
 
 type Calendar = {
   id: number;
   profile_id: number;
   name: string;
   max_rating: number;
+  position: number;
 };
 
 type Entry = {
@@ -68,46 +74,50 @@ function CalendarsPage() {
       .catch((err) => console.log(err));
   }
 
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    setCalendars((prevCalendars) => {
+      const oldIndex = prevCalendars.findIndex(
+        (calendar) => calendar.id === active.id
+      );
+
+      const newIndex = prevCalendars.findIndex(
+        (calendar) => calendar.id === over.id
+      );
+
+      return arrayMove(prevCalendars, oldIndex, newIndex);
+    });
+  }
+  
+
   return (
   <>
       <h1>Kalendre</h1>
-      {calendars.map((calendar) => {
-        const calendarEntries = entries.filter(
-          (entry) => entry.calendar_id === calendar.id
-        );
+      <DndContext onDragEnd={handleDragEnd}>
+        <SortableContext items={calendars.map((calendar) => calendar.id)}>
+          {calendars.map((calendar) => {
+            const calendarEntries = entries.filter(
+              (entry) => entry.calendar_id === calendar.id
+            );
 
-        return (
-          <div className="heatmap-instance">
-            <div key={calendar.id}>
-              <CalendarHeatMap
-                entries={ calendarEntries }
-                name={ calendar.name }
-                variant="default"
+            return (
+              <SortableCalendarItem
+                key={ calendar.id }
+                calendar={ calendar }
+                calendarEntries={ calendarEntries }
                 colors={ calendarColors[calendar.id] ?? [] }
-                numDays={364}
+                onDelete={ deleteCalendar }
+                onEdit={(id) => navigate(`/calendars/${id}/edit`)}
               />
-            </div>
-            <div className="delete-button-container">
-              <button
-                className="delete-button"
-                onClick={() => {
-                  deleteCalendar(calendar.id, calendar.name)
-                }}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="edit-button-container">
-              <button
-                className="edit-button"
-                onClick={() => navigate(`/calendars/${calendar.id}/edit`)}
-              >
-                ✎
-              </button>
-            </div>
-          </div>
-        )
-      })}
+            )
+          })}
+        </SortableContext>
+      </DndContext>
       <div className="add-calendar-container">
         <button onClick={() => navigate("/calendars/new")}>
           Add Calendar
@@ -117,7 +127,7 @@ function CalendarsPage() {
   );
 }
 
-function loadColors(calendarId: number) {
+async function loadColors(calendarId: number) {
     return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/colors`)
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));

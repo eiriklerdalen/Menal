@@ -57,6 +57,12 @@
 
 .rating-0 {background: gray;}
 
+.drag-handles {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
 .delete-button {
   position: absolute;
   top: 16px;

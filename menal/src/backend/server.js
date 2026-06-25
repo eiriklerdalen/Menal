@@ -71,6 +71,7 @@ app.get("/profiles/:profileId/calendars", (req, res) => {
         SELECT *
         FROM calendars
         WHERE profile_id = ?
+        ORDER BY position
     `).all(profileId);
 
     res.json(calendars)
@@ -158,16 +159,25 @@ app.post("/profiles/:profileId/calendars", (req, res) => {
         });
     }
 
+    const lastPosition = db.prepare(`
+        SELECT MAX(position) AS maxPosition
+        FROM calendars
+        WHERE profile_id = ?
+    `).get(profileId);
+
+    const newPosition = (lastPosition.maxPosition ?? -1) + 1;
+
     const result = db.prepare(`
-        INSERT INTO calendars (profile_id, name, max_rating)
-        VALUES (?, ?, ?)
-    `).run(profileId, name, max_rating);
+        INSERT INTO calendars (profile_id, name, max_rating, position)
+        VALUES (?, ?, ?, ?)
+    `).run(profileId, name, max_rating, newPosition);
 
     res.json({
         id: result.lastInsertRowid,
         profileId,
         name,
-        max_rating
+        max_rating,
+        position: newPosition
     });
 });
 
