@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { HexColorPicker } from "react-colorful";
 
 import CalendarHeatMap from "../components/CalendarHeatMap";
+import ScaleColorSelector from "../components/ScaleColorSelector";
 
 import "/src/pages/EditCalendarPage.css";
 
@@ -66,41 +67,11 @@ function EditCalendarPage() {
                         placeholder="For eksempel: Trening"
                     />
                 </div>
-
-                <div className="scales-color-selector">
-                    <p>Farger:</p>
-                    <div className="color-buttons">
-                        {Array.from({ length: maxRating }, (_, i) => i + 1).map((rating) => (
-                            <button
-                                key={rating}
-                                style={{ backgroundColor: colors[rating - 1] }}
-                                onClick={() => setSelectedColorIndex(rating - 1)}
-                            >
-                                {rating}
-                            </button>
-                        ))}
-                    </div>
-                    {selectedColorIndex !== null && (
-                        <div className="color-picker-popup">
-                            <HexColorPicker
-                                color={colors[selectedColorIndex]}
-                                onChange={(newColor) => {
-                                    const updatedColors = [...colors];
-                                    updatedColors[selectedColorIndex] = newColor;
-                                    setColors(updatedColors);
-                                }}
-                            />
-
-                            <button 
-                                className="close-color-selector-button"
-                                onClick={() => setSelectedColorIndex(null)}
-                            >
-                                Lukk
-                            </button>
-                        </div>
-                    )}
-                </div>
-
+                <ScaleColorSelector
+                    colors={ colors }
+                    setColors={ setColors }
+                    maxRating={ maxRating }
+                />
             </div>
             <div className="heatmap-color-preview">
                 <p>Forhåndsvisning:</p>

@@ -13,6 +13,7 @@ db.exec(`
     profile_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     max_rating INTEGER NOT NULL DEFAULT 6,
+    position INTEGER NOT NULL,
     FOREIGN KEY (profile_id) REFERENCES profiles(id)
   );
 
@@ -48,10 +49,10 @@ db.exec(`
   INSERT OR IGNORE INTO profiles (id, name)
   VALUES (1, 'Eirik');  
 
-  INSERT OR IGNORE INTO calendars (id, profile_id, name, max_rating)
+  INSERT OR IGNORE INTO calendars (id, profile_id, name, max_rating, position)
   VALUES
-    (1, 1, 'Hvordan var dagen din?', 6),
-    (2, 1, 'Trente du?', 1);
+    (1, 1, 'Hvordan var dagen din?', 6, 1),
+    (2, 1, 'Trente du?', 1, 2);
 
   INSERT OR IGNORE INTO entries (id, calendar_id, date, rating)
   VALUES

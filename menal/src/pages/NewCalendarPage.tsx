@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import CalendarHeatMap from "../components/CalendarHeatMap";
+import ScaleColorSelector from "../components/ScaleColorSelector";
 
 import "/src/pages/NewCalendarPage.css";
 
@@ -16,6 +18,7 @@ function NewCalendarPage() {
 
     const [calendarName, setCalendarName] = useState("");
     const [maxRating, setMaxRating] = useState(7);
+    const [colors, setColors] = useState<string[]>(presets[7]);
 
     function createCalendar() {
         if (calendarName.trim() === "") {
@@ -49,7 +52,7 @@ function NewCalendarPage() {
             .catch((err) => console.log(err));
     }
 
-    const colors = presets[maxRating];
+    // const colors = presets[maxRating];
     const [previewEntries, setPreviewEntries] = useState(
         generatePreviewEntries(maxRating, 365)
     );
@@ -70,7 +73,13 @@ function NewCalendarPage() {
                     </div>
 
                     <div className="calendar-rating-input">
-                        <p>Vurderingsskala:</p>
+                        <p>
+                            Vurderingsskala:
+                            <span className="edit-warning">
+                                {" "}
+                                (kan ikke endres senere)
+                            </span>
+                        </p>
 
                         <div className="rating-buttons">
                             {[1, 2, 3, 4, 5, 6, 7].map((rating) => (
@@ -82,8 +91,9 @@ function NewCalendarPage() {
                                                         maxRating === rating ? "#2ECC71" : "white"
                                                 }}
                                                 onClick={() => {
-                                                    setMaxRating(rating)
-                                                    setPreviewEntries(generatePreviewEntries(rating, 365))
+                                                    setMaxRating(rating);
+                                                    setColors(presets[rating])
+                                                    setPreviewEntries(generatePreviewEntries(rating, 365));
                                                 }}
                                             >
                                                 {rating}
@@ -94,19 +104,11 @@ function NewCalendarPage() {
                 </div>
 
                 <div className="color-settings">
-                    <div className="scales-color-selector">
-                        <p>Farger:</p>
-                        <div className="color-buttons">
-                            {Array.from({ length: maxRating }, (_, i) => i + 1).map((rating) => (
-                                <button
-                                    key={rating}
-                                    style={{ backgroundColor: colors[rating - 1] }}
-                                >
-                                    {rating}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    <ScaleColorSelector
+                        colors={ colors }
+                        setColors={ setColors }
+                        maxRating={ maxRating }
+                    />
 
                     <div className="calendar-preview">
                         <p>Forhåndsvisning:</p>

@@ -51,6 +51,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.edit-warning {
+  font-size: 0.85em;
+  color: #888;
+}
+
 .rating-buttons {
   display: flex;
   justify-content: space-between;
@@ -173,3 +178,4 @@
   transform: translateY(-1px);
   opacity: 0.95;
 }
+
