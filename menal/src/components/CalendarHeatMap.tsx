@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Entry = {
@@ -20,60 +21,65 @@ function getRatingForDate(date: string, entries: Entry[]) {
   return 0
 }
 
-function getLastYear(entries: Entry[], numDays: number) {
-  const today = new Date();
-  const daysIntoWeek = today.getDay()
+function getYear(entries: Entry[], numDays: number, startDate: Date, endDate: Date) {
+  const weeks: { date: string; rating: number }[][] = [];
 
-  // Opprinnelig egen funskjon
-  const currWeek = [];
+  const current = new Date(startDate);
+  const end = new Date(endDate);
 
-  for (let i = 0; i <= daysIntoWeek; i++) {
-    const date = new Date(today);
+  let currentWeek: { date: string; rating: number }[] = [];
 
-    date.setDate(today.getDate() - daysIntoWeek + i)
-
-    const formattedDate = date.toISOString().split('T')[0];
-
-    currWeek.push({
+  while (current <= end) {
+    const formattedDate = current.toISOString().split("T")[0];
+    
+    currentWeek.push({
       date: formattedDate,
-      rating: getRatingForDate(formattedDate, entries)
+      rating: getRatingForDate(formattedDate, entries),
     });
+
+    const isEndOfWeek = current.getDay() === 6;
+
+    if (isEndOfWeek) {
+      if (weeks.length === 0) {
+        while (currentWeek.length < 7) {
+          currentWeek.unshift({
+            date: "",
+            rating: -1,
+          });
+        }
+      }
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+
+    current.setDate(current.getDate() + 1);
   }
 
-  // Opprinnelig egen funksjon
-  const days = [];
-
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - daysIntoWeek); 
-
-  for (let i = numDays; i >= 1; i--) {
-    const date = new Date(startOfWeek);
-    date.setDate(startOfWeek.getDate() - i)
-
-    const formattedDate = date.toISOString().split('T')[0];
-
-    days.push({
-      date: formattedDate,
-      rating: getRatingForDate(formattedDate, entries)
-    });
+  if (currentWeek.length > 0) {
+    weeks.push(currentWeek);
   }
 
-  const weeks: { date: string; rating: number; }[][] = [];
-
-  for (let i = 0; i < days.length; i += 7) {
-    weeks.push(days.slice(i, i + 7));
-  }
-
-  return [
-    ...weeks,
-    currWeek
-  ]
+  return weeks
 }
 
 function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: Entry[], name: string, variant?: string, colors: string[], numDays: number}) {
   const navigate = useNavigate();
 
-  const weeks = getLastYear(entries, numDays)
+  const [selectedYear, setSelectedYear] = useState<"lastYear" | "2026">("lastYear");
+  let startDate: Date;
+  let endDate: Date;
+
+  if (selectedYear === "lastYear") {
+      endDate = new Date();
+      startDate = new Date(endDate);
+      startDate.setDate(endDate.getDate() - numDays + 1);
+  } else {
+      startDate = new Date("2026-01-01");
+      endDate = new Date("2026-12-31");
+  }
+
+  //const weeks = getLastYear(entries, numDays)
+  const weeks = getYear(entries, numDays, startDate, endDate);
 
   function getMonthLabel(week: Day[]) {
     const firstDayOfMonth = week.find((day) => {
@@ -93,34 +99,60 @@ function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: 
     <div className={`calendar ${variant}`}>
       <p className={`calendarName ${variant}`}>{name}</p>
 
-      <div className="month-row">
-        {weeks.map((week) => (
-          <div className="month-label">
-            {getMonthLabel(week)}
-          </div>
-        ))}
-      </div>
+      <div className="heatmap-layout">
+        <div className="year-buttons">
+          <button 
+            className={selectedYear === "lastYear" ? "active" : ""}
+            onClick={() => setSelectedYear("lastYear")}
+          >
+            Last year
+          </button>
+          <button 
+            className={selectedYear === "2026" ? "active" : ""}
+            onClick={() => setSelectedYear("2026")}
+          >
+            2026
+          </button>
+        </div>
 
-
-      <div className={`heatmap ${variant}`}>
-        {weeks.map((week) => (
-          <div className="week">
-            {week.map((day) => (
-              <div
-                key={day.date}
-                className={`day rating-${day.rating} ${variant}`}
-                style = {{
-                  backgroundColor:
-                    day.rating === 0
-                      ? "gray"
-                      : colors[day.rating - 1]
-                }}
-                title={`${day.date}: ${day.rating}/6`}
-                onClick={() => navigate(`/log/${day.date}`)}
-              />
+        <div className="heatmap-content">
+          <div className="month-row">
+            {weeks.map((week) => (
+              <div className="month-label">
+                {getMonthLabel(week)}
+              </div>
             ))}
           </div>
-        ))}
+
+          <div className={`heatmap ${variant}`}>
+            {weeks.map((week, weekIndex) => (
+              <div className="week" key={weekIndex}>
+                {week.map((day, dayIndex) => (
+                  <div
+                    key={`${weekIndex}-${dayIndex}`}
+                    className={
+                      day.rating === -1
+                        ? `day placeholder ${variant}`
+                        : `day rating-${day.rating} ${variant}`
+                    }
+                    style = {{
+                      backgroundColor:
+                        day.rating === 0
+                          ? "gray"
+                          : colors[day.rating - 1]
+                    }}
+                    title={day.rating === -1 ? "" : `${day.date}: ${day.rating}/6`}
+                    onClick={() => {
+                      if (day.rating != -1) {
+                        navigate(`/log/${day.date}`)
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
