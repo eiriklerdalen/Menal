@@ -10,6 +10,20 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.month-row {
+  display: flex;
+  gap: 3px;
+  margin-left: 10px;
+  margin-bottom: 4px;
+  justify-content: center;
+}
+
+.month-label {
+  width: 12px;
+  font-size: 10px;
+  color: #888;
+}
+
 .calendar.default {
   display: flex;
   flex-direction: column;

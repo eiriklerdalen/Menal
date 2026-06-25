@@ -7,6 +7,11 @@ type Entry = {
   rating: number;
 };
 
+type Day = {
+  date: string,
+  rating: number
+}
+
 function getRatingForDate(date: string, entries: Entry[]) {
   const entry = entries.find((entry) => entry.date === date);
   if (entry) {
@@ -69,9 +74,33 @@ function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: 
   const navigate = useNavigate();
 
   const weeks = getLastYear(entries, numDays)
+
+  function getMonthLabel(week: Day[]) {
+    const firstDayOfMonth = week.find((day) => {
+      return new Date(day.date).getDate() === 1
+    })
+
+    if (!firstDayOfMonth) {
+      return ""
+    }
+
+    return new Date(firstDayOfMonth.date).toLocaleString("en-US", {
+      month: "short",
+    })
+  }
+
   return (
     <div className={`calendar ${variant}`}>
       <p className={`calendarName ${variant}`}>{name}</p>
+
+      <div className="month-row">
+        {weeks.map((week) => (
+          <div className="month-label">
+            {getMonthLabel(week)}
+          </div>
+        ))}
+      </div>
+
 
       <div className={`heatmap ${variant}`}>
         {weeks.map((week) => (
