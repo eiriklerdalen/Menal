@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import SortableCalendarItem from "../components/SortableCalendarItem";
 
 import "/src/pages/CalendarsPage.css";
+import "/src/components/CalendarHeatMap.css"
+
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { arrayMove } from "@dnd-kit/sortable";
