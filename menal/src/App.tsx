@@ -2,6 +2,7 @@ import DashboardPage from "./pages/DashboardPage";
 import CalendarPage from "./pages/CalendarsPage";
 import LogPage from "./pages/LogPage";
 import NewCalendarPage from "./pages/NewCalendarPage"
+import EditCalendarPage from "./pages/EditCalendarPage";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Route path="/log/:date" element={<LogPage />} />
             <Route path="/calendars" element={<CalendarPage />} />
             <Route path="/calendars/new" element={<NewCalendarPage />} />
+            <Route path="calendars/:calendarId/edit" element={<EditCalendarPage />} />
             <Route path="/settings" element={<h1>Innstillinger</h1>} />
         </Routes>
       </main>

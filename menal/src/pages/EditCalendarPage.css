@@ -1,0 +1,14 @@
+.edit-calendar-page {
+    width: 95%;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+.heatmap-color-preview {
+    border-radius: 15px;   
+    background: white;
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    padding: 20px;
+}
