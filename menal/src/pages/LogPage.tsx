@@ -149,7 +149,7 @@ function LogPage() {
         });
     }
 
-    async function deleteEntry(calendarId: number, date: string) {
+    async function deleteEntry(calendarId: number, date: string) {
         await fetch(`http://10.0.0.76:3000/profiles/1/entries/${calendarId}/${date}`, {
             method: "DELETE"
         })

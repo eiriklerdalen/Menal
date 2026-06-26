@@ -173,14 +173,13 @@ function getYear(entries: Entry[], numDays: number, startDate: Date, endDate: Da
 
 function getYearButtons(oldestEntryDate: string | null) {
   if (oldestEntryDate === null) {
-    return [];
+    return [new Date().getFullYear()];
   }
 
   const oldestYear = new Date(oldestEntryDate).getFullYear();
   const currentYear = new Date().getFullYear();
 
   const years = [];
-
   for (let year = oldestYear; year <= currentYear; year++) {
     years.push(year);
   }
