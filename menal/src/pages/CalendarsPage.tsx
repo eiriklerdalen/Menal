@@ -17,6 +17,7 @@ type Calendar = {
   name: string;
   max_rating: number;
   position: number;
+  oldestEntryDate: string;
 };
 
 type Entry = {
@@ -95,7 +96,6 @@ function CalendarsPage() {
       return arrayMove(prevCalendars, oldIndex, newIndex);
     });
   }
-  
 
   return (
   <>
@@ -122,7 +122,7 @@ function CalendarsPage() {
       </DndContext>
       <div className="add-calendar-container">
         <button onClick={() => navigate("/calendars/new")}>
-          Add Calendar
+          Add New Calendar
         </button>
       </div>
   </>

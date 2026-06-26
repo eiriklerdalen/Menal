@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Entry = {
@@ -13,59 +13,13 @@ type Day = {
   rating: number
 }
 
-function getRatingForDate(date: string, entries: Entry[]) {
-  const entry = entries.find((entry) => entry.date === date);
-  if (entry) {
-    return entry.rating
-  }
-  return 0
-}
-
-function getYear(entries: Entry[], numDays: number, startDate: Date, endDate: Date) {
-  const weeks: { date: string; rating: number }[][] = [];
-
-  const current = new Date(startDate);
-  const end = new Date(endDate);
-
-  let currentWeek: { date: string; rating: number }[] = [];
-
-  while (current <= end) {
-    const formattedDate = current.toISOString().split("T")[0];
-    
-    currentWeek.push({
-      date: formattedDate,
-      rating: getRatingForDate(formattedDate, entries),
-    });
-
-    const isEndOfWeek = current.getDay() === 6;
-
-    if (isEndOfWeek) {
-      if (weeks.length === 0) {
-        while (currentWeek.length < 7) {
-          currentWeek.unshift({
-            date: "",
-            rating: -1,
-          });
-        }
-      }
-      weeks.push(currentWeek);
-      currentWeek = [];
-    }
-
-    current.setDate(current.getDate() + 1);
-  }
-
-  if (currentWeek.length > 0) {
-    weeks.push(currentWeek);
-  }
-
-  return weeks
-}
-
-function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: Entry[], name: string, variant?: string, colors: string[], numDays: number}) {
+function CalendarHeatMap(
+    { entries, name, variant, colors, numDays, oldestEntryDate }:
+    {entries: Entry[], name: string, variant?: string, colors: string[], numDays: number, oldestEntryDate: string | null}
+  ) {
   const navigate = useNavigate();
 
-  const [selectedYear, setSelectedYear] = useState<"lastYear" | "2026">("lastYear");
+  const [selectedYear, setSelectedYear] = useState<"lastYear" | number>("lastYear");
   let startDate: Date;
   let endDate: Date;
 
@@ -74,11 +28,10 @@ function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: 
       startDate = new Date(endDate);
       startDate.setDate(endDate.getDate() - numDays + 1);
   } else {
-      startDate = new Date("2026-01-01");
-      endDate = new Date("2026-12-31");
+      startDate = new Date(selectedYear, 0, 1);
+      endDate = new Date(selectedYear, 11, 31);
   }
 
-  //const weeks = getLastYear(entries, numDays)
   const weeks = getYear(entries, numDays, startDate, endDate);
 
   function getMonthLabel(week: Day[]) {
@@ -100,19 +53,22 @@ function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: 
       <p className={`calendarName ${variant}`}>{name}</p>
 
       <div className="heatmap-layout">
-        <div className="year-buttons">
+        <div className={`year-buttons ${variant}`}>
           <button 
             className={selectedYear === "lastYear" ? "active" : ""}
             onClick={() => setSelectedYear("lastYear")}
           >
             Last year
           </button>
-          <button 
-            className={selectedYear === "2026" ? "active" : ""}
-            onClick={() => setSelectedYear("2026")}
-          >
-            2026
-          </button>
+          {getYearButtons(oldestEntryDate).toReversed().map((year) => (
+            <button
+              key={year}
+              className={selectedYear === year ? "active" : ""}
+              onClick={() => setSelectedYear(year)}
+            >
+              {year}
+            </button>
+          ))}
         </div>
 
         <div className="heatmap-content">
@@ -156,6 +112,80 @@ function CalendarHeatMap({ entries, name, variant, colors, numDays }: {entries: 
       </div>
     </div>
   );
+}
+
+function formatDateLocal(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getRatingForDate(date: string, entries: Entry[]) {
+  const entry = entries.find((entry) => entry.date === date);
+  if (entry) {
+    return entry.rating
+  }
+  return 0
+}
+
+function getYear(entries: Entry[], numDays: number, startDate: Date, endDate: Date) {
+  const weeks: { date: string; rating: number }[][] = [];
+
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+
+  let currentWeek: { date: string; rating: number }[] = [];
+
+  while (current <= end) {
+    const formattedDate = formatDateLocal(current);
+    
+    currentWeek.push({
+      date: formattedDate,
+      rating: getRatingForDate(formattedDate, entries),
+    });
+
+    const isEndOfWeek = current.getDay() === 6;
+
+    if (isEndOfWeek) {
+      if (weeks.length === 0) {
+        while (currentWeek.length < 7) {
+          currentWeek.unshift({
+            date: "",
+            rating: -1,
+          });
+        }
+      }
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+
+    current.setDate(current.getDate() + 1);
+  }
+
+  if (currentWeek.length > 0) {
+    weeks.push(currentWeek);
+  }
+
+  return weeks
+}
+
+function getYearButtons(oldestEntryDate: string | null) {
+  if (oldestEntryDate === null) {
+    return [];
+  }
+
+  const oldestYear = new Date(oldestEntryDate).getFullYear();
+  const currentYear = new Date().getFullYear();
+
+  const years = [];
+
+  for (let year = oldestYear; year <= currentYear; year++) {
+    years.push(year);
+  }
+
+  return years;
 }
 
 export default CalendarHeatMap;

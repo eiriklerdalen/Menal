@@ -9,6 +9,7 @@ type Calendar = {
   name: string;
   max_rating: number;
   position: number;
+  oldestEntryDate: string | null;
 };
 
 type Entry = {
@@ -68,6 +69,7 @@ function SortableCalendarItem({
                 variant="default"
                 colors={colors}
                 numDays={364}
+                oldestEntryDate={calendar.oldestEntryDate}
             />
 
             <div className="delete-button-container">

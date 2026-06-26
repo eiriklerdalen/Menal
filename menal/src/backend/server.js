@@ -68,10 +68,14 @@ app.get("/profiles/:profileId/calendars", (req, res) => {
     const profileId = Number(req.params.profileId);
 
     const calendars = db.prepare(`
-        SELECT *
+        SELECT 
+        calendars.*,
+        MIN(entries.date) AS oldestEntryDate
         FROM calendars
-        WHERE profile_id = ?
-        ORDER BY position
+        LEFT JOIN entries ON entries.calendar_id = calendars.id
+        WHERE calendars.profile_id = ?
+        GROUP BY calendars.id
+        ORDER BY calendars.position
     `).all(profileId);
 
     res.json(calendars)

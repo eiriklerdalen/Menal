@@ -36,6 +36,10 @@
   flex: 1;
 }
 
+.year-buttons.preview {
+  display: none;
+}
+
 .year-buttons {
   display: flex;
   flex-direction: column;
