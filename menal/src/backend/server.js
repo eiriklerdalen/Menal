@@ -203,6 +203,22 @@ app.post("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
 
 // DELETE -----------------------------------------------------------------------------------------------------------------
 
+app.delete("/profiles/:profileId/entries/:calendarId/:date", (req, res) => {
+    const calendarId = Number(req.params.calendarId);
+    const { date } = req.params;
+
+    const result = db.prepare(`
+        DELETE FROM entries
+        WHERE calendar_id = ?
+        AND date = ?
+    `).run(calendarId, date);
+
+    res.json({
+        success: true,
+        changes: result.changes,
+    });
+})
+
 app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
     const profileId = Number(req.params.profileId);
     const calendarId = Number(req.params.calendarId);

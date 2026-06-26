@@ -181,7 +181,7 @@ function getYearButtons(oldestEntryDate: string | null) {
 
   const years = [];
 
-  for (let year = oldestYear; year <= currentYear; year++) {
+  for (let year = oldestYear; year <= currentYear; year++) {
     years.push(year);
   }
 

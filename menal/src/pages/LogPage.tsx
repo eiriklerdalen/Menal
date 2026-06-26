@@ -149,7 +149,11 @@ function LogPage() {
         });
     }
 
-    console.log(calendarColors)
+    async function deleteEntry(calendarId: number, date: string) {
+        await fetch(`http://10.0.0.76:3000/profiles/1/entries/${calendarId}/${date}`, {
+            method: "DELETE"
+        })
+    }
 
     return (
         <div className="log-page">
@@ -200,7 +204,7 @@ function LogPage() {
                                     className="reset-button rating-button" 
                                     onClick={() => {
                                         updateEntry(calendar.id, 0, selectedDate);
-                                        saveEntry(calendar.id, 0, selectedDate);
+                                        deleteEntry(calendar.id, selectedDate);
                                     }}
                                 >
                                     0
