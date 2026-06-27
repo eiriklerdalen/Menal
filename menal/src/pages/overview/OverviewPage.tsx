@@ -16,8 +16,6 @@ function OverviewPage() {
             .catch((err) => console.log(err));
     }, [])
 
-    console.log("THIS:", years);
-
     return (
         <div>
             <h1>Oversikt</h1>

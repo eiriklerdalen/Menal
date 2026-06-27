@@ -36,7 +36,37 @@ app.get("/profiles/:profileId/overview/:year/journal_entries", (req, res) => {
     `).all(profileId, `${year}-%`);
 
     res.json(journal_entries);
-})
+});
+
+app.get("/profiles/:profileId/overview", (req, res) => {
+    const profileId = Number(req.params.profileId);
+
+    const years = db.prepare(`
+        SELECT DISTINCT substr(date, 1, 4) AS year
+        FROM journal_entries
+        WHERE profile_id = ?
+        ORDER BY year DESC;
+    `).all(profileId);
+
+    res.json(years);
+});
+
+app.get("/profiles/:profileId/overview/:year/entries", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const { year } = req.params;
+
+    const entries = db.prepare(`
+        SELECT entries.*
+        FROM entries
+        JOIN calendars
+            ON entries.calendar_id = calendars.id
+        WHERE calendars.profile_id = ?
+        AND entries.date LIKE ?
+        ORDER BY entries.date
+    `).all(profileId, `${year}-%`);
+
+    res.json(entries);
+});
 
 app.get("/profiles/:profileId/overview/:year", (req, res) => {
     const profileId = Number(req.params.profileId);

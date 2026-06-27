@@ -8,26 +8,44 @@ type JournalEntry = {
     journal_text: string;
 };
 
+type Entry = {
+  id: number;
+  calendar_id: number;
+  date: string;
+  rating: number;
+};
+
 function YearOverViewPage() {
     const { year } = useParams();
 
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
         fetch(`http://10.0.0.76:3000/profiles/1/overview/${year}/journal_entries`)
+            .then((res) => res.json())
+            .then((data) => setJournalEntries(data))
+            .catch((err) => console.log(err));
+    }, [year]);
+
+    const [entries, setEntries] = useState<Entry[]>([]);
+    useEffect(() => {
+        fetch(`http://10.0.0.76:3000/profiles/1/overview/${year}/entries`)
             .then((res) => res.json())
             .then((data) => setEntries(data))
             .catch((err) => console.log(err));
     }, [year]);
 
+    const groupedJournalEntries = groupEntriesByWeek(journalEntries);
+    const journalWeeks = Object.keys(groupedJournalEntries).map(Number).sort((a, b) => a - b);
+
     const groupedEntries = groupEntriesByWeek(entries);
-    const weeks = Object.keys(groupedEntries).map(Number).sort((a, b) => a - b);
+    console.log("This:", groupedEntries);
 
     const [openWeek, setOpenWeek] = useState<number | null>(null);
 
     return (
         <div className="year-overview-page">
             <h1>Oversikt/{year}</h1>
-            {weeks.map((week) => (
+            {journalWeeks.map((week) => (
                 <div className="week-container">
                     <button
                         className="week-button"
@@ -40,10 +58,18 @@ function YearOverViewPage() {
 
                     {openWeek == week && (
                         <div className="week-entries">
-                            {groupedEntries[week].map((entry) => (
-                                <div key={entry.date} className="journal-entry">
-                                    <h4>{entry.date}</h4>
-                                    <p>{entry.journal_text}</p>
+                            {groupedJournalEntries[week].map((journalEntry) => (
+                                <div key={journalEntry.date} className="journal-entry">
+                                    <h4>{journalEntry.date}</h4>
+                                    <p>{journalEntry.journal_text}</p>
+
+                                    {groupedEntries[week]
+                                        .filter((entry) => entry.date === journalEntry.date)
+                                        .map((entry) => (
+                                            <p key={entry.id}>
+                                                {entry.calendar_id}: {entry.rating}
+                                            </p>
+                                        ))}
                                 </div>
                             ))}
                         </div>
@@ -65,8 +91,8 @@ function getWeekNumber(dateString: string) {
     return Math.floor(diffInDays / 7) + 1;
 }
 
-function groupEntriesByWeek(entries: JournalEntry[]) {
-    const grouped: Record<number, JournalEntry[]> = {};
+function groupEntriesByWeek<T extends {date: string}>(entries: T[]): Record<number, T[]> {
+    const grouped: Record<number, T[]> = {};
 
     entries.forEach((entry) => {
         const week = getWeekNumber(entry.date);
