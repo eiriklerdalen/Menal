@@ -1,4 +1,6 @@
 import DashboardPage from "./pages/DashboardPage";
+import OverviewPage from "./pages/OverviewPage";
+import YearOverviewPage from "./pages/YearOverviewPage";
 import CalendarPage from "./pages/CalendarsPage";
 import LogPage from "./pages/LogPage";
 import NewCalendarPage from "./pages/NewCalendarPage"
@@ -14,10 +16,13 @@ function App() {
         <h1
           className="menal-title"
           onClick={() => navigate("/")}
-        >Menal</h1>
+        >
+          Menal
+        </h1>
 
         <nav>
           <button onClick={() => navigate("/dashboard")}>Dashbord</button>
+          <button onClick={() => navigate("/overview")}>Oversikt</button>
           <button onClick={() => navigate("/log")}>Logg</button>
           <button onClick={() => navigate("/calendars")}>Kalendre</button>
           <button onClick={() => navigate("/settings")}>Innstillinger</button>
@@ -28,6 +33,8 @@ function App() {
         <Routes>
           <Route path="/" element={<h1>Velkommen tilbake!</h1>} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/overview" element={<OverviewPage />} />
+            <Route path="/overview/:year" element={<YearOverviewPage />} />
             <Route path="/log" element={<LogPage />} />
             <Route path="/log/:date" element={<LogPage />} />
             <Route path="/calendars" element={<CalendarPage />} />

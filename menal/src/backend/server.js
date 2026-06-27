@@ -17,22 +17,40 @@ app.get("/profiles/:profileId/journal_entries", (req, res) => {
         SELECT *
         FROM journal_entries
         WHERE profile_id = ?
+        ORDER BY date DESC
     `).all(profileId);
 
     res.json(journal_entries);
 });
 
-app.get("/profiles/:profileId/journal_entries/:date", (req, res) => {
+app.get("/profiles/:profileId/overview/:year/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
+    const { year } = req.params;
 
-    const entry = db.prepare(`
+    const journal_entries = db.prepare(`
         SELECT *
         FROM journal_entries
         WHERE profile_id = ?
-        AND date = ?    
-    `).get(profileId, req.params.date);
+        AND date LIKE ?
+        ORDER BY date;  
+    `).all(profileId, `${year}-%`);
 
-    res.json(entry);
+    res.json(journal_entries);
+})
+
+app.get("/profiles/:profileId/overview/:year", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const { year } = req.params;
+
+    const journal_entries = db.prepare(`
+        SELECT *
+        FROM journal_entries
+        WHERE profile_id = ?
+        AND date LIKE ?
+        ORDER BY date DESC
+    `).all(profileId, `${year}-%`);
+
+    res.json(journal_entries);
 })
 
 app.get("/profiles/:profileId/entries", (req, res) => {
