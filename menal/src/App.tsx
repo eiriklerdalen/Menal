@@ -23,7 +23,7 @@ function App() {
         <nav>
           <button onClick={() => navigate("/dashboard")}>Dashbord</button>
           <button onClick={() => navigate("/overview")}>Oversikt</button>
-          <button onClick={() => navigate("/log")}>Logg</button>
+          <button onClick={() => navigate(`/log/${getDate()}`)}>Logg</button>
           <button onClick={() => navigate("/calendars")}>Kalendre</button>
           <button onClick={() => navigate("/settings")}>Innstillinger</button>
         </nav>
@@ -35,7 +35,6 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/overview" element={<OverviewPage />} />
             <Route path="/overview/:year" element={<YearOverviewPage />} />
-            <Route path="/log" element={<LogPage />} />
             <Route path="/log/:date" element={<LogPage />} />
             <Route path="/calendars" element={<CalendarPage />} />
             <Route path="/calendars/new" element={<NewCalendarPage />} />
@@ -45,6 +44,16 @@ function App() {
       </main>
     </div>
   )
+}
+
+function getDate() {
+  const date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 export default App

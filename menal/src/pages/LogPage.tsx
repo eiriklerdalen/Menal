@@ -11,12 +11,7 @@ function LogPage() {
     /* Date selector */
     const { date } = useParams();
 
-    const [selectedDate, setSelectedDate] = useState("");
-    useEffect(() => {
-        setSelectedDate(
-            date ?? new Date().toISOString().split("T")[0]
-        );
-    }, [date]);
+    const [selectedDate, setSelectedDate] = useState(date!);
 
     /* Journal updates */
     const [text, setText] = useState("");
@@ -30,6 +25,13 @@ function LogPage() {
                 `http://10.0.0.76:3000/profiles/1/journal_entries/${selectedDate}`,
                 { signal: controller.signal }
             );
+
+            if (!res.ok) {
+                setUserHasEdited(false);
+                setText("");
+                return;
+            }
+
             const entry = await res.json();
 
             setUserHasEdited(false);
@@ -49,8 +51,12 @@ function LogPage() {
         if (!userHasEdited) return;
 
         const timeout = setTimeout(() => {
-            saveJournalEntry(1, selectedDate, text);
-        }, 1500);
+            if (userHasEdited && text.trim() === "") {
+                deleteJournalEntry(1, selectedDate);
+            } else {
+                saveJournalEntry(1, selectedDate, text);
+            }
+        }, 2500);
 
         return () => clearTimeout(timeout);
     }, [text, selectedDate, userHasEdited]);
@@ -154,6 +160,12 @@ function LogPage() {
         await fetch(`http://10.0.0.76:3000/profiles/1/entries/${calendarId}/${date}`, {
             method: "DELETE"
         })
+    }
+
+    async function deleteJournalEntry(profileId: number, date: string) {
+        await fetch(`http://10.0.0.76:3000/profiles/${profileId}/journal_entries/${date}`, {
+            method: "DELETE"
+        });
     }
 
     return (

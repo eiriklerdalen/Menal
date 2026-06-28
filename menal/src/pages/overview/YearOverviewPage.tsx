@@ -33,7 +33,6 @@ function YearOverViewPage() {
     const journalWeeks = Object.keys(groupedJournalEntries).map(Number).sort((a, b) => a - b);
 
     const groupedEntries = groupEntriesByWeek(entries);
-    console.log("This:", groupedEntries);
 
     const [openWeek, setOpenWeek] = useState<number | null>(null);
 
@@ -68,7 +67,7 @@ function YearOverViewPage() {
                                             ✎
                                         </button>
                                         <div className="overview-ratings">
-                                            {groupedEntries[week]
+                                            {(groupedEntries[week] ?? [])
                                                 .filter((entry) => entry.date === journalEntry.date)
                                                 .map((entry) => (
                                                     <div

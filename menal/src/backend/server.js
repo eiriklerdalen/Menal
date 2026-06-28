@@ -34,8 +34,8 @@ app.get("/profiles/:profileId/journal_entries/:date", (req, res) => {
         AND date = ?
     `).get(profileId, date);
 
-    res.json(journal_entry);
-})
+    res.json(journal_entry ?? null);
+});
 
 app.get("/profiles/:profileId/overview/:year/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
@@ -302,6 +302,19 @@ app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
     `).run(calendarId, profileId);
 
     res.json({ success: true })
+});
+
+app.delete("/profiles/:profileId/journal_entries/:date", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const { date } = req.params;
+
+    const result = db.prepare(`
+        DELETE FROM journal_entries
+        WHERE profile_id = ?
+        AND date = ?
+    `).run(profileId, date)
+
+    res.json({ success: true });
 });
 
 // PATCH ------------------------------------------------------------------------------------------------------------------
