@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-type Year = {
-    year: string;
-};
+import type { Year } from "../../types";
 
 function OverviewPage() {
     const navigate = useNavigate();

@@ -6,14 +6,9 @@ import { HexColorPicker } from "react-colorful";
 import CalendarHeatMap from "../components/CalendarHeatMap";
 import ScaleColorSelector from "../components/ScaleColorSelector";
 
-import "/src/pages/EditCalendarPage.css";
+import type { Entry } from "../types";
 
-type Entry = {
-  id: number;
-  calendar_id: number;
-  date: string;
-  rating: number;
-};
+import "/src/pages/EditCalendarPage.css";
 
 function EditCalendarPage() {
     const navigate = useNavigate();
@@ -22,7 +17,6 @@ function EditCalendarPage() {
     const calendarIdNumber = Number(calendarId);
 
     const [calendarName, setCalendarName] = useState("");
-    const [selectedColorIndex, setSelectedColorIndex] = useState<number | null>(null);
 
     const [maxRating, setMaxRating] = useState(7);
         useEffect(() => {

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import useCalendars from "../hooks/useCalendars";
+
 import SortableCalendarItem from "../components/SortableCalendarItem";
+
+import type { Entry } from "../types";
 
 import "/src/pages/CalendarsPage.css";
 import "/src/components/CalendarHeatMap.css"
@@ -11,32 +15,18 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { arrayMove } from "@dnd-kit/sortable";
 import type { DragEndEvent } from "@dnd-kit/core";
 
-type Calendar = {
-  id: number;
-  profile_id: number;
-  name: string;
-  max_rating: number;
-  position: number;
-  oldestEntryDate: string;
-};
-
-type Entry = {
-  id: number;
-  calendar_id: number;
-  date: string;
-  rating: number;
-};
-
 function CalendarsPage() {
   const navigate = useNavigate();
 
-  const [calendars, setCalendars] = useState<Calendar[]>([]);
-  useEffect(() => {
-    fetch("http://10.0.0.76:3000/profiles/1/calendars")
-      .then((res) => res.json())
-      .then((data) => setCalendars(data))
-      .catch((err) => console.log(err));
-  }, []);
+  const { calendars, setCalendars, calendarColors } = useCalendars();
+
+  // const [calendars, setCalendars] = useState<Calendar[]>([]);
+  // useEffect(() => {
+  //   fetch("http://10.0.0.76:3000/profiles/1/calendars")
+  //     .then((res) => res.json())
+  //     .then((data) => setCalendars(data))
+  //     .catch((err) => console.log(err));
+  // }, []);
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
@@ -46,17 +36,17 @@ function CalendarsPage() {
         .catch((err) => console.error(err));
   }, []);
 
-  const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});
-    useEffect(() => {
-      calendars.forEach((calendar) => {
-          loadColors(calendar.id).then((colors) => {
-              setCalendarColors((prev) => ({
-                  ...prev,
-                  [calendar.id]: colors,
-              }));
-          });
-      });
-  }, [calendars]);
+  // const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});
+  //   useEffect(() => {
+  //     calendars.forEach((calendar) => {
+  //         loadColors(calendar.id).then((colors) => {
+  //             setCalendarColors((prev) => ({
+  //                 ...prev,
+  //                 [calendar.id]: colors,
+  //             }));
+  //         });
+  //     });
+  // }, [calendars]);
 
   function deleteCalendar(calendarId: number, calendarName: string) {
     const shouldDelete = confirm(`
@@ -127,12 +117,6 @@ function CalendarsPage() {
       </div>
   </>
   );
-}
-
-async function loadColors(calendarId: number) {
-    return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/colors`)
-        .then((res) => res.json())
-        .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
 
 export default CalendarsPage;

@@ -3,19 +3,7 @@ import { useParams } from "react-router-dom";
 
 import "/src/pages/LogPage.css";
 
-type Calendar = {
-  id: number;
-  profile_id: number;
-  name: string;
-  max_rating: number;
-};
-
-type Entry = {
-  id: number;
-  calendar_id: number;
-  date: string;
-  rating: number;
-};
+import type { Calendar, Entry } from "../types";
 
 function LogPage() {
     /* Date selector */

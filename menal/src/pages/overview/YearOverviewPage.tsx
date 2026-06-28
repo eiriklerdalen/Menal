@@ -1,41 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+import useCalendars from "../../hooks/useCalendars";
+
 import "/src/pages/overview/YearOverViewPage.css";
 
-type Calendar = {
-  id: number;
-  profile_id: number;
-  name: string;
-  max_rating: number;
-  position: number;
-  oldestEntryDate: string;
-};
-
-type JournalEntry = {
-    id: number;
-    profile_id: number;
-    date: string;
-    journal_text: string;
-};
-
-type Entry = {
-  id: number;
-  calendar_id: number;
-  date: string;
-  rating: number;
-};
+import type { JournalEntry, Entry } from "../../types";
 
 function YearOverViewPage() {
     const { year } = useParams();
-
-    const [calendars, setCalendars] = useState<Calendar[]>([]);
-    useEffect(() => {
-    fetch("http://10.0.0.76:3000/profiles/1/calendars")
-        .then((res) => res.json())
-        .then((data) => setCalendars(data))
-        .catch((err) => console.log(err));
-    }, []);
+    const { calendarColors } = useCalendars();
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
@@ -52,18 +26,6 @@ function YearOverViewPage() {
             .then((data) => setEntries(data))
             .catch((err) => console.log(err));
     }, [year]);
-
-    const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});
-        useEffect(() => {
-        calendars.forEach((calendar) => {
-            loadColors(calendar.id).then((colors) => {
-                setCalendarColors((prev) => ({
-                    ...prev,
-                    [calendar.id]: colors,
-                }));
-            });
-        });
-    }, [calendars]);
 
     const groupedJournalEntries = groupEntriesByWeek(journalEntries);
     const journalWeeks = Object.keys(groupedJournalEntries).map(Number).sort((a, b) => a - b);
@@ -144,12 +106,6 @@ function groupEntriesByWeek<T extends {date: string}>(entries: T[]): Record<numb
     });
 
     return grouped;
-}
-
-async function loadColors(calendarId: number) {
-    return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/colors`)
-        .then((res) => res.json())
-        .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
 
 export default YearOverViewPage;

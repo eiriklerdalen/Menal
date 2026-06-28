@@ -6,12 +6,7 @@ import ScaleColorSelector from "../components/ScaleColorSelector";
 
 import "/src/pages/NewCalendarPage.css";
 
-type Entry = {
-  id: number;
-  calendar_id: number;
-  date: string;
-  rating: number;
-};
+import type { Entry } from "../types";
 
 function NewCalendarPage() {
     const navigate = useNavigate();
