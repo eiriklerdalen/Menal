@@ -20,6 +20,7 @@ function LogPage() {
 
     /* Journal updates */
     const [text, setText] = useState("");
+    const [userHasEdited, setUserHasEdited] = useState(false);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -29,8 +30,9 @@ function LogPage() {
                 `http://10.0.0.76:3000/profiles/1/journal_entries/${selectedDate}`,
                 { signal: controller.signal }
             );
-
             const entry = await res.json();
+
+            setUserHasEdited(false);
             setText(entry?.journal_text ?? "");
         }
 
@@ -42,6 +44,16 @@ function LogPage() {
 
         return () => controller.abort();
     }, [selectedDate]);
+
+    useEffect(() => {
+        if (!userHasEdited) return;
+
+        const timeout = setTimeout(() => {
+            saveJournalEntry(1, selectedDate, text);
+        }, 1500);
+
+        return () => clearTimeout(timeout);
+    }, [text, selectedDate, userHasEdited]);
 
     /* Calendar updates*/
     const [calendars, setCalendars] = useState<Calendar[]>([]);
@@ -59,16 +71,12 @@ function LogPage() {
             .then((data) => setEntries(data))
     }, [selectedDate]);
 
-    function getRatingsForCalendar(calendarID: number) {
+    function getRatingsForCalendar(calendarId: number) {
         const entry = entries.find((e) =>
-            e.calendar_id === calendarID
+            e.calendar_id === calendarId && e.date === selectedDate
         );
 
-        if (entry) {
-            return entry.rating
-        } else {
-            return 0
-        }
+        return entry?.rating ?? 0;
     }
 
     function loadEntries(date: string) {
@@ -170,7 +178,8 @@ function LogPage() {
                         className="journal-input"
                         value={text}
                         onChange={(e) => {
-                            setText(e.target.value)
+                            setText(e.target.value);
+                            setUserHasEdited(true);
                         }}
                     />
                 </label>
