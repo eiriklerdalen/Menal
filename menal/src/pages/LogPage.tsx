@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import "/src/pages/LogPage.css";
-
 import type { Calendar, Entry } from "../types";
+
+import "/src/pages/LogPage.css";
 
 function LogPage() {
     const navigate = useNavigate();
@@ -18,34 +18,29 @@ function LogPage() {
         );
     }, [date]);
 
-    function changeDate(newDate: string) {
-        setSelectedDate(newDate);
-        navigate(`/log/${newDate}`);
-    }
-
     /* Journal updates */
-     const [text, setText] = useState("");
-     useEffect(() => {
-        const timeout = setTimeout(async () => {
-            await saveJournalEntry(1, selectedDate, text)
-        }, 1500);
-        return () => clearTimeout(timeout);
-     }, [text]);
-
-    async function loadJournalEntry(date: string) {
-        const res = await fetch(`http://10.0.0.76:3000/profiles/1/journal_entries/${date}`);
-
-        const entry = await res.json();
-
-        if (entry) {
-            setText(entry.journal_text);
-        } else {
-            setText("");
-        }
-    }
+    const [text, setText] = useState("");
 
     useEffect(() => {
-        loadJournalEntry(selectedDate);
+        const controller = new AbortController();
+
+        async function loadJournalEntry() {
+            const res = await fetch(
+                `http://10.0.0.76:3000/profiles/1/journal_entries/${selectedDate}`,
+                { signal: controller.signal }
+            );
+
+            const entry = await res.json();
+            setText(entry?.journal_text ?? "");
+        }
+
+        loadJournalEntry().catch((err) => {
+            if (err.name !== "AbortError") {
+                console.error(err);
+            }
+        });
+
+        return () => controller.abort();
     }, [selectedDate]);
 
     /* Calendar updates*/
@@ -174,7 +169,9 @@ function LogPage() {
                     <textarea
                         className="journal-input"
                         value={text}
-                        onChange={(e) => setText(e.target.value)}
+                        onChange={(e) => {
+                            setText(e.target.value)
+                        }}
                     />
                 </label>
 

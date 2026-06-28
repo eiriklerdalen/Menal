@@ -23,6 +23,20 @@ app.get("/profiles/:profileId/journal_entries", (req, res) => {
     res.json(journal_entries);
 });
 
+app.get("/profiles/:profileId/journal_entries/:date", (req, res) => {
+    const profileId = Number(req.params.profileId);
+    const { date } = req.params;
+
+    const journal_entry = db.prepare(`
+        SELECT *
+        FROM journal_entries
+        WHERE profile_id = ?
+        AND date = ?
+    `).get(profileId, date);
+
+    res.json(journal_entry);
+})
+
 app.get("/profiles/:profileId/overview/:year/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
     const { year } = req.params;
