@@ -1,3 +1,42 @@
+.year-button {
+    width: 100%;
+
+    padding: 16px;
+    margin-bottom: 16px;
+
+    border-radius: 15px;
+    background: white;
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    font-family: var(---quicksand);
+    font-size: 24px;
+}
+
+.week-button {
+  width: 100%;
+
+  padding: 16px;
+  margin-bottom: 16px;
+
+  border-radius: 15px;
+  background: white;
+  border: 1px solid lightgray;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  font-family: var(---quicksand);
+  font-size: 24px;
+}
+
+.week-button:hover {
+  background: #f3f4f6;
+}
+
+.week-button.active {
+  background: #2ECC71;
+  color: white;
+}
+
 .journal-entry {
   display: flex;
   justify-content: space-between;

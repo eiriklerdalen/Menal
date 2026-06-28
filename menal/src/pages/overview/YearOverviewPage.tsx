@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import useCalendars from "../../hooks/useCalendars";
 
-import "/src/pages/overview/YearOverviewPage.css";
+import "/src/pages/overview/OverviewPage.css";
 
 import type { JournalEntry, Entry } from "../../types";
 
@@ -40,12 +40,12 @@ function YearOverViewPage() {
         <div className="year-overview-page">
             <h1>Oversikt/{year}</h1>
             {journalWeeks.map((week) => (
-                <div className="week-container">
+                <div key={week} className="week-container">
                     <button
-                        className="week-button"
-                        onClick={() =>
+                        className={`week-button ${openWeek === week ? "active" : ""}`}
+                        onClick={() => {
                             setOpenWeek(openWeek === week ? null : week)
-                        }
+                        }}
                     >
                         Uke {week}
                     </button>
@@ -91,22 +91,11 @@ function YearOverViewPage() {
     )
 }
 
-function getWeekNumber(dateString: string) {
-    const date = new Date(dateString);
-    const startOfYear = new Date(date.getFullYear(), 0, 1);
-
-    const diffInDays = Math.floor(
-        (date.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    return Math.floor(diffInDays / 7) + 1;
-}
-
 function groupEntriesByWeek<T extends {date: string}>(entries: T[]): Record<number, T[]> {
     const grouped: Record<number, T[]> = {};
 
     entries.forEach((entry) => {
-        const week = getWeekNumber(entry.date);
+        const week = getISOWeekNumber(entry.date);
 
         if (!grouped[week]) {
             grouped[week] = [];
@@ -116,6 +105,26 @@ function groupEntriesByWeek<T extends {date: string}>(entries: T[]): Record<numb
     });
 
     return grouped;
+}
+
+function getISOWeekNumber(dateString: string) {
+    const date = new Date(dateString + "T00:00:00");
+
+    date.setHours(0, 0, 0, 0);
+
+    date.setDate(
+        date.getDate() + 3 - ((date.getDay() + 6) % 7)
+    );
+
+    const week1 = new Date(date.getFullYear(), 0, 4);
+
+    return 1 + Math.round(
+        (
+            (date.getTime() - week1.getTime()) / 86400000
+            - 3
+            + ((week1.getDay() + 6) % 7)
+        ) / 7
+    );
 }
 
 export default YearOverViewPage;

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import type { Year } from "../../types";
 
+import "/src/pages/overview/OverviewPage.css";
+
 function OverviewPage() {
     const navigate = useNavigate();
 
@@ -22,6 +24,7 @@ function OverviewPage() {
                 {years.map((year) => (
                     <button
                         key={year.year}
+                        className="year-button"
                         onClick={() => navigate(`/overview/${year.year}`)}
                     >
                         {year.year}
