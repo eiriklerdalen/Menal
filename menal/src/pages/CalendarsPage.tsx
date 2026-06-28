@@ -20,14 +20,6 @@ function CalendarsPage() {
 
   const { calendars, setCalendars, calendarColors } = useCalendars();
 
-  // const [calendars, setCalendars] = useState<Calendar[]>([]);
-  // useEffect(() => {
-  //   fetch("http://10.0.0.76:3000/profiles/1/calendars")
-  //     .then((res) => res.json())
-  //     .then((data) => setCalendars(data))
-  //     .catch((err) => console.log(err));
-  // }, []);
-
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
     fetch("http://10.0.0.76:3000/profiles/1/entries")
@@ -35,18 +27,6 @@ function CalendarsPage() {
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));
   }, []);
-
-  // const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});
-  //   useEffect(() => {
-  //     calendars.forEach((calendar) => {
-  //         loadColors(calendar.id).then((colors) => {
-  //             setCalendarColors((prev) => ({
-  //                 ...prev,
-  //                 [calendar.id]: colors,
-  //             }));
-  //         });
-  //     });
-  // }, [calendars]);
 
   function deleteCalendar(calendarId: number, calendarName: string) {
     const shouldDelete = confirm(`

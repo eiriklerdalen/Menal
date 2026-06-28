@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import useCalendars from "../../hooks/useCalendars";
 
-import "/src/pages/overview/YearOverViewPage.css";
+import "/src/pages/overview/YearOverviewPage.css";
 
 import type { JournalEntry, Entry } from "../../types";
 
 function YearOverViewPage() {
+    const navigate = useNavigate();
+
     const { year } = useParams();
     const { calendarColors } = useCalendars();
 
@@ -53,24 +55,33 @@ function YearOverViewPage() {
                         <div className="week-entries">
                             {groupedJournalEntries[week].map((journalEntry) => (
                                 <div key={journalEntry.date} className="journal-entry">
-                                    <h4>{journalEntry.date}</h4>
-                                    <p>{journalEntry.journal_text}</p>
+                                    <div className="journal-content">
+                                        <h4>{journalEntry.date}</h4>
+                                        <p>{journalEntry.journal_text}</p>
+                                    </div>
 
-                                    {groupedEntries[week]
-                                        .filter((entry) => entry.date === journalEntry.date)
-                                        .map((entry) => (
-                                            <div
-                                                key={entry.id}
-                                                className="overview-rating-box"
-                                                style={{
-                                                    backgroundColor:
-                                                        calendarColors[entry.calendar_id]?.[entry.rating-1] ?? "gray"
-                                                }}
-                                            />
-                                            // <p key={entry.id}>
-                                            //     {entry.calendar_id}: {entry.rating}
-                                            // </p>
-                                        ))}
+                                    <div className="journal-actions">
+                                        <button
+                                            className="edit-journal-button"
+                                            onClick={() => navigate("/log")}
+                                        >
+                                            ✎
+                                        </button>
+                                        <div className="overview-ratings">
+                                            {groupedEntries[week]
+                                                .filter((entry) => entry.date === journalEntry.date)
+                                                .map((entry) => (
+                                                    <div
+                                                        key={entry.id}
+                                                        className="overview-rating-box"
+                                                        style={{
+                                                            backgroundColor:
+                                                                calendarColors[entry.calendar_id]?.[entry.rating-1] ?? "gray"
+                                                        }}
+                                                    />
+                                                ))}
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>

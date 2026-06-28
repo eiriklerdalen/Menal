@@ -1,3 +1,52 @@
+.journal-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding: 16px;
+  margin-bottom: 16px;
+
+  border-radius: 15px;
+  background: white;
+  border: 1px solid lightgray;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.journal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.journal-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.edit-journal-button {
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+
+  opacity: 0.5;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.overview-ratings {
+  width: 28px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
 .overview-rating-box {
   width: 14px;
   height: 14px;
