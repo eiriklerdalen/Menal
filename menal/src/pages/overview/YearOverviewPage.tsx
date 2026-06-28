@@ -63,7 +63,7 @@ function YearOverViewPage() {
                                     <div className="journal-actions">
                                         <button
                                             className="edit-journal-button"
-                                            onClick={() => navigate("/log")}
+                                            onClick={() => navigate(`/log/${journalEntry.date}`)}
                                         >
                                             ✎
                                         </button>

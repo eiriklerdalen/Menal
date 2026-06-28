@@ -1,17 +1,27 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import "/src/pages/LogPage.css";
 
 import type { Calendar, Entry } from "../types";
 
 function LogPage() {
+    const navigate = useNavigate();
+
     /* Date selector */
     const { date } = useParams();
 
-    const [selectedDate, setSelectedDate] = useState(
-        date ?? new Date().toISOString().split("T")[0]
-    );
+    const [selectedDate, setSelectedDate] = useState("");
+    useEffect(() => {
+        setSelectedDate(
+            date ?? new Date().toISOString().split("T")[0]
+        );
+    }, [date]);
+
+    function changeDate(newDate: string) {
+        setSelectedDate(newDate);
+        navigate(`/log/${newDate}`);
+    }
 
     /* Journal updates */
      const [text, setText] = useState("");
@@ -151,7 +161,10 @@ function LogPage() {
                     className="date-selector"
                     type="date"
                     value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                    onChange={(e) => {
+                        setSelectedDate(e.target.value);
+                        navigate(`/log/${e.target.value}`);
+                    }}
                 />
             </div>
 
