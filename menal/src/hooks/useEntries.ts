@@ -14,3 +14,7 @@ function useEntries(date: string) {
 }
 
 export default useEntries;
+
+// entries = {
+//     id: x, calendar_id: y, date: z, rating: a
+// }

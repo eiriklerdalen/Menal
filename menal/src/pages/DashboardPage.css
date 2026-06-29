@@ -1,0 +1,43 @@
+.today-section {
+    display: inline-block;
+    
+    padding: 20px;
+    margin-bottom: 20px;
+
+    border-radius: 15px;   
+    background: white;
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-rating-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-rating {
+    margin-left: auto;
+}
+
+.write-log-button button {
+    width: 100%;
+
+    padding: 16px;
+
+    border: none;
+    border-radius: 15px;
+
+    background: #2ECC71;
+    color: white;
+
+    font-family: var(--quicksand);
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    transition: all 0.15s ease;
+}
