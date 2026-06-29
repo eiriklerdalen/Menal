@@ -18,7 +18,12 @@ function OverviewPage() {
 
     return (
         <div>
-            <h1>Oversikt</h1>
+            <h1
+                className="over-view-back-button"
+                onClick={() => navigate("/overview")}
+            >
+                Oversikt
+            </h1>
 
             <div className="overview-years">
                 {years.map((year) => (

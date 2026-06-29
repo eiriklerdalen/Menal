@@ -38,7 +38,12 @@ function YearOverViewPage() {
 
     return (
         <div className="year-overview-page">
-            <h1>Oversikt/{year}</h1>
+            <h1
+                className="over-view-back-button"
+                onClick={() => navigate("/overview")}
+            >
+                Oversikt/{year}
+            </h1>
             {journalWeeks.map((week) => (
                 <div key={week} className="week-container">
                     <button

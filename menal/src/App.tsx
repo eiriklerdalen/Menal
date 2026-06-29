@@ -15,7 +15,7 @@ function App() {
       <aside className="sidebar">
         <h1
           className="menal-title"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/dashboard")}
         >
           Menal
         </h1>
@@ -31,7 +31,7 @@ function App() {
 
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<h1>Velkommen tilbake!</h1>} />
+          <Route path="/" element={<DashboardPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/overview" element={<OverviewPage />} />
             <Route path="/overview/:year" element={<YearOverviewPage />} />

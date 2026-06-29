@@ -10,6 +10,18 @@ app.use(cors());
 app.use(express.json());
 
 // GET --------------------------------------------------------------------------------------------------------------------
+app.get("/profiles/:profileId", (req, res) => {
+    const profileId= Number(req.params.profileId);
+
+    const profile = db.prepare(`
+        SELECT *
+        FROM profiles
+        WHERE id = ?
+    `).get(profileId);
+
+    res.json(profile);
+});
+
 app.get("/profiles/:profileId/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
 
