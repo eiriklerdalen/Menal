@@ -1,6 +1,5 @@
 .today-section {
-    display: inline-block;
-    
+    width: 300px;
     padding: 20px;
     margin-bottom: 20px;
 
@@ -11,7 +10,8 @@
 }
 
 .calendar-rating-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 10px;
 }

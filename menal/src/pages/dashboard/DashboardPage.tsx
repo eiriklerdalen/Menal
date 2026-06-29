@@ -1,0 +1,70 @@
+import { useEffect, useState } from "react";
+
+import useCalendars from "../../hooks/useCalendars.ts";
+import useEntries from "../../hooks/useEntries.ts";
+import getDate from "../../utils/date.ts";
+
+import type { Calendar, Entry } from "../../types.ts";
+
+import "/src/pages/dashboard/DashboardPage.css";
+
+import TodayPanel from "./TodayPanel.tsx";
+
+const profileId = 1;
+
+function DashboardPage() {
+    const date = getDate();
+
+    const { calendars, calendarColors } = useCalendars();
+    const { entries, setEntries } = useEntries(date);
+
+    const [name, setName] = useState<string>("");
+    useEffect(() => {
+        fetch(`http://10.0.0.76:3000/profiles/${profileId}`)
+            .then((res) => res.json())
+            .then((data) => setName(data.name))
+            .catch((err) => console.log(err));
+    }, []);
+
+    return (
+        <div className="dashboard">
+            <h1>Velkommen tilbake, {name}</h1>
+            <TodayPanel
+                profileId={profileId}
+                date={date}
+                calendars={calendars}
+                entries={entries}
+                calendarColors={calendarColors}
+            />
+        </div>
+    )
+}
+
+export default DashboardPage;
+
+// ───────────────────────────────
+// Good evening, Eirik
+
+// Today
+// ───────────────────────────────
+// Journal           ✓
+// Mood              5/6
+// Sleep             4/6
+// Training          —
+// Productivity      6/6
+
+// [Continue today's log]
+
+// ───────────────────────────────
+// Current streak: 17 days
+
+// Journal entries: 184
+
+// Calendars: 5
+
+// ───────────────────────────────
+// Latest journal
+
+// 29 June
+
+// Today was...

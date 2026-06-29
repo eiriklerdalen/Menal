@@ -1,4 +1,4 @@
-import DashboardPage from "./pages/DashboardPage";
+import DashboardPage from "./pages/dashboard/DashboardPage";
 import OverviewPage from "./pages/overview/OverviewPage";
 import YearOverviewPage from "./pages/overview/YearOverviewPage";
 import CalendarPage from "./pages/CalendarsPage";
