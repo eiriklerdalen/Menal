@@ -7,6 +7,8 @@ import NewCalendarPage from "./pages/NewCalendarPage"
 import EditCalendarPage from "./pages/EditCalendarPage";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
+import getDate from "./utils/date";
+
 function App() {
   const navigate = useNavigate();
 
@@ -44,16 +46,6 @@ function App() {
       </main>
     </div>
   )
-}
-
-function getDate() {
-  const date = new Date();
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
 }
 
 export default App

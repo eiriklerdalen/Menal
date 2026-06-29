@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+import useEntries from "../hooks/useEntries";
+import useCalendars from "../hooks/useCalendars";
+
 import type { Calendar, Entry } from "../types";
 
 import "/src/pages/LogPage.css";
@@ -62,20 +65,8 @@ function LogPage() {
     }, [text, selectedDate, userHasEdited]);
 
     /* Calendar updates*/
-    const [calendars, setCalendars] = useState<Calendar[]>([]);
-    useEffect(() => {
-        fetch("http://10.0.0.76:3000/profiles/1/calendars")
-            .then((res) => res.json())
-            .then((data) => setCalendars(data))
-            .catch((err) => console.log(err));
-    }, []);
-
-    const [entries, setEntries] = useState<Entry[]>([]);
-    useEffect(() => {
-        fetch(`http://10.0.0.76:3000/profiles/1/entries/${selectedDate}`)
-            .then((res) => res.json())
-            .then((data) => setEntries(data))
-    }, [selectedDate]);
+    const { calendars, calendarColors } = useCalendars();
+    const { entries, setEntries } = useEntries(selectedDate);
 
     function getRatingsForCalendar(calendarId: number) {
         const entry = entries.find((e) =>
@@ -111,24 +102,6 @@ function LogPage() {
             loadEntries(selectedDate);
         }
     }, [selectedDate]);
-
-    const [calendarColors, setCalendarColors] = useState<
-        Record<number, string[]>
-    >({});
-        useEffect(() => {
-        calendars.forEach((calendar) => {
-            fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendar.id}/colors`)
-                .then((res) => res.json())
-                .then((data) => {
-                    setCalendarColors((prev) => ({
-                        ...prev,
-                        [calendar.id]: data.map(
-                            (row: { color: string }) => row.color
-                        ),
-                    }));
-                });
-        });
-    }, [calendars]);
     
     function updateEntry(calendarId: number, rating: number, date: string) {
         setEntries((prevEntries) => {
