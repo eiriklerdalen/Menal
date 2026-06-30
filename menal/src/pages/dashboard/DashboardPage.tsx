@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 
 import useCalendars from "../../hooks/useCalendars.ts";
 import useEntries from "../../hooks/useEntries.ts";
+
 import getDate from "../../utils/date.ts";
 
-import type { Calendar, Entry } from "../../types.ts";
+import TodayPanel from "./TodayPanel.tsx";
+import StatisticsPanel from "./StatisticsPanel.tsx";
+import AverageRatingPanel from "./AverageRatingPanel.tsx";
 
 import "/src/pages/dashboard/DashboardPage.css";
-
-import TodayPanel from "./TodayPanel.tsx";
 
 const profileId = 1;
 
@@ -29,13 +30,17 @@ function DashboardPage() {
     return (
         <div className="dashboard">
             <h1>Velkommen tilbake, {name}</h1>
-            <TodayPanel
-                profileId={profileId}
-                date={date}
-                calendars={calendars}
-                entries={entries}
-                calendarColors={calendarColors}
-            />
+                <div className="dashboard-content">
+                <TodayPanel
+                    profileId={profileId}
+                    date={date}
+                    calendars={calendars}
+                    entries={entries}
+                    calendarColors={calendarColors}
+                />
+                <StatisticsPanel />
+                <AverageRatingPanel />
+            </div>
         </div>
     )
 }

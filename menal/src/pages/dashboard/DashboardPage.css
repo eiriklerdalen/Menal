@@ -1,3 +1,10 @@
+.dashboard-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* TodayPanel: ------------------------------------------------------------------------------------------------------------*/
 .today-section {
     width: 300px;
     padding: 20px;
@@ -40,4 +47,35 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     transition: all 0.15s ease;
+}
+
+/* StatisticsPanel: --------------------------------------------------------------------------------------------------------*/
+.statistics-section {
+    width: 300px;
+    padding: 20px;
+    margin-bottom: 20px;
+
+    border-radius: 15px;   
+    background: white;
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statistic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+/* AverageRatingPanel: ----------------------------------------------------------------------------------------------------*/
+.average-rating-section {
+    width: 300px;
+    padding: 20px;
+    margin-bottom: 20px;
+
+    border-radius: 15px;   
+    background: white;
+    border: 1px solid lightgray;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
