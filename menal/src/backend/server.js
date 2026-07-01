@@ -167,7 +167,7 @@ app.get("/profiles/:profileId/calendars/:calendarId", (req, res) => {
     `).get(calendarId, profileId);
 
     res.json(calendar);
-})
+});
 
 app.get("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
     const profileId = Number(req.params.profileId);
@@ -181,7 +181,43 @@ app.get("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
     `).all(calendarId);
 
     res.json(colors);
-})
+});
+
+app.get("/profiles/:profileId/calendars/:calendarId/average", (req, res) => {
+    console.log("Average endpoint called");
+    console.log(req.params);
+    console.log(req.query);
+    const profileId = Number(req.params.profileId);
+    const calendarId = Number(req.params.calendarId);
+
+    const from = req.query.from;
+    const to = req.query.to;
+
+    if (!from || !to) {
+        return res.status(400).json({
+            error: "Missing from or to date",
+        });
+    }
+
+    const result = db.prepare(`
+        SELECT AVG(entries.rating) AS average,
+               COUNT(entries.id) AS count
+        FROM entries
+        JOIN calendars ON entries.calendar_id = calendars.id
+        WHERE calendars.profile_id = ?
+          AND entries.calendar_id = ?
+          AND entries.date BETWEEN ? AND ?
+          AND entries.rating > 0
+    `).get(profileId, calendarId, from, to);
+
+    res.json({
+        calendarId,
+        from,
+        to,
+        average: result.average,
+        count: result.count,
+    });
+});
 
 // POST -------------------------------------------------------------------------------------------------------------------
 app.post("/profiles/:profileId/journal_entries", (req, res) => {
