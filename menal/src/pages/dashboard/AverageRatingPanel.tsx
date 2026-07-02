@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { apiURL } from "../../config/api";
 import useCalendars from "../../hooks/useCalendars";
 import { periods, getPeriodDates } from "../../utils/periods";
 
@@ -83,7 +84,7 @@ function AverageRatingPanel() {
 
 async function getAverageRating(calendarId: number, from: string, to: string) {
     const res = await fetch(
-        `http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/average?from=${from}&to=${to}`
+        apiURL(`/profiles/1/calendars/${calendarId}/average?from=${from}&to=${to}`)
     );
 
     if (!res.ok) {

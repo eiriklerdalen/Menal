@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import type { JournalEntry } from "../../types";
 
+import { apiURL } from "../../config/api";
 import calculateJournalStreak from "../../utils/streak";
 
 function StatisticsPanel() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch("http://10.0.0.76:3000/profiles/1/journal_entries")
+        fetch(apiURL("/profiles/1/journal_entries"))
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));

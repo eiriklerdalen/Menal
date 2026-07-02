@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { apiURL } from "../../config/api.ts";
 import type { Entry, Calendar } from "../../types.ts";
 
 type TodayPanelProps = {
@@ -70,7 +71,7 @@ function TodayPanel({
 }
 
 async function hasWrittenLogToday(profileId: number, date: string) {
-    const res = await fetch(`http://10.0.0.76:3000/profiles/${profileId}/journal_entries/${date}`);
+    const res = await fetch(apiURL(`/profiles/${profileId}/journal_entries/${date}`));
     const entry = await res.json();
 
     return !!entry;

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+import { apiURL } from "../config/api";
+
 import useEntries from "../hooks/useEntries";
 import useCalendars from "../hooks/useCalendars";
 
@@ -25,7 +27,7 @@ function LogPage() {
 
         async function loadJournalEntry() {
             const res = await fetch(
-                `http://10.0.0.76:3000/profiles/1/journal_entries/${selectedDate}`,
+                apiURL(`/profiles/1/journal_entries/${selectedDate}`),
                 { signal: controller.signal }
             );
 
@@ -77,7 +79,7 @@ function LogPage() {
     }
 
     function loadEntries(date: string) {
-        fetch(`http://10.0.0.76:3000/profiles/1/entries/${date}`)
+        fetch(apiURL(`/profiles/1/entries/${date}`))
         .then((res) => res.json())
         .then((data) => {
             const entriesWithDefaults = calendars.map((calendar) => {
@@ -130,13 +132,13 @@ function LogPage() {
     }
 
     async function deleteEntry(calendarId: number, date: string) {
-        await fetch(`http://10.0.0.76:3000/profiles/1/entries/${calendarId}/${date}`, {
+        await fetch(apiURL(`/profiles/1/entries/${calendarId}/${date}`), {
             method: "DELETE"
         })
     }
 
     async function deleteJournalEntry(profileId: number, date: string) {
-        await fetch(`http://10.0.0.76:3000/profiles/${profileId}/journal_entries/${date}`, {
+        await fetch(apiURL(`/profiles/${profileId}/journal_entries/${date}`), {
             method: "DELETE"
         });
     }
@@ -229,7 +231,7 @@ function LogPage() {
 }
 
 async function saveJournalEntry(profileID: number, date: string, text: string) {
-    await fetch("http://10.0.0.76:3000/profiles/1/journal_entries", {
+    await fetch(apiURL("/profiles/1/journal_entries"), {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -246,7 +248,7 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
 }
 
 async function saveEntry(calendarId: number, rating: number, date: string) {
-    return await fetch("http://10.0.0.76:3000/profiles/1/entries", {
+    return await fetch(apiURL("/profiles/1/entries"), {
         method: "POST",
         headers: {
         "Content-Type": "application/json",

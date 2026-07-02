@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { HexColorPicker } from "react-colorful";
+
+import { apiURL } from "../config/api";
 
 import CalendarHeatMap from "../components/CalendarHeatMap";
 import ScaleColorSelector from "../components/ScaleColorSelector";
@@ -20,7 +21,7 @@ function EditCalendarPage() {
 
     const [maxRating, setMaxRating] = useState(7);
         useEffect(() => {
-        fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarIdNumber}`)
+        fetch(apiURL(`/profiles/1/calendars/${calendarIdNumber}`))
             .then((res) => res.json())
             .then((calendar) => {
                 setCalendarName(calendar.name);
@@ -30,7 +31,7 @@ function EditCalendarPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(`http://10.0.0.76:3000/profiles/1/entries`)
+        fetch(apiURL(`/profiles/1/entries`))
             .then((res) => res.json())
             .then((data) => {
                 const calendarEntries = data.filter(
@@ -93,13 +94,13 @@ function EditCalendarPage() {
 }
 
 async function loadColors(calendarId: number) {
-    return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/colors`)
+    return fetch(apiURL(`/profiles/1/calendars/${calendarId}/colors`))
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
 
 async function saveCalendar(calendarId: number, calendarName: string, colors: string[]) {
-    return fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}`, {
+    return fetch(apiURL(`/profiles/1/calendars/${calendarId}`), {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -109,7 +110,7 @@ async function saveCalendar(calendarId: number, calendarName: string, colors: st
         }),
     })
         .then(() => 
-            fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}/colors`, {
+            fetch(apiURL(`/profiles/1/calendars/${calendarId}/colors`), {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

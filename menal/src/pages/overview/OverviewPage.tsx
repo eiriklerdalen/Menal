@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { apiURL } from "../../config/api";
+
 import type { Year } from "../../types";
 
 import "/src/pages/overview/OverviewPage.css";
@@ -10,7 +12,7 @@ function OverviewPage() {
 
     const [years, setYears] = useState<Year[]>([]);
     useEffect(() => {
-        fetch("http://10.0.0.76:3000/profiles/1/overview")
+        fetch(apiURL("/profiles/1/overview"))
             .then((res) => res.json())
             .then((data) => setYears(data))
             .catch((err) => console.log(err));

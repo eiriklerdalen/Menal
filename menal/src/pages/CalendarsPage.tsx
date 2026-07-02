@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { apiURL } from "../config/api";
+
 import useCalendars from "../hooks/useCalendars";
 
 import SortableCalendarItem from "../components/SortableCalendarItem";
@@ -22,7 +24,7 @@ function CalendarsPage() {
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
-    fetch("http://10.0.0.76:3000/profiles/1/entries")
+    fetch(apiURL("/profiles/1/entries"))
         .then((res) => res.json())
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));
@@ -37,7 +39,7 @@ function CalendarsPage() {
       return;
     }
 
-    fetch(`http://10.0.0.76:3000/profiles/1/calendars/${calendarId}`, {
+    fetch(apiURL(`/profiles/1/calendars/${calendarId}`), {
       method: "DELETE",
     })
       .then((res) => res.json())
