@@ -5,8 +5,8 @@
   padding: 20px;
 
   border-radius: 15px;
-  background: white;
-  border: 1px solid lightgray;
+  background: var(--color-heatmap-bg);
+  border: 1px solid var(--color-heatmap-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,15 +53,15 @@
   padding: 6px 12px;
   border: 1px solid #d0d7de;
   border-radius: 6px;
-  background: white;
-  color: #444;
+  background: var(--color-year-buttons-bg);
+  color: var(--color-font);
   cursor: pointer;
   font-size: 13px;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .year-buttons button:hover {
-  background: #f3f4f6;
+  background: var(--color-year-buttons-hover);
 }
 
 .year-buttons button.active {
@@ -74,16 +74,18 @@
 
 .year-select {
   padding: 6px 10px;
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-year-select-border);
   border-radius: 8px;
-  background: white;
+  background: var(--color-year-select-bg);
   font-family: inherit;
   cursor: pointer;
+
+  color: var(--color-font);
 }
 
 .year-select.selected {
-  background-color: #e8f2ff;
-  border-color: #4f8ef7;
+  background-color: var(--color-year-select-selected-bg);
+  border-color: var(--color-year-select-selected-border);
 }
 
 /* -----------------------------------------------------------------------------------------------------------------------*/

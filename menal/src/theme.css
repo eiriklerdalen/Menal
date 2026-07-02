@@ -1,0 +1,170 @@
+:root {
+    /* Primitive Colors */
+    --surface-bg: white;
+    --surface-card: white;
+    --surface-border: lightgray;
+
+    --color-border: lightgray;
+
+    /* Layout */
+    --color-bg: var(--surface-card);
+    --color-sidebar-bg: #fffbf7;
+    --color-sidebar-border: #ddd;
+    --color-sidebar-button-hover: #eaeaea;
+
+    --color-font: black;
+
+    /* Dashboard */
+    --color-db-card-bg: var(--surface-card);
+    --color-db-card-border: lightgray;
+    --color-write-log-button-font: var(--surface-card);
+
+    --color-write-log-button: #2ECC71;
+
+    --color-parameter-selector-bg: var(--surface-card);
+    --color-parameter-selector-font: black;
+
+    /* Overview */
+    --color-year-button-bg: var(--surface-card);
+    --color-year-button-border: lightgray;
+
+    --color-week-button-bg: #var(--surface-card);
+    --color-week-button-border: lightgray;
+    --color-week-button-hover: #eaeaea;
+    --color-week-button-active-font: var(--surface-card);
+
+    --color-journal-entry-bg: var(--surface-card);
+    --color-journal-entry-border: lightgray;
+
+    /* Log */
+    --color-date-selector-bg: var(--surface-card);
+    --color-date-selector-border: lightgray;
+    
+    --color-date-arrow: var(--surface-card);
+
+    --color-log-entry-bg: var(--surface-card);
+
+    /* Heatmap */
+    --color-heatmap-bg: var(--surface-card);
+    --color-heatmap-border: lightgray;
+
+    --color-year-buttons-bg: #var(--surface-card);
+    --color-year-buttons-border: #d0d7de;
+    --color-year-buttons-hover: #eaeaea;
+
+    --color-year-select-bg: var(--color-sidebar-bg);
+    --color-year-select-border: var(--color-sidebar-border);
+
+    /* New Calendar */
+    --color-name-input-bg: white;
+    --color-name-input-border: lightgray;
+
+    --color-calendar-rating-input-bg: var(--surface-card);
+    --color-calendar-rating-input-border: var(--surface-border);
+
+    --color-rating-buttons-bg: var(--surface-card);
+    --color-rating-buttons-border: var(--surface-border);
+
+    --color-scale-selector-bg: var(--surface-card);
+    --color-scale-selector-border: var(--surface-border);
+
+    --color-color-buttons-bg: var(--surface-card);
+    --color-color-buttons-border: var(--surface-border);
+
+    --color-calendar-preview-bg: var(--surface-card);
+    --color-calendar-preview-border: var(--surface-border);
+
+    /* Edit Calendar */
+    --color-color-picker-button-border: var(--surface-border);
+
+    --color-heatmap-preview-bg: var(--surface-card);
+    --color-heatmap-preview-border: var(--surface-border);
+}
+
+.dark-mode {
+    /* Primitive Colors */
+    --surface-bg: #121212;
+    --surface-card: #181818;
+    --surface-border: #3A3A3A;
+
+    --color-font: white;
+
+    /* Layout */
+    --color-bg: var(--surface-bg);
+    --color-sidebar-bg: var(--surface-card);
+    --color-sidebar-border: var(--surface-border);
+    --color-sidebar-button-hover: #2A2A2A;
+
+    --color-font: white;
+
+    /* Dashboard */
+    --color-db-card-bg: var(--surface-card);
+    --color-db-card-border: var(--surface-border);
+    --color-write-log-button-font: black;
+    --color-write-log-button: #2ECC71;
+
+    --color-parameter-selector-bg: var(--surface-card);
+    --color-parameter-selector-font: white;
+
+    /* Overview */
+    --color-year-button-bg: var(--surface-card);
+    --color-year-button-border: var(--surface-border);
+
+    --color-week-button-bg: var(--surface-card);
+    --color-week-button-border: --surface-border;
+    --color-week-button-hover: #2A2A2A;
+    --color-week-button-active-font: black;
+
+    --color-journal-entry-bg: var(--surface-card);
+    --color-journal-entry-border: --surface-border;
+
+    /* Log */
+    --color-date-selector-bg: var(--surface-card);
+    --color-date-selector-border: --surface-border;
+
+    --color-date-arrow: var(--surface-card);
+
+    --color-log-entry-bg: var(--surface-card);
+
+    --color-rating-container-bg: var(--surface-card);
+    --color-rating-container-border: --surface-border;
+
+    /* Heatmap */
+    --color-heatmap-bg: var(--surface-card);
+    --color-heatmap-border: var(--surface-border);
+
+    --color-year-buttons-bg: var(--surface-card);
+    --color-year-buttons-border: --surface-border;
+    --color-year-buttons-hover: #2A2A2A;
+
+    --color-year-select-bg: var(--surface-card);
+    --color-year-select-border: var(--surface-border);
+
+    --color-year-select-selected-bg: #2D4F7A;
+    --color-year-select-selected-border: #4f8ef7;
+
+    /* New Calendar */
+    --color-name-input-bg: var(--surface-card);
+    --color-name-input-border: var(--surface-border);
+
+    --color-calendar-rating-input-bg: var(--surface-card);
+    --color-calendar-rating-input-border: var(--surface-border);
+
+    --color-rating-buttons-bg: var(--surface-card);
+    --color-rating-buttons-border: var(--surface-border);
+
+    --color-scale-selector-bg: var(--surface-card);
+    --color-scale-selector-border: var(--surface-border);
+
+    --color-color-buttons-bg: var(--surface-card);
+    --color-color-buttons-border: var(--surface-border);
+
+    --color-calendar-preview-bg: var(--surface-card);
+    --color-calendar-preview-border: var(--surface-border);
+
+    /* Edit Calendar */
+    --color-color-picker-button-border: var(--surface-border);
+
+    --color-heatmap-preview-bg: var(--surface-card);
+    --color-heatmap-preview-border: var(--surface-border);
+}

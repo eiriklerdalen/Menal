@@ -13,8 +13,8 @@
   padding: 20px;
 
   border-radius: 15px;
-  background: white;
-  border: 1px solid lightgray;
+  background: var(--color-date-selector-bg);
+  border: 1px solid var(--color-date-selector-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   margin-bottom: 24px;
@@ -24,10 +24,10 @@
   width: 34px;
   height: 34px;
 
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
 
-  background: white;
+  background: var(--color-date-arrow);
   cursor: pointer;
 
   font-size: 18px;
@@ -41,10 +41,12 @@
   padding: 10px 14px;
 
   border-radius: 10px;
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-date-selector-border);
+  background: var(--color-date-selector-bg);
 
   font-family: var(--quicksand);
   font-size: 16px;
+  color: var(--color-font);
 }
 
 .log-entry {
@@ -60,13 +62,14 @@
   padding: 16px;
 
   border-radius: 15px;
-  background: white;
-  border: 1px solid lightgray;
+  background: var(--color-log-entry-bg);
+  border: 1px solid var(--color-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   font-family: var(--quicksand);
   font-size: 16px;
   line-height: 1.5;
+  color: var(--color-font);
 
   box-sizing: border-box;
 }
@@ -76,9 +79,11 @@
   padding: 20px;
 
   border-radius: 15px;
-  background: white;
-  border: 1px solid lightgray;
+  background: var(--color-rating-container-bg);
+  border: 1px solid var(--color-rating-container-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  color: var(--color-font);
 }
 
 .rating-header {

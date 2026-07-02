@@ -27,7 +27,7 @@ function TodayPanel({
     }, [date]);
 
     return (
-        <div className="today-section">
+        <div className="card-section">
             <h4>I dag...</h4>
 
             <div className="calendar-rating-container">

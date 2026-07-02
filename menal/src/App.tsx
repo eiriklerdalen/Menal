@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import OverviewPage from "./pages/overview/OverviewPage";
 import YearOverviewPage from "./pages/overview/YearOverviewPage";
@@ -7,14 +9,18 @@ import NewCalendarPage from "./pages/calendars/new_calendar/NewCalendarPage"
 import EditCalendarPage from "./pages/calendars/edit_calendar/EditCalendarPage";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
+import ThemeSwitch from "./components/ThemeSwitch";
 import { getDate } from "./utils/date";
+
+import "./theme.css";
 
 function App() {
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
+    <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
+      <aside className={`sidebar ${darkMode ? "dark-mode" : ""}`}>
         <h1
           className="menal-title"
           onClick={() => navigate("/dashboard")}
@@ -29,9 +35,14 @@ function App() {
           <button onClick={() => navigate("/calendars")}>Kalendre</button>
           <button onClick={() => navigate("/settings")}>Innstillinger</button>
         </nav>
+
+        <ThemeSwitch
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
       </aside>
 
-      <main className="main-content">
+      <main className={`main-content ${darkMode ? "dark-mode" : ""}`}>
         <Routes>
           <Route path="/" element={<DashboardPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />

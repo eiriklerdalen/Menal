@@ -41,7 +41,7 @@ function AverageRatingPanel() {
     const completion = Math.round((count / days) * 100);
 
     return (
-        <div className="average-rating-section">
+        <div className="card-section">
             <h4>Gjennomsnittsrating</h4>
             <div className="average-parameters">
                 <select

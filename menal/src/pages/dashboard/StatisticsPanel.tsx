@@ -25,7 +25,7 @@ function StatisticsPanel() {
     const numJournalEntries = journalEntries.length;
 
     return (
-        <div className="statistics-section">
+        <div className="card-section">
             <h4>Statistikk...</h4>
             <div className="statistics-content">
                 <div className="statistic">

@@ -59,7 +59,6 @@ function EditCalendarPage() {
                     <input
                         value={calendarName}
                         onChange={(e) => setCalendarName(e.target.value)}
-                        placeholder="For eksempel: Trening"
                     />
                 </div>
                 <ScaleColorSelector
@@ -82,7 +81,7 @@ function EditCalendarPage() {
                 </div>
             </div>
             <button 
-                className="save-button"
+                className="save-edit-button"
                 onClick={() => {
                     saveCalendar(calendarIdNumber, calendarName, colors)
                         .then(() => navigate("/calendars"))

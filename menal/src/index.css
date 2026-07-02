@@ -20,13 +20,24 @@ body {
   display: flex;
   width: 100%;
   min-height: 100vh;
+
+  background-color: var(--color-bg);
+  color: var(--color-font);
+}
+
+.app-layout button {
+  color: inherit;
 }
 
 .sidebar {
   width: 260px;
   padding: 20px;
-  border-right: 2px solid #ddd;
-  background: #fffbf7;
+
+  display: flex;
+  flex-direction: column;
+
+  border-right: 2px solid var(--color-sidebar-border);
+  background: var(--color-sidebar-bg);
 }
 
 .sidebar nav {
@@ -39,7 +50,7 @@ body {
   cursor: pointer;
 }
 
-.sidebar button {
+.sidebar nav button {
   text-align: left;
   padding: 10px;
   border: none;
@@ -50,10 +61,36 @@ body {
 }
 
 .sidebar button:hover {
-  background: #eaeaea;
+  background: var(--color-sidebar-button-hover);
 }
 
 .main-content {
   flex: 1;
   padding: 32px;
+}
+
+/* Dark Mode Switch -------------------------------------------------------------------------------------------------------*/
+.theme-switch {
+  margin-top: auto;
+
+  width: 52px;
+  height: 28px;
+
+  padding: 3px;
+
+  border: 1px solid lightgray;
+  border-radius: 999px;
+  background: #fffbf7;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.2s ease;
+}
+
+.theme-switch.dark {
+  background: #2f3542;
 }

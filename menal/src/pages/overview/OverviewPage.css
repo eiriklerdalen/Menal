@@ -9,8 +9,8 @@
     margin-bottom: 16px;
 
     border-radius: 15px;
-    background: white;
-    border: 1px solid lightgray;
+    background: var(--color-year-button-bg);
+    border: 1px solid var(--color-year-button-border);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     font-family: var(---quicksand);
@@ -24,8 +24,8 @@
   margin-bottom: 16px;
 
   border-radius: 15px;
-  background: white;
-  border: 1px solid lightgray;
+  background: var(--color-week-button-bg);
+  border: 1px solid var(--color-week-button-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   font-family: var(---quicksand);
@@ -33,12 +33,12 @@
 }
 
 .week-button:hover {
-  background: #f3f4f6;
+  background: var(--color-week-button-hover);
 }
 
 .week-button.active {
   background: #2ECC71;
-  color: white;
+  color: var(--color-week-button-active-font);
 }
 
 .journal-entry {
@@ -50,8 +50,8 @@
   margin-bottom: 16px;
 
   border-radius: 15px;
-  background: white;
-  border: 1px solid lightgray;
+  background: var(--color-journal-entry-bg);
+  border: 1px solid var(--color-journal-entry-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 

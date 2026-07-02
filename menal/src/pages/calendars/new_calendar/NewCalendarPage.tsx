@@ -85,7 +85,7 @@ function NewCalendarPage() {
                                                 className="new-rating"
                                                 style={{
                                                     backgroundColor:
-                                                        maxRating === rating ? "#2ECC71" : "white"
+                                                        maxRating === rating ? "#2ECC71" : ""
                                                 }}
                                                 onClick={() => {
                                                     setMaxRating(rating);
