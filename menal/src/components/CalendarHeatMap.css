@@ -61,14 +61,33 @@
 }
 
 .year-buttons button:hover {
-    background: #f3f4f6;
+  background: #f3f4f6;
 }
 
 .year-buttons button.active {
-    background: #2d7ff9;
-    color: white;
-    border-color: #2d7ff9;
+  background: #2d7ff9;
+  color: white;
+  border-color: #2d7ff9;
 }
+
+/* Year Select ------------------------------------------------------------------------------------------------------------*/
+
+.year-select {
+  padding: 6px 10px;
+  border: 1px solid lightgray;
+  border-radius: 8px;
+  background: white;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.year-select.selected {
+  background-color: #e8f2ff;
+  border-color: #4f8ef7;
+}
+
+/* -----------------------------------------------------------------------------------------------------------------------*/
+
 
 .calendar.default {
   display: flex;

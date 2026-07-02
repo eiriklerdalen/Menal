@@ -21,6 +21,8 @@ function CalendarsPage() {
   const navigate = useNavigate();
 
   const { calendars, setCalendars, calendarColors } = useCalendars();
+  const numCalendars = calendars.length;
+  const calendarLimitReached = numCalendars >= 5;
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
@@ -70,8 +72,12 @@ function CalendarsPage() {
   }
 
   return (
-  <>
-      <h1>Kalendre</h1>
+    <div className="calendar-page">
+      <div className="calendar-page-header">
+        <h1>Kalendre</h1>
+        <p>{calendars.length}/5</p>
+      </div>
+
       <DndContext onDragEnd={handleDragEnd}>
         <SortableContext items={calendars.map((calendar) => calendar.id)}>
           {calendars.map((calendar) => {
@@ -93,11 +99,19 @@ function CalendarsPage() {
         </SortableContext>
       </DndContext>
       <div className="add-calendar-container">
-        <button onClick={() => navigate("/calendars/new")}>
+        <button 
+          disabled={calendarLimitReached}
+          onClick={() => navigate("/calendars/new")}
+        >
           Add New Calendar
         </button>
+        {calendarLimitReached && (
+          <p className="calendar-limit-message">
+              Du har nådd maks antall kalendere.
+          </p>
+        )}
       </div>
-  </>
+    </div>
   );
 }
 

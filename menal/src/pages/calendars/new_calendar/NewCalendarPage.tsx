@@ -116,6 +116,7 @@ function NewCalendarPage() {
                                 variant="preview"
                                 colors={ colors }
                                 numDays={182}
+                                oldestEntryDate={null}
                             />
                         </div>
                     </div>

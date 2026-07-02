@@ -48,6 +48,10 @@ function CalendarHeatMap(
     })
   }
 
+  const [hasSelectedYear, setHasSelectedYear] = useState(false);
+  const years = getYearButtons(oldestEntryDate).toReversed();
+  const useYearSelect = years.length > 2;
+
   return (
     <div className={`calendar ${variant}`}>
       <p className={`calendarName ${variant}`}>{name}</p>
@@ -56,11 +60,42 @@ function CalendarHeatMap(
         <div className={`year-buttons ${variant}`}>
           <button 
             className={selectedYear === "lastYear" ? "active" : ""}
-            onClick={() => setSelectedYear("lastYear")}
+            onClick={() => {
+              setSelectedYear("lastYear")
+              setHasSelectedYear(false);
+            }}
           >
             Last year
           </button>
-          {getYearButtons(oldestEntryDate).toReversed().map((year) => (
+
+          {useYearSelect ? (
+            <select
+              className={`year-select ${hasSelectedYear ? "selected" : ""}`}
+              value={selectedYear}
+              onChange={(e) => {
+                setSelectedYear(Number(e.target.value))
+                setHasSelectedYear(true);
+              }}
+            >
+              {years.map((year) => (
+                  <option key={year} value={year}>
+                      {year}
+                  </option>
+              ))}
+            </select>
+          ) : (
+            years.map((year) => (
+              <button
+                key={year}
+                className={selectedYear === year ? "active" : ""}
+                onClick={() => setSelectedYear(year)}
+              >
+                {year}
+              </button>
+            ))
+          )}
+
+          {/* {getYearButtons(oldestEntryDate).toReversed().map((year) => (
             <button
               key={year}
               className={selectedYear === year ? "active" : ""}
@@ -68,7 +103,7 @@ function CalendarHeatMap(
             >
               {year}
             </button>
-          ))}
+          ))} */}
         </div>
 
         <div className="heatmap-content">

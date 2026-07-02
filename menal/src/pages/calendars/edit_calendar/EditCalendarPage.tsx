@@ -77,6 +77,7 @@ function EditCalendarPage() {
                         variant="preview"
                         colors={ colors }
                         numDays={ 364 }
+                        oldestEntryDate={null}
                     />
                 </div>
             </div>
