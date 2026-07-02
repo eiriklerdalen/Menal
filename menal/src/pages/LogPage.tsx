@@ -156,7 +156,7 @@ function LogPage() {
 
     return (
         <div className="log-page">
-            <h1>Logg dagen / {getDateWriting(new Date(selectedDate))}</h1>
+            <h1>Logg dagen / {getDateWriting(new Date(selectedDate), true)}</h1>
             <div className="date-selector-container">
                 <button 
                     className="date-arrow"

@@ -7,10 +7,35 @@ export function getDate(date: Date = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-export function getDateWriting(date: Date = new Date()) {
+export function getDateWriting(date: Date = new Date(), includeYear: boolean) {
   return new Intl.DateTimeFormat("nb-NO", {
         day: "numeric",
         month: "long",
-        year: "numeric",
+        ...(includeYear && { year: "numeric" }),
     }).format(date);
+}
+
+export function getWeekday(dayNumOfWeek: number) {
+  switch (dayNumOfWeek) {
+    case 0:
+      return "Søndag";
+    
+    case 1:
+      return "Mandag";
+
+    case 2:
+      return "Tirsdag";
+
+    case 3:
+      return "Onsdag";
+
+    case 4:
+      return "Torsdag";
+
+    case 5:
+      return "Fredag";
+
+    case 6:
+      return "Lørdag";
+  }
 }

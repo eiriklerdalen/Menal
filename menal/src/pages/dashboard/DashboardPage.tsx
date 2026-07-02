@@ -31,7 +31,7 @@ function DashboardPage() {
         <div className="dashboard">
             <div className="dashboard-header">
                 <h1>Velkommen tilbake, {name}</h1>
-                <p>{getDateWriting(new Date())}</p>
+                <p>{getDateWriting(new Date(), true)}</p>
             </div>
                 <div className="dashboard-content">
                 <TodayPanel

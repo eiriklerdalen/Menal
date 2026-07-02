@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../config/api";
 
+import { getDateWriting, getWeekday } from "../../utils/date";
+
 import useCalendars from "../../hooks/useCalendars";
 
 import "/src/pages/overview/OverviewPage.css";
@@ -62,7 +64,7 @@ function YearOverViewPage() {
                             {groupedJournalEntries[week].map((journalEntry) => (
                                 <div key={journalEntry.date} className="journal-entry">
                                     <div className="journal-content">
-                                        <h4>{journalEntry.date}</h4>
+                                        <h4>{`${getWeekday((new Date(journalEntry.date)).getDay())} - ${getDateWriting(new Date(journalEntry.date), false)}`}</h4>
                                         <p>{journalEntry.journal_text}</p>
                                     </div>
 
@@ -133,5 +135,6 @@ function getISOWeekNumber(dateString: string) {
         ) / 7
     );
 }
+
 
 export default YearOverViewPage;
