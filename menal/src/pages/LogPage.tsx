@@ -6,6 +6,7 @@ import { apiURL } from "../config/api";
 import useEntries from "../hooks/useEntries";
 import useCalendars from "../hooks/useCalendars";
 
+import { getDate, getDateWriting } from "../utils/date";
 import type { Calendar, Entry } from "../types";
 
 import "/src/pages/LogPage.css";
@@ -143,10 +144,27 @@ function LogPage() {
         });
     }
 
+    function changeDate(numDays: number) {
+        const date = new Date(selectedDate);
+
+        date.setDate(date.getDate() + numDays);
+        const newDate = getDate(date);
+
+        setSelectedDate(newDate);
+        navigate(`/log/${newDate}`);
+    }
+
     return (
         <div className="log-page">
-            <h1>Logg dagen</h1>
-            <div className="data-selector-container">
+            <h1>Logg dagen / {getDateWriting(new Date(selectedDate))}</h1>
+            <div className="date-selector-container">
+                <button 
+                    className="date-arrow"
+                    onClick={() => changeDate(-1)}
+                >
+                    ←
+                </button>
+
                 <input
                     className="date-selector"
                     type="date"
@@ -156,6 +174,13 @@ function LogPage() {
                         navigate(`/log/${e.target.value}`);
                     }}
                 />
+
+                <button
+                    className="date-arrow"
+                    onClick={() => changeDate(1)}
+                >
+                    →
+                </button>
             </div>
 
             <div className="log-entry">

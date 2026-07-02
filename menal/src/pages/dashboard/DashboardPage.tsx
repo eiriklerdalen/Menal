@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import useCalendars from "../../hooks/useCalendars.ts";
 import useEntries from "../../hooks/useEntries.ts";
 
-import getDate from "../../utils/date.ts";
+import { getDate } from "../../utils/date.ts";
 
 import TodayPanel from "./TodayPanel.tsx";
 import StatisticsPanel from "./StatisticsPanel.tsx";
