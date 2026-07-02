@@ -38,8 +38,16 @@ export function getPeriodDates(period: string) {
             break;
     }
 
+    const millisecondsPerDay = 1000 * 60 * 60 * 24;
+
+    const days =
+        Math.floor(
+            (today.getTime() - from.getTime()) / millisecondsPerDay
+        ) + 1;
+
     return {
         from: from.toISOString().split("T")[0],
         to: today.toISOString().split("T")[0],
+        days,
     }
 }

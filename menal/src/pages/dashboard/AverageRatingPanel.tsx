@@ -20,7 +20,7 @@ function AverageRatingPanel() {
     );
 
     const [selectedPeriod, setSelectedPeriod] = useState<string>("week");
-    const { from, to } = getPeriodDates(selectedPeriod);
+    const { from, to, days } = getPeriodDates(selectedPeriod);
 
 
     const [average, setAverage] = useState<number | null>(null);
@@ -37,6 +37,8 @@ function AverageRatingPanel() {
 
         loadAverage();
     }, [selectedCalendarId, selectedPeriod]);
+
+    const completion = Math.round((count / days) * 100);
 
     return (
         <div className="average-rating-section">
@@ -76,7 +78,11 @@ function AverageRatingPanel() {
             </div>
             <div className="average-stat-row">
                 <span>Entries i perioden:</span>
-                <span>{count}</span>
+                <span>{count}/{days}</span>
+            </div>
+            <div className="average-stat-row">
+                <span>Konsistens:</span>
+                <span>{completion}%</span>
             </div>
         </div>
     )
