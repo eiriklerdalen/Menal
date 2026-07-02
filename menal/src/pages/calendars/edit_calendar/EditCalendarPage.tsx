@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../config/api";
+import { apiURL } from "../../../config/api";
 
-import CalendarHeatMap from "../components/CalendarHeatMap";
-import ScaleColorSelector from "../components/ScaleColorSelector";
+import CalendarHeatMap from "../../../components/CalendarHeatMap";
+import ScaleColorSelector from "../../../components/ScaleColorSelector";
 
-import type { Entry } from "../types";
+import type { Entry } from "../../../types";
 
-import "/src/pages/EditCalendarPage.css";
+import "/src/pages/calendars/edit_calendar/EditCalendarPage.css";
 
 function EditCalendarPage() {
     const navigate = useNavigate();

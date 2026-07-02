@@ -1,13 +1,13 @@
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import OverviewPage from "./pages/overview/OverviewPage";
 import YearOverviewPage from "./pages/overview/YearOverviewPage";
-import CalendarPage from "./pages/CalendarsPage";
+import CalendarPage from "./pages/calendars/CalendarsPage";
 import LogPage from "./pages/LogPage";
-import NewCalendarPage from "./pages/NewCalendarPage"
-import EditCalendarPage from "./pages/EditCalendarPage";
+import NewCalendarPage from "./pages/calendars/new_calendar/NewCalendarPage"
+import EditCalendarPage from "./pages/calendars/edit_calendar/EditCalendarPage";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
-import getDate from "./utils/date";
+import { getDate } from "./utils/date";
 
 function App() {
   const navigate = useNavigate();

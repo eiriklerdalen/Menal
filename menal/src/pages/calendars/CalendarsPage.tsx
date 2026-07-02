@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../config/api";
+import { apiURL } from "../../config/api";
 
-import useCalendars from "../hooks/useCalendars";
+import useCalendars from "../../hooks/useCalendars";
 
-import SortableCalendarItem from "../components/SortableCalendarItem";
+import SortableCalendarItem from "../../components/SortableCalendarItem";
 
-import type { Entry } from "../types";
+import type { Entry } from "../../types";
 
-import "/src/pages/CalendarsPage.css";
+import "/src/pages/calendars/CalendarsPage.css";
 import "/src/components/CalendarHeatMap.css"
 
 import { DndContext } from "@dnd-kit/core";

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import useCalendars from "../../hooks/useCalendars.ts";
 import useEntries from "../../hooks/useEntries.ts";
 
-import { getDate } from "../../utils/date.ts";
+import { getDate, getDateWriting } from "../../utils/date.ts";
 
 import TodayPanel from "./TodayPanel.tsx";
 import StatisticsPanel from "./StatisticsPanel.tsx";
@@ -29,7 +29,10 @@ function DashboardPage() {
 
     return (
         <div className="dashboard">
-            <h1>Velkommen tilbake, {name}</h1>
+            <div className="dashboard-header">
+                <h1>Velkommen tilbake, {name}</h1>
+                <p>{getDateWriting(new Date())}</p>
+            </div>
                 <div className="dashboard-content">
                 <TodayPanel
                     profileId={profileId}
