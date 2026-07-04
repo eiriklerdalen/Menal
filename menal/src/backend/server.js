@@ -6,6 +6,8 @@ import cors from "cors";
 const app = express();
 const db = new Database("menal.db");
 
+const bcrypt = require("bcrypt");
+
 app.use(cors());
 app.use(express.json());
 
@@ -220,6 +222,35 @@ app.get("/profiles/:profileId/calendars/:calendarId/average", (req, res) => {
 });
 
 // POST -------------------------------------------------------------------------------------------------------------------
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = db.prepare(`
+        SELECT *
+        FROM users
+        WHERE email = ?
+    `).get(email);
+
+    if (!user) {
+        return res.status(401).json({ error: "Invalid email or password."});
+    }
+
+    const passwordIsValid = await bcrypt.compare(
+        password,
+        user.password_hash
+    );
+
+    if (!passwordIsValid) {
+        return res.status(401).json({ error: "Invalid email or password."});
+    }
+
+    res.json({
+        id: user.id,
+        profileId: user.id,
+        email: user.email,
+    });
+});
+
 app.post("/profiles/:profileId/journal_entries", (req, res) => {
     const profileId = Number(req.params.profileId);
     const { profile_id, date, journal_text } = req.body;

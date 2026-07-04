@@ -8,6 +8,14 @@ db.exec(`
     name TEXT NOT NULL
   );
 
+  CREATE TABLE users (
+    id INTEGER PRIMAY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    profile_id INTEGER NOT NULL UNIQUE,
+    FOREIGN KEY (profile_id) REFERENCES profiles(id)
+  );
+
   CREATE TABLE calendars (
     id INTEGER PRIMARY KEY,
     profile_id INTEGER NOT NULL,
