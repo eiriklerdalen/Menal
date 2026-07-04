@@ -8,7 +8,7 @@ import useEntries from "../../hooks/useEntries";
 import useCalendars from "../../hooks/useCalendars";
 
 import { getDate, getDateWriting } from "../../utils/date";
-import type { Calendar, Entry } from "../../types";
+import type { Entry } from "../../types";
 
 import "/src/pages/log/LogPage.css";
 
