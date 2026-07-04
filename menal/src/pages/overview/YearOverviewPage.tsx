@@ -5,6 +5,7 @@ import { apiURL } from "../../config/api";
 
 import { getDateWriting, getWeekday } from "../../utils/date";
 
+import useCurrentUser from "../../hooks/useCurrentUser";
 import useCalendars from "../../hooks/useCalendars";
 
 import "/src/pages/overview/OverviewPage.css";
@@ -12,6 +13,8 @@ import "/src/pages/overview/OverviewPage.css";
 import type { JournalEntry, Entry } from "../../types";
 
 function YearOverViewPage() {
+    const { profileId } = useCurrentUser();
+
     const navigate = useNavigate();
 
     const { year } = useParams();
@@ -19,7 +22,7 @@ function YearOverViewPage() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/1/overview/${year}/journal_entries`))
+        fetch(apiURL(`/profiles/${profileId}/overview/${year}/journal_entries`))
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));
@@ -27,7 +30,7 @@ function YearOverViewPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/1/overview/${year}/entries`))
+        fetch(apiURL(`/profiles/${profileId}/overview/${year}/entries`))
             .then((res) => res.json())
             .then((data) => setEntries(data))
             .catch((err) => console.log(err));

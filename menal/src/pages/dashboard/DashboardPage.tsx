@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-
+import useCurrentUser from "../../hooks/useCurrentUser.ts";
 import useCalendars from "../../hooks/useCalendars.ts";
 import useEntries from "../../hooks/useEntries.ts";
 
@@ -11,38 +10,30 @@ import AverageRatingPanel from "./AverageRatingPanel.tsx";
 
 import "/src/pages/dashboard/DashboardPage.css";
 
-const profileId = 1;
-
 function DashboardPage() {
+    const { profileId, name } = useCurrentUser();
+
     const date = getDate();
 
     const { calendars, calendarColors } = useCalendars();
-    const { entries, setEntries } = useEntries(date);
-
-    const [name, setName] = useState<string>("");
-    useEffect(() => {
-        fetch(`http://10.0.0.76:3000/profiles/${profileId}`)
-            .then((res) => res.json())
-            .then((data) => setName(data.name))
-            .catch((err) => console.log(err));
-    }, []);
+    const { entries } = useEntries(date);
 
     return (
         <div className="dashboard">
             <div className="dashboard-header">
-                <h1>Velkommen tilbake, {name}</h1>
+                <h1>Velkommen tilbake, { name }</h1>
                 <p>{getDateWriting(new Date(), true)}</p>
             </div>
                 <div className="dashboard-content">
                 <TodayPanel
-                    profileId={profileId}
-                    date={date}
-                    calendars={calendars}
-                    entries={entries}
-                    calendarColors={calendarColors}
+                    profileId={ profileId }
+                    date={ date }
+                    calendars={ calendars }
+                    entries={ entries }
+                    calendarColors={ calendarColors }
                 />
-                <StatisticsPanel />
-                <AverageRatingPanel />
+                <StatisticsPanel profileId={ profileId } />
+                <AverageRatingPanel profileId={ profileId } />
             </div>
         </div>
     )

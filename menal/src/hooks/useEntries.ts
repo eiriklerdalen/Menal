@@ -1,11 +1,17 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
+import { apiURL } from "../config/api";
+
+import useCurrentUser from "./useCurrentUser";
 
 import type { Entry } from "../types";
 
 function useEntries(date: string) {
+    const { profileId } = useCurrentUser();
+
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(`http://10.0.0.76:3000/profiles/1/entries/${date}`)
+        fetch(apiURL(`/profiles/${profileId}/entries/${date}`))
             .then((res) => res.json())
             .then((data) => setEntries(data))
     }, [date]);
@@ -14,7 +20,3 @@ function useEntries(date: string) {
 }
 
 export default useEntries;
-
-// entries = {
-//     id: x, calendar_id: y, date: z, rating: a
-// }

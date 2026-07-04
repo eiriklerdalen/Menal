@@ -4,8 +4,11 @@ import { apiURL } from "../../config/api";
 import useCalendars from "../../hooks/useCalendars";
 import { periods, getPeriodDates } from "../../utils/periods";
 
+type AverageRatingPanelProps = {
+    profileId: number;
+};
 
-function AverageRatingPanel() {
+function AverageRatingPanel({profileId}: AverageRatingPanelProps) {
 
     const { calendars } = useCalendars();
     const [selectedCalendarId, setSelectedCalendarId] = useState<number | null>(null);
@@ -29,7 +32,7 @@ function AverageRatingPanel() {
         async function loadAverage() {
             if (selectedCalendarId === null) return;
 
-            const result = await getAverageRating(selectedCalendarId, from, to);
+            const result = await getAverageRating(profileId, selectedCalendarId, from, to);
 
             setAverage(result.average);
             setCount(result.count);
@@ -88,9 +91,9 @@ function AverageRatingPanel() {
     )
 }
 
-async function getAverageRating(calendarId: number, from: string, to: string) {
+async function getAverageRating(profileId: number, calendarId: number, from: string, to: string) {
     const res = await fetch(
-        apiURL(`/profiles/1/calendars/${calendarId}/average?from=${from}&to=${to}`)
+        apiURL(`/profiles/${profileId}/calendars/${calendarId}/average?from=${from}&to=${to}`)
     );
 
     if (!res.ok) {

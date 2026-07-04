@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { apiURL } from "../../../config/api";
+
+import useCurrentUser from "../../../hooks/useCurrentUser";
+
 import CalendarHeatMap from "../../../components/CalendarHeatMap";
 import ScaleColorSelector from "../../../components/ScaleColorSelector";
-
-import { apiURL } from "../../../config/api";
 
 import "/src/pages/calendars/new_calendar/NewCalendarPage.css";
 
 import type { Entry } from "../../../types";
 
 function NewCalendarPage() {
+    const { profileId } = useCurrentUser();
+
     const navigate = useNavigate();
 
     const [calendarName, setCalendarName] = useState("");
@@ -23,7 +27,7 @@ function NewCalendarPage() {
             return;
         }
 
-        fetch(apiURL("/profiles/1/calendars"), {
+        fetch(apiURL(`/profiles/${profileId}/calendars`), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -35,7 +39,7 @@ function NewCalendarPage() {
         })
             .then((res) => res.json())
             .then((data) => {
-                return fetch(apiURL(`/profiles/1/calendars/${data.id}/colors`), {
+                return fetch(apiURL(`/profiles/${profileId}/calendars/${data.id}/colors`), {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

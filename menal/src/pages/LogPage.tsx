@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { apiURL } from "../config/api";
 
+import useCurrentUser from "../hooks/useCurrentUser";
 import useEntries from "../hooks/useEntries";
 import useCalendars from "../hooks/useCalendars";
 
@@ -12,6 +13,8 @@ import type { Calendar, Entry } from "../types";
 import "/src/pages/LogPage.css";
 
 function LogPage() {
+    const { profileId } = useCurrentUser();
+
     const navigate = useNavigate();
 
     /* Date selector */
@@ -28,7 +31,7 @@ function LogPage() {
 
         async function loadJournalEntry() {
             const res = await fetch(
-                apiURL(`/profiles/1/journal_entries/${selectedDate}`),
+                apiURL(`/profiles/${profileId}/journal_entries/${selectedDate}`),
                 { signal: controller.signal }
             );
 
@@ -58,9 +61,9 @@ function LogPage() {
 
         const timeout = setTimeout(() => {
             if (userHasEdited && text.trim() === "") {
-                deleteJournalEntry(1, selectedDate);
+                deleteJournalEntry(profileId, selectedDate);
             } else {
-                saveJournalEntry(1, selectedDate, text);
+                saveJournalEntry(profileId, selectedDate, text);
             }
         }, 2500);
 
@@ -80,7 +83,7 @@ function LogPage() {
     }
 
     function loadEntries(date: string) {
-        fetch(apiURL(`/profiles/1/entries/${date}`))
+        fetch(apiURL(`/profiles/${profileId}/entries/${date}`))
         .then((res) => res.json())
         .then((data) => {
             const entriesWithDefaults = calendars.map((calendar) => {
@@ -132,8 +135,8 @@ function LogPage() {
         });
     }
 
-    async function deleteEntry(calendarId: number, date: string) {
-        await fetch(apiURL(`/profiles/1/entries/${calendarId}/${date}`), {
+    async function deleteEntry(profileId: number, calendarId: number, date: string) {
+        await fetch(apiURL(`/profiles/${profileId}/entries/${calendarId}/${date}`), {
             method: "DELETE"
         })
     }
@@ -223,7 +226,7 @@ function LogPage() {
                                     className="reset-button rating-button" 
                                     onClick={() => {
                                         updateEntry(calendar.id, 0, selectedDate);
-                                        deleteEntry(calendar.id, selectedDate);
+                                        deleteEntry(profileId, calendar.id, selectedDate);
                                     }}
                                 >
                                     0
@@ -239,7 +242,7 @@ function LogPage() {
                                         }}
                                         onClick={() => {
                                             updateEntry(calendar.id, rating, selectedDate);
-                                            saveEntry(calendar.id, rating, selectedDate);
+                                            saveEntry(profileId, calendar.id, rating, selectedDate);
                                         }}
                                     >
                                         {rating}
@@ -256,7 +259,7 @@ function LogPage() {
 }
 
 async function saveJournalEntry(profileID: number, date: string, text: string) {
-    await fetch(apiURL("/profiles/1/journal_entries"), {
+    await fetch(apiURL(`/profiles/${profileID}/journal_entries`), {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -272,8 +275,8 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
         .catch((err) => console.log(err))
 }
 
-async function saveEntry(calendarId: number, rating: number, date: string) {
-    return await fetch(apiURL("/profiles/1/entries"), {
+async function saveEntry(profileId: number, calendarId: number, rating: number, date: string) {
+    return await fetch(apiURL(`/profiles/${profileId}/entries`), {
         method: "POST",
         headers: {
         "Content-Type": "application/json",

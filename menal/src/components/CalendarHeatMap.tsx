@@ -94,16 +94,6 @@ function CalendarHeatMap(
               </button>
             ))
           )}
-
-          {/* {getYearButtons(oldestEntryDate).toReversed().map((year) => (
-            <button
-              key={year}
-              className={selectedYear === year ? "active" : ""}
-              onClick={() => setSelectedYear(year)}
-            >
-              {year}
-            </button>
-          ))} */}
         </div>
 
         <div className="heatmap-content">
