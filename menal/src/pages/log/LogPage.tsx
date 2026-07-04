@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import { apiURL } from "../config/api";
+import { apiURL } from "../../config/api";
 
-import useCurrentUser from "../hooks/useCurrentUser";
-import useEntries from "../hooks/useEntries";
-import useCalendars from "../hooks/useCalendars";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import useEntries from "../../hooks/useEntries";
+import useCalendars from "../../hooks/useCalendars";
 
-import { getDate, getDateWriting } from "../utils/date";
-import type { Calendar, Entry } from "../types";
+import { getDate, getDateWriting } from "../../utils/date";
+import type { Calendar, Entry } from "../../types";
 
-import "/src/pages/LogPage.css";
+import "/src/pages/log/LogPage.css";
 
 function LogPage() {
     const { profileId } = useCurrentUser();
