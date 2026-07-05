@@ -14,7 +14,7 @@ import type { JournalEntry, Entry } from "../../types";
 
 function YearOverViewPage() {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ function YearOverViewPage() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/overview/${year}/journal_entries`))
+        fetch(apiURL(`/users/${userId}/overview/${year}/journal_entries`))
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));
@@ -31,7 +31,7 @@ function YearOverViewPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/overview/${year}/entries`))
+        fetch(apiURL(`/users/${userId}/overview/${year}/entries`))
             .then((res) => res.json())
             .then((data) => setEntries(data))
             .catch((err) => console.log(err));

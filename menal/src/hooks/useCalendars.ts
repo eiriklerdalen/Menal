@@ -8,13 +8,13 @@ import type { Calendar } from "../types";
 
 function useCalendars() {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const [calendars, setCalendars] = useState<Calendar[]>([]);
     const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});
 
     useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/calendars`))
+        fetch(apiURL(`/users/${userId}/calendars`))
             .then((res) => res.json())
             .then((data) => setCalendars(data))
             .catch((err) => console.log(err));
@@ -22,7 +22,7 @@ function useCalendars() {
 
     useEffect(() => {
         calendars.forEach((calendar) => {
-            loadColors(profileId, calendar.id).then((colors) => {
+            loadColors(userId, calendar.id).then((colors) => {
                 setCalendarColors((prev) => ({
                     ...prev,
                     [calendar.id]: colors,
@@ -34,8 +34,8 @@ function useCalendars() {
     return { calendars, setCalendars, calendarColors };
 }
 
-async function loadColors(profileId: number, calendarId: number) {
-    return fetch(apiURL(`/profiles/${profileId}/calendars/${calendarId}/colors`))
+async function loadColors(userId: number, calendarId: number) {
+    return fetch(apiURL(`/users/${userId}/calendars/${calendarId}/colors`))
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }

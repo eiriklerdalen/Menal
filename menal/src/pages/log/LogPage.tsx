@@ -15,7 +15,7 @@ import "/src/pages/log/LogPage.css";
 
 function LogPage() {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ function LogPage() {
 
         async function loadJournalEntry() {
             const res = await fetch(
-                apiURL(`/profiles/${profileId}/journal_entries/${selectedDate}`),
+                apiURL(`/users/${userId}/journal_entries/${selectedDate}`),
                 { signal: controller.signal }
             );
 
@@ -63,9 +63,9 @@ function LogPage() {
 
         const timeout = setTimeout(() => {
             if (userHasEdited && text.trim() === "") {
-                deleteJournalEntry(profileId, selectedDate);
+                deleteJournalEntry(userId, selectedDate);
             } else {
-                saveJournalEntry(profileId, selectedDate, text);
+                saveJournalEntry(userId, selectedDate, text);
             }
         }, 2500);
 
@@ -85,7 +85,7 @@ function LogPage() {
     }
 
     function loadEntries(date: string) {
-        fetch(apiURL(`/profiles/${profileId}/entries/${date}`))
+        fetch(apiURL(`/users/${userId}/entries/${date}`))
         .then((res) => res.json())
         .then((data) => {
             const entriesWithDefaults = calendars.map((calendar) => {
@@ -137,14 +137,14 @@ function LogPage() {
         });
     }
 
-    async function deleteEntry(profileId: number, calendarId: number, date: string) {
-        await fetch(apiURL(`/profiles/${profileId}/entries/${calendarId}/${date}`), {
+    async function deleteEntry(userId: number, calendarId: number, date: string) {
+        await fetch(apiURL(`/users/${userId}/entries/${calendarId}/${date}`), {
             method: "DELETE"
         })
     }
 
-    async function deleteJournalEntry(profileId: number, date: string) {
-        await fetch(apiURL(`/profiles/${profileId}/journal_entries/${date}`), {
+    async function deleteJournalEntry(userId: number, date: string) {
+        await fetch(apiURL(`/users/${userId}/journal_entries/${date}`), {
             method: "DELETE"
         });
     }
@@ -228,7 +228,7 @@ function LogPage() {
                                     className="reset-button rating-button" 
                                     onClick={() => {
                                         updateEntry(calendar.id, 0, selectedDate);
-                                        deleteEntry(profileId, calendar.id, selectedDate);
+                                        deleteEntry(userId, calendar.id, selectedDate);
                                     }}
                                 >
                                     0
@@ -244,7 +244,7 @@ function LogPage() {
                                         }}
                                         onClick={() => {
                                             updateEntry(calendar.id, rating, selectedDate);
-                                            saveEntry(profileId, calendar.id, rating, selectedDate);
+                                            saveEntry(userId, calendar.id, rating, selectedDate);
                                         }}
                                     >
                                         {rating}
@@ -260,14 +260,14 @@ function LogPage() {
     )
 }
 
-async function saveJournalEntry(profileID: number, date: string, text: string) {
-    await fetch(apiURL(`/profiles/${profileID}/journal_entries`), {
+async function saveJournalEntry(userId: number, date: string, text: string) {
+    await fetch(apiURL(`/users/${userId}/journal_entries`), {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            profile_id: profileID,
+            user_id: userId,
             date: date,
             journal_text: text
         })
@@ -277,8 +277,8 @@ async function saveJournalEntry(profileID: number, date: string, text: string) {
         .catch((err) => console.log(err))
 }
 
-async function saveEntry(profileId: number, calendarId: number, rating: number, date: string) {
-    return await fetch(apiURL(`/profiles/${profileId}/entries`), {
+async function saveEntry(userId: number, calendarId: number, rating: number, date: string) {
+    return await fetch(apiURL(`/users/${userId}/entries`), {
         method: "POST",
         headers: {
         "Content-Type": "application/json",

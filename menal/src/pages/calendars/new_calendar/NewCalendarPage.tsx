@@ -14,7 +14,7 @@ import type { Entry } from "../../../types";
 
 function NewCalendarPage() {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ function NewCalendarPage() {
             return;
         }
 
-        fetch(apiURL(`/profiles/${profileId}/calendars`), {
+        fetch(apiURL(`/users/${userId}/calendars`), {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -40,7 +40,7 @@ function NewCalendarPage() {
         })
             .then((res) => res.json())
             .then((data) => {
-                return fetch(apiURL(`/profiles/${profileId}/calendars/${data.id}/colors`), {
+                return fetch(apiURL(`/users/${userId}/calendars/${data.id}/colors`), {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

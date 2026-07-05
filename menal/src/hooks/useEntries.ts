@@ -8,11 +8,11 @@ import type { Entry } from "../types";
 
 function useEntries(date: string) {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/entries/${date}`))
+        fetch(apiURL(`/users/${userId}/entries/${date}`))
             .then((res) => res.json())
             .then((data) => setEntries(data))
     }, [date]);

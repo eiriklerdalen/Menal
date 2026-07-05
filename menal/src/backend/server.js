@@ -11,75 +11,75 @@ app.use(cors());
 app.use(express.json());
 
 // GET --------------------------------------------------------------------------------------------------------------------
-app.get("/profiles/:profileId", (req, res) => {
-    const profileId= Number(req.params.profileId);
+app.get("/users/:userId", (req, res) => {
+    const userId= Number(req.params.userId);
 
-    const profile = db.prepare(`
-        SELECT *
-        FROM profiles
+    const user = db.prepare(`
+        SELECT id, name, email
+        FROM users
         WHERE id = ?
-    `).get(profileId);
+    `).get(userId);
 
-    res.json(profile);
+    res.json(user);
 });
 
-app.get("/profiles/:profileId/journal_entries", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/journal_entries", (req, res) => {
+    const userId = Number(req.params.userId);
 
     const journal_entries = db.prepare(`
         SELECT *
         FROM journal_entries
-        WHERE profile_id = ?
+        WHERE user_id = ?
         ORDER BY date DESC
-    `).all(profileId);
+    `).all(userId);
 
     res.json(journal_entries);
 });
 
-app.get("/profiles/:profileId/journal_entries/:date", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/journal_entries/:date", (req, res) => {
+    const userId = Number(req.params.userId);
     const { date } = req.params;
 
     const journal_entry = db.prepare(`
         SELECT *
         FROM journal_entries
-        WHERE profile_id = ?
+        WHERE user_id = ?
         AND date = ?
-    `).get(profileId, date);
+    `).get(userId, date);
 
     res.json(journal_entry ?? null);
 });
 
-app.get("/profiles/:profileId/overview/:year/journal_entries", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/overview/:year/journal_entries", (req, res) => {
+    const userId = Number(req.params.userId);
     const { year } = req.params;
 
     const journal_entries = db.prepare(`
         SELECT *
         FROM journal_entries
-        WHERE profile_id = ?
+        WHERE user_id = ?
         AND date LIKE ?
         ORDER BY date;  
-    `).all(profileId, `${year}-%`);
+    `).all(userId, `${year}-%`);
 
     res.json(journal_entries);
 });
 
-app.get("/profiles/:profileId/overview", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/overview", (req, res) => {
+    const userId = Number(req.params.userId);
 
     const years = db.prepare(`
         SELECT DISTINCT substr(date, 1, 4) AS year
         FROM journal_entries
-        WHERE profile_id = ?
+        WHERE user_id = ?
         ORDER BY year DESC;
-    `).all(profileId);
+    `).all(userId);
 
     res.json(years);
 });
 
-app.get("/profiles/:profileId/overview/:year/entries", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/overview/:year/entries", (req, res) => {
+    const userId = Number(req.params.userId);
     const { year } = req.params;
 
     const entries = db.prepare(`
@@ -87,60 +87,60 @@ app.get("/profiles/:profileId/overview/:year/entries", (req, res) => {
         FROM entries
         JOIN calendars
             ON entries.calendar_id = calendars.id
-        WHERE calendars.profile_id = ?
+        WHERE calendars.user_id = ?
         AND entries.date LIKE ?
         ORDER BY entries.date
-    `).all(profileId, `${year}-%`);
+    `).all(userId, `${year}-%`);
 
     res.json(entries);
 });
 
-app.get("/profiles/:profileId/overview/:year", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/overview/:year", (req, res) => {
+    const userId = Number(req.params.userId);
     const { year } = req.params;
 
     const journal_entries = db.prepare(`
         SELECT *
         FROM journal_entries
-        WHERE profile_id = ?
+        WHERE user_id = ?
         AND date LIKE ?
         ORDER BY date DESC
-    `).all(profileId, `${year}-%`);
+    `).all(userId, `${year}-%`);
 
     res.json(journal_entries);
 })
 
-app.get("/profiles/:profileId/entries", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/entries", (req, res) => {
+    const userId = Number(req.params.userId);
 
     const entries = db.prepare(`
         SELECT entries.*
         FROM entries
         JOIN calendars
             ON entries.calendar_id = calendars.id
-        WHERE calendars.profile_id = ?
-    `).all(profileId);
+        WHERE calendars.user_id = ?
+    `).all(userId);
 
     res.json(entries);
 });
 
-app.get("/profiles/:profileId/entries/:date", (req, res) => {
-    const { profileId, date } = req.params;
+app.get("/users/:userId/entries/:date", (req, res) => {
+    const { userId, date } = req.params;
 
     const entries = db.prepare(`
         SELECT entries.*
         FROM entries
         JOIN calendars
             ON entries.calendar_id = calendars.id
-        WHERE calendars.profile_id = ?
+        WHERE calendars.user_id = ?
         AND entries.date = ?
-    `).all(profileId, date);
+    `).all(userId, date);
 
     res.json(entries);
 });
 
-app.get("/profiles/:profileId/calendars", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/calendars", (req, res) => {
+    const userId = Number(req.params.userId);
 
     const calendars = db.prepare(`
         SELECT 
@@ -148,30 +148,30 @@ app.get("/profiles/:profileId/calendars", (req, res) => {
         MIN(entries.date) AS oldestEntryDate
         FROM calendars
         LEFT JOIN entries ON entries.calendar_id = calendars.id
-        WHERE calendars.profile_id = ?
+        WHERE calendars.user_id = ?
         GROUP BY calendars.id
         ORDER BY calendars.position
-    `).all(profileId);
+    `).all(userId);
 
     res.json(calendars)
 });
 
-app.get("/profiles/:profileId/calendars/:calendarId", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/calendars/:calendarId", (req, res) => {
+    const userId = Number(req.params.userId);
     const calendarId = Number(req.params.calendarId);
 
     const calendar = db.prepare(`
-        SELECT id, profile_id, name, max_rating
+        SELECT id, user_id, name, max_rating
         FROM calendars
         WHERE id = ?
-        AND profile_id = ?
-    `).get(calendarId, profileId);
+        AND user_id = ?
+    `).get(calendarId, userId);
 
     res.json(calendar);
 });
 
-app.get("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/calendars/:calendarId/colors", (req, res) => {
+    const userId = Number(req.params.userId);
     const calendarId = Number(req.params.calendarId);
 
     const colors = db.prepare(`
@@ -184,11 +184,8 @@ app.get("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
     res.json(colors);
 });
 
-app.get("/profiles/:profileId/calendars/:calendarId/average", (req, res) => {
-    console.log("Average endpoint called");
-    console.log(req.params);
-    console.log(req.query);
-    const profileId = Number(req.params.profileId);
+app.get("/users/:userId/calendars/:calendarId/average", (req, res) => {
+    const userId = Number(req.params.userId);
     const calendarId = Number(req.params.calendarId);
 
     const from = req.query.from;
@@ -205,11 +202,11 @@ app.get("/profiles/:profileId/calendars/:calendarId/average", (req, res) => {
                COUNT(entries.id) AS count
         FROM entries
         JOIN calendars ON entries.calendar_id = calendars.id
-        WHERE calendars.profile_id = ?
+        WHERE calendars.user_id = ?
           AND entries.calendar_id = ?
           AND entries.date BETWEEN ? AND ?
           AND entries.rating > 0
-    `).get(profileId, calendarId, from, to);
+    `).get(userId, calendarId, from, to);
 
     res.json({
         calendarId,
@@ -245,34 +242,75 @@ app.post("/login", async (req, res) => {
 
     res.json({
         id: user.id,
-        profileId: user.id,
+        userId: user.id,
         email: user.email,
     });
 });
 
-app.post("/profiles/:profileId/journal_entries", (req, res) => {
-    const profileId = Number(req.params.profileId);
-    const { profile_id, date, journal_text } = req.body;
+app.post("/register", async (req, res) => {
+    const { email, name, password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+        return res.status(400).json({
+            error: "Passwords do not match.",
+        });
+    }
+
+    const existingUser = db.prepare(`
+        SELECT id
+        FROM users
+        WHERE email = ?
+    `).get(email);
+
+    if (existingUser) {
+        return res.status(409).json({
+            error: "Email already exists."
+        });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const result = db.prepare(`
+        INSERT INTO users
+        (name, email, password_hash)
+        VALUES (?, ?, ?)
+    `).run(name, email, passwordHash);
+
+    const user = db.prepare(`
+        SELECT id, name, email
+        FROM users
+        WHERE id = ?    
+    `).get(result.lastInsertRowid);
+
+    res.status(201).json({
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+    });
+}) 
+
+app.post("/users/:userId/journal_entries", (req, res) => {
+    const { userId, date, journal_text } = req.body;
 
     const stmt = db.prepare(`
-        INSERT INTO journal_entries (profile_id, date, journal_text)
+        INSERT INTO journal_entries (user_id, date, journal_text)
         VALUES (?, ?, ?)
-        ON CONFLICT(profile_id, date)
+        ON CONFLICT(user_id, date)
         DO UPDATE SET journal_text = excluded.journal_text;    
     `);
 
-    const result = stmt.run(profile_id, date, journal_text);
+    const result = stmt.run(userId, date, journal_text);
 
     res.json({
         id: result.lastInsertRowid,
-        profile_id: 1, // Husk å endre!
+        user_id: 1, // Husk å endre!
         date,
         journal_text
     });
 });
 
-app.post("/profiles/:profileId/entries", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.post("/users/:userId/entries", (req, res) => {
+    const userId = Number(req.params.userId);
 
     const { calendar_id, date, rating } = req.body;
 
@@ -293,8 +331,8 @@ app.post("/profiles/:profileId/entries", (req, res) => {
     });
 });
 
-app.post("/profiles/:profileId/calendars", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.post("/users/:userId/calendars", (req, res) => {
+    const userId = Number(req.params.userId);
     const { name, max_rating } = req.body;
 
     if (!name || name.trim() === "") {
@@ -306,26 +344,26 @@ app.post("/profiles/:profileId/calendars", (req, res) => {
     const lastPosition = db.prepare(`
         SELECT MAX(position) AS maxPosition
         FROM calendars
-        WHERE profile_id = ?
-    `).get(profileId);
+        WHERE user_id = ?
+    `).get(userId);
 
     const newPosition = (lastPosition.maxPosition ?? -1) + 1;
 
     const result = db.prepare(`
-        INSERT INTO calendars (profile_id, name, max_rating, position)
+        INSERT INTO calendars (user_id, name, max_rating, position)
         VALUES (?, ?, ?, ?)
-    `).run(profileId, name, max_rating, newPosition);
+    `).run(userId, name, max_rating, newPosition);
 
     res.json({
         id: result.lastInsertRowid,
-        profileId,
+        userId,
         name,
         max_rating,
         position: newPosition
     });
 });
 
-app.post("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
+app.post("/users/:userId/calendars/:calendarId/colors", (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 
@@ -343,7 +381,7 @@ app.post("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
 
 // DELETE -----------------------------------------------------------------------------------------------------------------
 
-app.delete("/profiles/:profileId/entries/:calendarId/:date", (req, res) => {
+app.delete("/users/:userId/entries/:calendarId/:date", (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { date } = req.params;
 
@@ -359,8 +397,8 @@ app.delete("/profiles/:profileId/entries/:calendarId/:date", (req, res) => {
     });
 })
 
-app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.delete("/users/:userId/calendars/:calendarId", (req, res) => {
+    const userId = Number(req.params.userId);
     const calendarId = Number(req.params.calendarId);
 
     db.prepare(`
@@ -376,28 +414,28 @@ app.delete("/profiles/:profileId/calendars/:calendarId", (req, res) => {
     db.prepare(`
         DELETE FROM calendars
         WHERE id = ?
-        and profile_id = ?
-    `).run(calendarId, profileId);
+        and user_id = ?
+    `).run(calendarId, userId);
 
     res.json({ success: true })
 });
 
-app.delete("/profiles/:profileId/journal_entries/:date", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.delete("/users/:userId/journal_entries/:date", (req, res) => {
+    const userId = Number(req.params.userId);
     const { date } = req.params;
 
     const result = db.prepare(`
         DELETE FROM journal_entries
-        WHERE profile_id = ?
+        WHERE user_id = ?
         AND date = ?
-    `).run(profileId, date)
+    `).run(userId, date)
 
     res.json({ success: true });
 });
 
 // PATCH ------------------------------------------------------------------------------------------------------------------
-app.patch("/profiles/:profileId/calendars/:calendarId", (req, res) => {
-    const profileId = Number(req.params.profileId);
+app.patch("/users/:userId/calendars/:calendarId", (req, res) => {
+    const userId = Number(req.params.userId);
     const calendarId = Number(req.params.calendarId);
 
     const { name } = req.body;
@@ -406,14 +444,14 @@ app.patch("/profiles/:profileId/calendars/:calendarId", (req, res) => {
         UPDATE calendars
         SET name = ?
         WHERE id = ?
-        AND profile_id = ?
-    `).run(name, calendarId, profileId);
+        AND user_id = ?
+    `).run(name, calendarId, userId);
 
     res.json({ success: true });
 })
 
 // PUT --------------------------------------------------------------------------------------------------------------------
-app.put("/profiles/:profileId/calendars/:calendarId/colors", (req, res) => {
+app.put("/users/:userId/calendars/:calendarId/colors", (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 

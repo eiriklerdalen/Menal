@@ -13,7 +13,7 @@ import "/src/pages/dashboard/DashboardPage.css";
 function DashboardPage() {
     const user = useRequiredUser();
     const name = user.name;
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const date = getDate();
 
@@ -28,14 +28,14 @@ function DashboardPage() {
             </div>
                 <div className="dashboard-content">
                 <TodayPanel
-                    profileId={ profileId }
+                    userId={ userId }
                     date={ date }
                     calendars={ calendars }
                     entries={ entries }
                     calendarColors={ calendarColors }
                 />
-                <StatisticsPanel profileId={ profileId } />
-                <AverageRatingPanel profileId={ profileId } />
+                <StatisticsPanel userId={ userId } />
+                <AverageRatingPanel userId={ userId } />
             </div>
         </div>
     )

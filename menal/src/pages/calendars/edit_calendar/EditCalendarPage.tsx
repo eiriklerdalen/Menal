@@ -15,7 +15,7 @@ import "/src/pages/calendars/edit_calendar/EditCalendarPage.css";
 
 function EditCalendarPage() {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ function EditCalendarPage() {
 
     const [maxRating, setMaxRating] = useState(7);
         useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/calendars/${calendarIdNumber}`))
+        fetch(apiURL(`/users/${userId}/calendars/${calendarIdNumber}`))
             .then((res) => res.json())
             .then((calendar) => {
                 setCalendarName(calendar.name);
@@ -36,7 +36,7 @@ function EditCalendarPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/entries`))
+        fetch(apiURL(`/users/${userId}/entries`))
             .then((res) => res.json())
             .then((data) => {
                 const calendarEntries = data.filter(
@@ -49,7 +49,7 @@ function EditCalendarPage() {
 
     const [colors, setColors] = useState<string[]>([]);
     useEffect(() => {
-        loadColors(profileId, calendarIdNumber)
+        loadColors(userId, calendarIdNumber)
             .then((color) => setColors(color))
             .catch((err) => console.log(err));
     }, [calendarIdNumber]);
@@ -88,7 +88,7 @@ function EditCalendarPage() {
             <button 
                 className="save-edit-button"
                 onClick={() => {
-                    saveCalendar(profileId, calendarIdNumber, calendarName, colors)
+                    saveCalendar(userId, calendarIdNumber, calendarName, colors)
                         .then(() => navigate("/calendars"))
                 }}
             >
@@ -98,14 +98,14 @@ function EditCalendarPage() {
     )
 }
 
-async function loadColors(profileId: number, calendarId: number) {
-    return fetch(apiURL(`/profiles/${profileId}/calendars/${calendarId}/colors`))
+async function loadColors(userId: number, calendarId: number) {
+    return fetch(apiURL(`/users/${userId}/calendars/${calendarId}/colors`))
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
 
-async function saveCalendar(profileId: number, calendarId: number, calendarName: string, colors: string[]) {
-    return fetch(apiURL(`/profiles/${profileId}/calendars/${calendarId}`), {
+async function saveCalendar(userId: number, calendarId: number, calendarName: string, colors: string[]) {
+    return fetch(apiURL(`/users/${userId}/calendars/${calendarId}`), {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -115,7 +115,7 @@ async function saveCalendar(profileId: number, calendarId: number, calendarName:
         }),
     })
         .then(() => 
-            fetch(apiURL(`/profiles/${profileId}/calendars/${calendarId}/colors`), {
+            fetch(apiURL(`/users/${userId}/calendars/${calendarId}/colors`), {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

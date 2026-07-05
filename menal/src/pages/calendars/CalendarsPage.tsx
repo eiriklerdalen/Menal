@@ -20,7 +20,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 
 function CalendarsPage() {
   const user = useRequiredUser();
-  const profileId = user.profileId;
+  const userId = user.userId;
 
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ function CalendarsPage() {
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
-    fetch(apiURL(`/profiles/${profileId}/entries`))
+    fetch(apiURL(`/users/${userId}/entries`))
         .then((res) => res.json())
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));
@@ -45,7 +45,7 @@ function CalendarsPage() {
       return;
     }
 
-    fetch(apiURL(`/profiles/${profileId}/calendars/${calendarId}`), {
+    fetch(apiURL(`/users/${userId}/calendars/${calendarId}`), {
       method: "DELETE",
     })
       .then((res) => res.json())

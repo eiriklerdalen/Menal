@@ -11,13 +11,13 @@ import "/src/pages/overview/OverviewPage.css";
 
 function OverviewPage() {
     const user = useRequiredUser();
-    const profileId = user.profileId;
+    const userId = user.userId;
 
     const navigate = useNavigate();
 
     const [years, setYears] = useState<Year[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/profiles/${profileId}/overview`))
+        fetch(apiURL(`/users/${userId}/overview`))
             .then((res) => res.json())
             .then((data) => setYears(data))
             .catch((err) => console.log(err));
