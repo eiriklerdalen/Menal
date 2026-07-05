@@ -290,7 +290,8 @@ app.post("/register", async (req, res) => {
 }) 
 
 app.post("/users/:userId/journal_entries", (req, res) => {
-    const { userId, date, journal_text } = req.body;
+    const userId = Number(req.params.userId);
+    const { date, journal_text } = req.body;
 
     const stmt = db.prepare(`
         INSERT INTO journal_entries (user_id, date, journal_text)
@@ -303,7 +304,7 @@ app.post("/users/:userId/journal_entries", (req, res) => {
 
     res.json({
         id: result.lastInsertRowid,
-        user_id: 1, // Husk å endre!
+        user_id: userId,
         date,
         journal_text
     });
