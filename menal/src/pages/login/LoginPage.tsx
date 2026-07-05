@@ -53,6 +53,15 @@ function LoginPage() {
                     Logg inn
                 </button>
             </form>
+            <p className="register-text">
+                Har du ikke konto?{" "}
+                <span
+                    className="register-link"
+                    onClick={() => navigate("/register")}
+                >
+                    Opprett konto
+                </span>
+            </p>
         </div>
     )
 }
