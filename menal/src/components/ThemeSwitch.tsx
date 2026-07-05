@@ -3,7 +3,7 @@ type ThemeSwitchProps = {
     setDarkMode: (value: boolean) => void;
 }
 
-function ThemeSwitch({ darkMode, setDarkMode}: ThemeSwitchProps) {
+function ThemeSwitch({ darkMode, setDarkMode}: ThemeSwitchProps) {
     return (
         <button
             className={`theme-switch ${darkMode ? "dark" : ""}`}

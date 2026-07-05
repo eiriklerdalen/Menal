@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 
 import { apiURL } from "../config/api";
 
-import useCurrentUser from "./useCurrentUser";
+import useRequiredUser from "./useRequiredUser";
 
 import type { Entry } from "../types";
 
 function useEntries(date: string) {
-    const { profileId } = useCurrentUser();
+    const user = useRequiredUser();
+    const profileId = user.profileId;
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {

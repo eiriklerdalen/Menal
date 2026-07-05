@@ -5,7 +5,7 @@ import { apiURL } from "../../config/api";
 
 import { getDateWriting, getWeekday } from "../../utils/date";
 
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useRequiredUser from "../../hooks/useRequiredUser";
 import useCalendars from "../../hooks/useCalendars";
 
 import "/src/pages/overview/OverviewPage.css";
@@ -13,7 +13,8 @@ import "/src/pages/overview/OverviewPage.css";
 import type { JournalEntry, Entry } from "../../types";
 
 function YearOverViewPage() {
-    const { profileId } = useCurrentUser();
+    const user = useRequiredUser();
+    const profileId = user.profileId;
 
     const navigate = useNavigate();
 

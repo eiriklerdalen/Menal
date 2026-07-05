@@ -1,4 +1,4 @@
-import useCurrentUser from "../../hooks/useCurrentUser.ts";
+import useRequiredUser from "../../hooks/useRequiredUser.tsx";
 import useCalendars from "../../hooks/useCalendars.ts";
 import useEntries from "../../hooks/useEntries.ts";
 
@@ -11,7 +11,9 @@ import AverageRatingPanel from "./AverageRatingPanel.tsx";
 import "/src/pages/dashboard/DashboardPage.css";
 
 function DashboardPage() {
-    const { profileId, name } = useCurrentUser();
+    const user = useRequiredUser();
+    const name = user.name;
+    const profileId = user.profileId;
 
     const date = getDate();
 

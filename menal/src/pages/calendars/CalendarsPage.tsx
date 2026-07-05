@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../config/api";
 
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useRequiredUser from "../../hooks/useRequiredUser";
 import useCalendars from "../../hooks/useCalendars";
 
 import SortableCalendarItem from "../../components/SortableCalendarItem";
@@ -19,7 +19,8 @@ import { arrayMove } from "@dnd-kit/sortable";
 import type { DragEndEvent } from "@dnd-kit/core";
 
 function CalendarsPage() {
-  const { profileId } = useCurrentUser();
+  const user = useRequiredUser();
+  const profileId = user.profileId;
 
   const navigate = useNavigate();
 

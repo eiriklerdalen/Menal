@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 
 import { apiURL } from "../config/api";
 
-import useCurrentUser from "./useCurrentUser";
+import useRequiredUser from "./useRequiredUser";
 
 import type { Calendar } from "../types";
 
 function useCalendars() {
-    const { profileId } = useCurrentUser();
+    const user = useRequiredUser();
+    const profileId = user.profileId;
 
     const [calendars, setCalendars] = useState<Calendar[]>([]);
     const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});

@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../config/api";
 
-import useCurrentUser from "../../hooks/useCurrentUser";
+import useRequiredUser from "../../hooks/useRequiredUser";
 
 import type { Year } from "../../types";
 
 import "/src/pages/overview/OverviewPage.css";
 
 function OverviewPage() {
-    const { profileId } = useCurrentUser();
+    const user = useRequiredUser();
+    const profileId = user.profileId;
 
     const navigate = useNavigate();
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../../config/api";
 
-import useCurrentUser from "../../../hooks/useCurrentUser";
+import useRequiredUser from "../../../hooks/useRequiredUser";
 
 import CalendarHeatMap from "../../../components/CalendarHeatMap";
 import ScaleColorSelector from "../../../components/ScaleColorSelector";
@@ -13,7 +13,8 @@ import "/src/pages/calendars/new_calendar/NewCalendarPage.css";
 import type { Entry } from "../../../types";
 
 function NewCalendarPage() {
-    const { profileId } = useCurrentUser();
+    const user = useRequiredUser();
+    const profileId = user.profileId;
 
     const navigate = useNavigate();
 

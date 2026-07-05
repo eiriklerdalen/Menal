@@ -5,6 +5,7 @@ import LoginPage from "./pages/login/LoginPage";
 import AppLayout from "./AppLayout";
 
 import "./theme.css";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -17,10 +18,12 @@ function App() {
       <Route
         path="/*"
                 element={
-                  <AppLayout
-                    darkMode={ darkMode }
-                    setDarkMode={ setDarkMode}
-                  />
+                  <ProtectedRoute>
+                    <AppLayout
+                      darkMode={ darkMode }
+                      setDarkMode={ setDarkMode}
+                    />
+                  </ProtectedRoute>
                 }
       />
     </Routes>

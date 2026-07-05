@@ -1,12 +1,11 @@
 import express from "express";
 import Database from "better-sqlite3";
+import bcrypt from "bcrypt";
 
 import cors from "cors";
 
 const app = express();
 const db = new Database("menal.db");
-
-const bcrypt = require("bcrypt");
 
 app.use(cors());
 app.use(express.json());

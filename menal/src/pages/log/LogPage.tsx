@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+import useRequiredUser from "../../hooks/useRequiredUser";
+
 import { apiURL } from "../../config/api";
 
-import useCurrentUser from "../../hooks/useCurrentUser";
 import useEntries from "../../hooks/useEntries";
 import useCalendars from "../../hooks/useCalendars";
 
@@ -13,7 +14,8 @@ import type { Entry } from "../../types";
 import "/src/pages/log/LogPage.css";
 
 function LogPage() {
-    const { profileId } = useCurrentUser();
+    const user = useRequiredUser();
+    const profileId = user.profileId;
 
     const navigate = useNavigate();
 
