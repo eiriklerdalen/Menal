@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
+import HomeRedirect from "./HomeRedirect";
 import LoginPage from "../pages/login/LoginPage";
 import AppLayout from "./AppLayout";
 
@@ -13,7 +14,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
+      <Route path="/" element={<HomeRedirect />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
