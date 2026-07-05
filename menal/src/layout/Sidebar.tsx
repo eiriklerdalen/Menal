@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
-import ThemeSwitch from "./components/ThemeSwitch";
-import { getDate } from "./utils/date";
+import ThemeSwitch from "../components/ThemeSwitch";
+import { getDate } from "../utils/date";
 
 type SidebarProps = {
     darkMode: boolean;

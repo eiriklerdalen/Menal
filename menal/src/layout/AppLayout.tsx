@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom";
 
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import OverviewPage from "./pages/overview/OverviewPage";
-import YearOverviewPage from "./pages/overview/YearOverviewPage";
-import CalendarPage from "./pages/calendars/CalendarsPage";
-import LogPage from "./pages/log/LogPage";
-import NewCalendarPage from "./pages/calendars/new_calendar/NewCalendarPage"
-import EditCalendarPage from "./pages/calendars/edit_calendar/EditCalendarPage";
+import DashboardPage from "../pages/dashboard/DashboardPage";
+import OverviewPage from "../pages/overview/OverviewPage";
+import YearOverviewPage from "../pages/overview/YearOverviewPage";
+import CalendarPage from "../pages/calendars/CalendarsPage";
+import LogPage from "../pages/log/LogPage";
+import NewCalendarPage from "../pages/calendars/new_calendar/NewCalendarPage"
+import EditCalendarPage from "../pages/calendars/edit_calendar/EditCalendarPage";
 
 import Sidebar from "./Sidebar";
 

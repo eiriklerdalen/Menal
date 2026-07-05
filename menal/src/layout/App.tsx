@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import LoginPage from "./pages/login/LoginPage";
+import LoginPage from "../pages/login/LoginPage";
 import AppLayout from "./AppLayout";
 
 import "./theme.css";
-import ProtectedRoute from "./ProtectedRoute";
-import RegisterPage from "./pages/register/RegisterPage";
+import ProtectedRoute from "../ProtectedRoute";
+import RegisterPage from "../pages/register/RegisterPage";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
