@@ -9,7 +9,7 @@ function ThemeSwitch({ darkMode, setDarkMode}: ThemeSwitchProps) {
             className={`theme-switch ${darkMode ? "dark" : ""}`}
             onClick={() => setDarkMode(!darkMode)}
         >
-            {darkMode ? "🌙" : "☀️"}
+            {darkMode ? "☀️" : "🌙"}
         </button>
     )
 }
