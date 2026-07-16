@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+
+import { apiURL } from "../config/api";
 
 type User = {
     id: number;
@@ -9,7 +11,8 @@ type User = {
 
 type AuthContextType = {
     user: User | null;
-    isLoggedIn: boolean;
+    loading: boolean;
+    //isLoggedIn: boolean;
     login: (user: User) => void;
     logout: () => void;
 }
@@ -18,6 +21,32 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode}) {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadCurrentUser() {
+            try {
+                const res = await fetch(apiURL("/me"), {
+                    credentials: "include",
+                });
+
+                if (!res.ok) {
+                    setUser(null);
+                    return;
+                }
+
+                const user = await res.json();
+                setUser(user);
+            } catch (err) {
+                console.log("Kunne ikke hente bruker:", err);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadCurrentUser();
+    }, []);
 
     function login(user: User) {
         setUser(user);
@@ -31,7 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
         <AuthContext.Provider
             value={{
                 user,
-                isLoggedIn: user !== null,
+                loading,
+                //isLoggedIn: user !== null,
                 login,
                 logout
             }}

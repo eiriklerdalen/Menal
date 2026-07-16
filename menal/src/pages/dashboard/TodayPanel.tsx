@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../config/api.ts";
+import { apiURL } from "../../config/api.js";
 import type { Entry, Calendar } from "../../types.ts";
 
 type TodayPanelProps = {

@@ -69,6 +69,7 @@ function LoginPage() {
 async function login(email: string, password: string) {
     const res = await fetch(apiURL("/login"), {
         method: "POST",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },

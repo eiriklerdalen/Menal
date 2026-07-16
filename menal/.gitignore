@@ -25,3 +25,6 @@ dist-ssr
 
 # Databases
 *.db
+
+# Secrets
+.env

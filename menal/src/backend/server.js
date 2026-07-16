@@ -1,16 +1,50 @@
+import "dotenv/config";
+
 import express from "express";
 import Database from "better-sqlite3";
 import bcrypt from "bcrypt";
 
 import cors from "cors";
+import session from "express-session";
 
 const app = express();
-const db = new Database("menal.db");
+const db = new Database("./src/backend/menal.db");
 
-app.use(cors());
+app.use(cors({
+    origin: "http://10.0.0.79:5173",
+    credentials: true,
+}));
+
 app.use(express.json());
 
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+
+    cookie: {
+        httpOnly: true,
+        secure: false, // change if https
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 30 // 1 month
+    }
+}))
+
 // GET --------------------------------------------------------------------------------------------------------------------
+app.get("/me", (req, res) => {
+    if (!req.session.userId) {
+        return res.sendStatus(401);
+    }
+
+    const user = db.prepare(`
+       SELECT id, name, email
+       FROM users
+       WHERE id = ? 
+    `).get(req.session.userId);
+
+    res.json(user);
+})
+
 app.get("/users/:userId", (req, res) => {
     const userId= Number(req.params.userId);
 
@@ -240,12 +274,16 @@ app.post("/login", async (req, res) => {
         return res.status(401).json({ error: "Invalid email or password."});
     }
 
+    req.session.userId = user.id;
+
     res.json({
         id: user.id,
         userId: user.id,
         email: user.email,
     });
 });
+
+//app.post("/logout", (req, res) => {})
 
 app.post("/register", async (req, res) => {
     const { email, name, password, confirmPassword } = req.body;
@@ -475,5 +513,5 @@ app.put("/users/:userId/calendars/:calendarId/colors", (req, res) => {
 
 // RUN
 app.listen(3000, "0.0.0.0", () => {
-  console.log("Server running on http://10.0.0.76:3000");
+  console.log("Server running on http://10.0.0.79:3000");
 });
