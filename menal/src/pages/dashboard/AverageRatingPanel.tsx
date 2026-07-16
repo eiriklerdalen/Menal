@@ -4,11 +4,8 @@ import { apiURL } from "../../config/api";
 import useCalendars from "../../hooks/useCalendars";
 import { periods, getPeriodDates } from "../../utils/periods";
 
-type AverageRatingPanelProps = {
-    userId: number;
-};
 
-function AverageRatingPanel({userId}: AverageRatingPanelProps) {
+function AverageRatingPanel() {
 
     const { calendars } = useCalendars();
     const [selectedCalendarId, setSelectedCalendarId] = useState<number | null>(null);
@@ -32,7 +29,7 @@ function AverageRatingPanel({userId}: AverageRatingPanelProps) {
         async function loadAverage() {
             if (selectedCalendarId === null) return;
 
-            const result = await getAverageRating(userId, selectedCalendarId, from, to);
+            const result = await getAverageRating(selectedCalendarId, from, to);
 
             setAverage(result.average);
             setCount(result.count);
@@ -91,10 +88,10 @@ function AverageRatingPanel({userId}: AverageRatingPanelProps) {
     )
 }
 
-async function getAverageRating(userId: number, calendarId: number, from: string, to: string) {
-    const res = await fetch(
-        apiURL(`/users/${userId}/calendars/${calendarId}/average?from=${from}&to=${to}`)
-    );
+async function getAverageRating(calendarId: number, from: string, to: string) {
+    const res = await fetch(apiURL(`/calendars/${calendarId}/average?from=${from}&to=${to}`), {
+        credentials: "include",
+    });
 
     if (!res.ok) {
         throw new Error("Failed to fetch average rating");

@@ -28,14 +28,13 @@ function DashboardPage() {
             </div>
                 <div className="dashboard-content">
                 <TodayPanel
-                    userId={ userId }
                     date={ date }
                     calendars={ calendars }
                     entries={ entries }
                     calendarColors={ calendarColors }
                 />
-                <StatisticsPanel userId={ userId } />
-                <AverageRatingPanel userId={ userId } />
+                <StatisticsPanel />
+                <AverageRatingPanel/>
             </div>
         </div>
     )

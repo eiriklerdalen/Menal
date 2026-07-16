@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../../config/api";
 
-import useRequiredUser from "../../../hooks/useRequiredUser";
-
 import CalendarHeatMap from "../../../components/CalendarHeatMap";
 import ScaleColorSelector from "../../../components/ScaleColorSelector";
 
@@ -14,8 +12,6 @@ import type { Entry } from "../../../types";
 import "/src/pages/calendars/edit_calendar/EditCalendarPage.css";
 
 function EditCalendarPage() {
-    const user = useRequiredUser();
-    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -26,7 +22,9 @@ function EditCalendarPage() {
 
     const [maxRating, setMaxRating] = useState(7);
         useEffect(() => {
-        fetch(apiURL(`/users/${userId}/calendars/${calendarIdNumber}`))
+        fetch(apiURL(`/calendars/${calendarIdNumber}`), {
+            credentials: "include",
+        })
             .then((res) => res.json())
             .then((calendar) => {
                 setCalendarName(calendar.name);
@@ -36,7 +34,9 @@ function EditCalendarPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/users/${userId}/entries`))
+        fetch(apiURL(`/entries`), {
+            credentials: "include",
+        })
             .then((res) => res.json())
             .then((data) => {
                 const calendarEntries = data.filter(
@@ -49,7 +49,7 @@ function EditCalendarPage() {
 
     const [colors, setColors] = useState<string[]>([]);
     useEffect(() => {
-        loadColors(userId, calendarIdNumber)
+        loadColors(calendarIdNumber)
             .then((color) => setColors(color))
             .catch((err) => console.log(err));
     }, [calendarIdNumber]);
@@ -88,7 +88,7 @@ function EditCalendarPage() {
             <button 
                 className="save-edit-button"
                 onClick={() => {
-                    saveCalendar(userId, calendarIdNumber, calendarName, colors)
+                    saveCalendar(calendarIdNumber, calendarName, colors)
                         .then(() => navigate("/calendars"))
                 }}
             >
@@ -98,15 +98,18 @@ function EditCalendarPage() {
     )
 }
 
-async function loadColors(userId: number, calendarId: number) {
-    return fetch(apiURL(`/users/${userId}/calendars/${calendarId}/colors`))
+async function loadColors(calendarId: number) {
+    return fetch(apiURL(`/calendars/${calendarId}/colors`), {
+        credentials: "include",
+    })
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
 
-async function saveCalendar(userId: number, calendarId: number, calendarName: string, colors: string[]) {
-    return fetch(apiURL(`/users/${userId}/calendars/${calendarId}`), {
+async function saveCalendar(calendarId: number, calendarName: string, colors: string[]) {
+    return fetch(apiURL(`/calendars/${calendarId}`), {
         method: "PATCH",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
@@ -115,8 +118,9 @@ async function saveCalendar(userId: number, calendarId: number, calendarName: st
         }),
     })
         .then(() => 
-            fetch(apiURL(`/users/${userId}/calendars/${calendarId}/colors`), {
+            fetch(apiURL(`/calendars/${calendarId}/colors`), {
                 method: "PUT",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },

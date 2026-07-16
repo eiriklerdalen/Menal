@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../config/api";
 
-import useRequiredUser from "../../hooks/useRequiredUser";
 import useCalendars from "../../hooks/useCalendars";
 
 import SortableCalendarItem from "../../components/SortableCalendarItem";
@@ -19,8 +18,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 import type { DragEndEvent } from "@dnd-kit/core";
 
 function CalendarsPage() {
-  const user = useRequiredUser();
-  const userId = user.userId;
 
   const navigate = useNavigate();
 
@@ -30,7 +27,9 @@ function CalendarsPage() {
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
-    fetch(apiURL(`/users/${userId}/entries`))
+    fetch(apiURL("/entries"), {
+      credentials: "include",
+    })
         .then((res) => res.json())
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));
@@ -45,8 +44,9 @@ function CalendarsPage() {
       return;
     }
 
-    fetch(apiURL(`/users/${userId}/calendars/${calendarId}`), {
+    fetch(apiURL(`/calendars/${calendarId}`), {
       method: "DELETE",
+      credentials: "include",
     })
       .then((res) => res.json())
       .then(() => {

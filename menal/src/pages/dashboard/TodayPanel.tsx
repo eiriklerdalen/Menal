@@ -5,7 +5,6 @@ import { apiURL } from "../../config/api.js";
 import type { Entry, Calendar } from "../../types.ts";
 
 type TodayPanelProps = {
-    userId: number;
     date: string;
     calendars: Calendar[];
     entries: Entry[];
@@ -13,7 +12,6 @@ type TodayPanelProps = {
 };
 
 function TodayPanel({
-    userId,
     date,
     calendars,
     entries,
@@ -23,7 +21,7 @@ function TodayPanel({
 
     const [hasWritten, setHasWritten] = useState(false);
     useEffect(() => {
-        hasWrittenLogToday(userId, date).then(setHasWritten);
+        hasWrittenLogToday(date).then(setHasWritten);
     }, [date]);
 
     return (
@@ -70,8 +68,10 @@ function TodayPanel({
     )
 }
 
-async function hasWrittenLogToday(userId: number, date: string) {
-    const res = await fetch(apiURL(`/users/${userId}/journal_entries/${date}`));
+async function hasWrittenLogToday(date: string) {
+    const res = await fetch(apiURL(`/journal_entries/${date}`), {
+        credentials: "include",
+    });
     const entry = await res.json();
 
     return !!entry;

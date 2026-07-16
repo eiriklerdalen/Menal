@@ -99,6 +99,7 @@ function RegisterPage() {
 async function register(email: string, name: string, password: string, confirmPassword: string) {
     const res = await fetch(apiURL("/register"), {
         method: "POST",
+        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },

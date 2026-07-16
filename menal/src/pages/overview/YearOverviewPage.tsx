@@ -5,7 +5,6 @@ import { apiURL } from "../../config/api";
 
 import { getDateWriting, getWeekday } from "../../utils/date";
 
-import useRequiredUser from "../../hooks/useRequiredUser";
 import useCalendars from "../../hooks/useCalendars";
 
 import "/src/pages/overview/OverviewPage.css";
@@ -13,8 +12,6 @@ import "/src/pages/overview/OverviewPage.css";
 import type { JournalEntry, Entry } from "../../types";
 
 function YearOverViewPage() {
-    const user = useRequiredUser();
-    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -23,7 +20,9 @@ function YearOverViewPage() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/users/${userId}/overview/${year}/journal_entries`))
+        fetch(apiURL(`/overview/${year}/journal_entries`), {
+            credentials: "include",
+        })
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));
@@ -31,7 +30,9 @@ function YearOverViewPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/users/${userId}/overview/${year}/entries`))
+        fetch(apiURL(`/overview/${year}/entries`), {
+            credentials: "include",
+        })
             .then((res) => res.json())
             .then((data) => setEntries(data))
             .catch((err) => console.log(err));

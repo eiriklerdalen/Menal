@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../../config/api";
 
-import useRequiredUser from "../../../hooks/useRequiredUser";
-
 import CalendarHeatMap from "../../../components/CalendarHeatMap";
 import ScaleColorSelector from "../../../components/ScaleColorSelector";
 
@@ -13,8 +11,6 @@ import "/src/pages/calendars/new_calendar/NewCalendarPage.css";
 import type { Entry } from "../../../types";
 
 function NewCalendarPage() {
-    const user = useRequiredUser();
-    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -28,8 +24,9 @@ function NewCalendarPage() {
             return;
         }
 
-        fetch(apiURL(`/users/${userId}/calendars`), {
+        fetch(apiURL("/calendars"), {
             method: "POST",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -40,8 +37,9 @@ function NewCalendarPage() {
         })
             .then((res) => res.json())
             .then((data) => {
-                return fetch(apiURL(`/users/${userId}/calendars/${data.id}/colors`), {
+                return fetch(apiURL(`/calendars/${data.id}/colors`), {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },

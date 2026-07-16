@@ -3,21 +3,19 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../config/api";
 
-import useRequiredUser from "../../hooks/useRequiredUser";
-
 import type { Year } from "../../types";
 
 import "/src/pages/overview/OverviewPage.css";
 
 function OverviewPage() {
-    const user = useRequiredUser();
-    const userId = user.userId;
 
     const navigate = useNavigate();
 
     const [years, setYears] = useState<Year[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/users/${userId}/overview`))
+        fetch(apiURL("/overview"), {
+            credentials: "include",
+        })
             .then((res) => res.json())
             .then((data) => setYears(data))
             .catch((err) => console.log(err));

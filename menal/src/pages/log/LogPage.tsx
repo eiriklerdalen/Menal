@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import useRequiredUser from "../../hooks/useRequiredUser";
-
 import { apiURL } from "../../config/api";
 
 import useEntries from "../../hooks/useEntries";
@@ -14,8 +12,6 @@ import type { Entry } from "../../types";
 import "/src/pages/log/LogPage.css";
 
 function LogPage() {
-    const user = useRequiredUser();
-    const userId = user.userId;
 
     const navigate = useNavigate();
 
@@ -32,10 +28,9 @@ function LogPage() {
         const controller = new AbortController();
 
         async function loadJournalEntry() {
-            const res = await fetch(
-                apiURL(`/users/${userId}/journal_entries/${selectedDate}`),
-                { signal: controller.signal }
-            );
+            const res = await fetch(apiURL(`/journal_entries/${selectedDate}`), {
+                signal: controller.signal 
+            });
 
             if (!res.ok) {
                 setUserHasEdited(false);
@@ -63,9 +58,9 @@ function LogPage() {
 
         const timeout = setTimeout(() => {
             if (userHasEdited && text.trim() === "") {
-                deleteJournalEntry(userId, selectedDate);
+                deleteJournalEntry(selectedDate);
             } else {
-                saveJournalEntry(userId, selectedDate, text);
+                saveJournalEntry(selectedDate, text);
             }
         }, 2500);
 
@@ -85,24 +80,26 @@ function LogPage() {
     }
 
     function loadEntries(date: string) {
-        fetch(apiURL(`/users/${userId}/entries/${date}`))
-        .then((res) => res.json())
-        .then((data) => {
-            const entriesWithDefaults = calendars.map((calendar) => {
-                const existingEntry = data.find(
-                    (entry: Entry) => entry.calendar_id === calendar.id
-                );
-
-                return existingEntry ?? {
-                    id: 0,
-                    calendar_id: calendar.id,
-                    date,
-                    rating: 0,
-                };
-            });
-
-            setEntries(entriesWithDefaults);
+        fetch(apiURL(`/entries/${date}`), {
+            credentials: "include",
         })
+            .then((res) => res.json())
+            .then((data) => {
+                const entriesWithDefaults = calendars.map((calendar) => {
+                    const existingEntry = data.find(
+                        (entry: Entry) => entry.calendar_id === calendar.id
+                    );
+
+                    return existingEntry ?? {
+                        id: 0,
+                        calendar_id: calendar.id,
+                        date,
+                        rating: 0,
+                    };
+                });
+
+                setEntries(entriesWithDefaults);
+            })
         .catch((err) => console.log(err));
     }
     useEffect(() => {
@@ -137,15 +134,17 @@ function LogPage() {
         });
     }
 
-    async function deleteEntry(userId: number, calendarId: number, date: string) {
-        await fetch(apiURL(`/users/${userId}/entries/${calendarId}/${date}`), {
-            method: "DELETE"
+    async function deleteEntry(calendarId: number, date: string) {
+        await fetch(apiURL(`/entries/${calendarId}/${date}`), {
+            method: "DELETE",
+            credentials: "include",
         })
     }
 
-    async function deleteJournalEntry(userId: number, date: string) {
-        await fetch(apiURL(`/users/${userId}/journal_entries/${date}`), {
-            method: "DELETE"
+    async function deleteJournalEntry(date: string) {
+        await fetch(apiURL(`/journal_entries/${date}`), {
+            method: "DELETE",
+            credentials: "include",
         });
     }
 
@@ -228,7 +227,7 @@ function LogPage() {
                                     className="reset-button rating-button" 
                                     onClick={() => {
                                         updateEntry(calendar.id, 0, selectedDate);
-                                        deleteEntry(userId, calendar.id, selectedDate);
+                                        deleteEntry(calendar.id, selectedDate);
                                     }}
                                 >
                                     0
@@ -244,7 +243,7 @@ function LogPage() {
                                         }}
                                         onClick={() => {
                                             updateEntry(calendar.id, rating, selectedDate);
-                                            saveEntry(userId, calendar.id, rating, selectedDate);
+                                            saveEntry(calendar.id, rating, selectedDate);
                                         }}
                                     >
                                         {rating}
@@ -260,16 +259,16 @@ function LogPage() {
     )
 }
 
-async function saveJournalEntry(userId: number, date: string, text: string) {
-    await fetch(apiURL(`/users/${userId}/journal_entries`), {
+async function saveJournalEntry(date: string, text: string) {
+    await fetch(apiURL("/journal_entries"), {
         method: "POST",
+        credentials: "include",
         headers: {
         "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            user_id: userId,
             date: date,
-            journal_text: text
+            journal_text: text,
         })
     })
         .then((res) => res.json())
@@ -277,9 +276,10 @@ async function saveJournalEntry(userId: number, date: string, text: string) {
         .catch((err) => console.log(err))
 }
 
-async function saveEntry(userId: number, calendarId: number, rating: number, date: string) {
-    return await fetch(apiURL(`/users/${userId}/entries`), {
+async function saveEntry(calendarId: number, rating: number, date: string) {
+    return await fetch(apiURL("/entries"), {
         method: "POST",
+        credentials: "include",
         headers: {
         "Content-Type": "application/json",
         },

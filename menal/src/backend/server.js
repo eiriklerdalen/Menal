@@ -43,35 +43,23 @@ app.get("/me", (req, res) => {
     `).get(req.session.userId);
 
     res.json(user);
-})
-
-app.get("/users/:userId", (req, res) => {
-    const userId= Number(req.params.userId);
-
-    const user = db.prepare(`
-        SELECT id, name, email
-        FROM users
-        WHERE id = ?
-    `).get(userId);
-
-    res.json(user);
 });
 
-app.get("/users/:userId/journal_entries", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/journal_entries", (req, res) => {
+    const userId = req.session.userId;
 
-    const journal_entries = db.prepare(`
+    const journalEntries = db.prepare(`
         SELECT *
         FROM journal_entries
         WHERE user_id = ?
         ORDER BY date DESC
     `).all(userId);
 
-    res.json(journal_entries);
+    res.json(journalEntries);
 });
 
-app.get("/users/:userId/journal_entries/:date", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/journal_entries/:date", (req, res) => {
+    const userId = req.session.userId;
     const { date } = req.params;
 
     const journal_entry = db.prepare(`
@@ -84,8 +72,21 @@ app.get("/users/:userId/journal_entries/:date", (req, res) => {
     res.json(journal_entry ?? null);
 });
 
-app.get("/users/:userId/overview/:year/journal_entries", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/overview", (req, res) => {
+    const userId = req.session.userId;
+
+    const years = db.prepare(`
+        SELECT DISTINCT substr(date, 1, 4) AS year
+        FROM journal_entries
+        WHERE user_id = ?
+        ORDER BY year DESC;
+    `).all(userId);
+
+    res.json(years);
+});
+
+app.get("/overview/:year/journal_entries", (req, res) => {
+    const userId = req.session.userId;
     const { year } = req.params;
 
     const journal_entries = db.prepare(`
@@ -99,21 +100,8 @@ app.get("/users/:userId/overview/:year/journal_entries", (req, res) => {
     res.json(journal_entries);
 });
 
-app.get("/users/:userId/overview", (req, res) => {
-    const userId = Number(req.params.userId);
-
-    const years = db.prepare(`
-        SELECT DISTINCT substr(date, 1, 4) AS year
-        FROM journal_entries
-        WHERE user_id = ?
-        ORDER BY year DESC;
-    `).all(userId);
-
-    res.json(years);
-});
-
-app.get("/users/:userId/overview/:year/entries", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/overview/:year/entries", (req, res) => {
+    const userId = req.session.userId;
     const { year } = req.params;
 
     const entries = db.prepare(`
@@ -129,8 +117,8 @@ app.get("/users/:userId/overview/:year/entries", (req, res) => {
     res.json(entries);
 });
 
-app.get("/users/:userId/overview/:year", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/overview/:year", (req, res) => {
+    const userId = req.session.userId;
     const { year } = req.params;
 
     const journal_entries = db.prepare(`
@@ -144,8 +132,8 @@ app.get("/users/:userId/overview/:year", (req, res) => {
     res.json(journal_entries);
 })
 
-app.get("/users/:userId/entries", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/entries", (req, res) => {
+    const userId = req.session.userId;
 
     const entries = db.prepare(`
         SELECT entries.*
@@ -158,8 +146,9 @@ app.get("/users/:userId/entries", (req, res) => {
     res.json(entries);
 });
 
-app.get("/users/:userId/entries/:date", (req, res) => {
-    const { userId, date } = req.params;
+app.get("/entries/:date", (req, res) => {
+    const userId = req.session.userId;
+    const { date } = req.params;
 
     const entries = db.prepare(`
         SELECT entries.*
@@ -173,8 +162,8 @@ app.get("/users/:userId/entries/:date", (req, res) => {
     res.json(entries);
 });
 
-app.get("/users/:userId/calendars", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/calendars", (req, res) => {
+    const userId = req.session.userId;
 
     const calendars = db.prepare(`
         SELECT 
@@ -190,8 +179,8 @@ app.get("/users/:userId/calendars", (req, res) => {
     res.json(calendars)
 });
 
-app.get("/users/:userId/calendars/:calendarId", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/calendars/:calendarId", (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
     const calendar = db.prepare(`
@@ -204,8 +193,8 @@ app.get("/users/:userId/calendars/:calendarId", (req, res) => {
     res.json(calendar);
 });
 
-app.get("/users/:userId/calendars/:calendarId/colors", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/calendars/:calendarId/colors", (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
     const colors = db.prepare(`
@@ -218,8 +207,8 @@ app.get("/users/:userId/calendars/:calendarId/colors", (req, res) => {
     res.json(colors);
 });
 
-app.get("/users/:userId/calendars/:calendarId/average", (req, res) => {
-    const userId = Number(req.params.userId);
+app.get("/calendars/:calendarId/average", (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
     const from = req.query.from;
@@ -276,10 +265,17 @@ app.post("/login", async (req, res) => {
 
     req.session.userId = user.id;
 
-    res.json({
-        id: user.id,
-        userId: user.id,
-        email: user.email,
+    req.session.save((err) => {
+        if (err) {
+            console.log(err);
+            return res.sendStatus(500);
+        }
+
+        res.json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+        });
     });
 });
 
@@ -337,8 +333,8 @@ app.post("/register", async (req, res) => {
     });
 }) 
 
-app.post("/users/:userId/journal_entries", (req, res) => {
-    const userId = Number(req.params.userId);
+app.post("/journal_entries", (req, res) => {
+    const userId = req.session.userId;
     const { date, journal_text } = req.body;
 
     const stmt = db.prepare(`
@@ -358,8 +354,8 @@ app.post("/users/:userId/journal_entries", (req, res) => {
     });
 });
 
-app.post("/users/:userId/entries", (req, res) => {
-    const userId = Number(req.params.userId);
+app.post("/entries", (req, res) => {
+    const userId = req.session.userId;
 
     const { calendar_id, date, rating } = req.body;
 
@@ -380,8 +376,8 @@ app.post("/users/:userId/entries", (req, res) => {
     });
 });
 
-app.post("/users/:userId/calendars", (req, res) => {
-    const userId = Number(req.params.userId);
+app.post("/calendars", (req, res) => {
+    const userId = req.session.userId;
     const { name, max_rating } = req.body;
 
     if (!name || name.trim() === "") {
@@ -412,7 +408,7 @@ app.post("/users/:userId/calendars", (req, res) => {
     });
 });
 
-app.post("/users/:userId/calendars/:calendarId/colors", (req, res) => {
+app.post("/calendars/:calendarId/colors", (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 
@@ -430,7 +426,7 @@ app.post("/users/:userId/calendars/:calendarId/colors", (req, res) => {
 
 // DELETE -----------------------------------------------------------------------------------------------------------------
 
-app.delete("/users/:userId/entries/:calendarId/:date", (req, res) => {
+app.delete("/entries/:calendarId/:date", (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { date } = req.params;
 
@@ -446,8 +442,8 @@ app.delete("/users/:userId/entries/:calendarId/:date", (req, res) => {
     });
 })
 
-app.delete("/users/:userId/calendars/:calendarId", (req, res) => {
-    const userId = Number(req.params.userId);
+app.delete("/calendars/:calendarId", (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
     db.prepare(`
@@ -469,8 +465,8 @@ app.delete("/users/:userId/calendars/:calendarId", (req, res) => {
     res.json({ success: true })
 });
 
-app.delete("/users/:userId/journal_entries/:date", (req, res) => {
-    const userId = Number(req.params.userId);
+app.delete("/journal_entries/:date", (req, res) => {
+    const userId = req.session.userId;
     const { date } = req.params;
 
     const result = db.prepare(`
@@ -483,8 +479,8 @@ app.delete("/users/:userId/journal_entries/:date", (req, res) => {
 });
 
 // PATCH ------------------------------------------------------------------------------------------------------------------
-app.patch("/users/:userId/calendars/:calendarId", (req, res) => {
-    const userId = Number(req.params.userId);
+app.patch("/calendars/:calendarId", (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
     const { name } = req.body;
@@ -500,7 +496,7 @@ app.patch("/users/:userId/calendars/:calendarId", (req, res) => {
 })
 
 // PUT --------------------------------------------------------------------------------------------------------------------
-app.put("/users/:userId/calendars/:calendarId/colors", (req, res) => {
+app.put("/calendars/:calendarId/colors", (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 

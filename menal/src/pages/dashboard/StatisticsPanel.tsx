@@ -4,15 +4,13 @@ import type { JournalEntry } from "../../types";
 import { apiURL } from "../../config/api";
 import calculateJournalStreak from "../../utils/streak";
 
-type StatisticsPanelProps = {
-    userId: number;
-};
-
-function StatisticsPanel({userId}: StatisticsPanelProps) {
+function StatisticsPanel() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/users/${userId}/journal_entries`))
+        fetch(apiURL("/journal_entries"), {
+            credentials: "include",
+        })
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));
