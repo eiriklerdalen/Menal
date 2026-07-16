@@ -31,7 +31,7 @@ app.use(session({
 }))
 
 // GET --------------------------------------------------------------------------------------------------------------------
-app.get("/me", (req, res) => {
+app.get("/me", requireAuth, (req, res) => {
     if (!req.session.userId) {
         return res.sendStatus(401);
     }
@@ -45,7 +45,7 @@ app.get("/me", (req, res) => {
     res.json(user);
 });
 
-app.get("/journal_entries", (req, res) => {
+app.get("/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
 
     const journalEntries = db.prepare(`
@@ -58,7 +58,7 @@ app.get("/journal_entries", (req, res) => {
     res.json(journalEntries);
 });
 
-app.get("/journal_entries/:date", (req, res) => {
+app.get("/journal_entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
@@ -72,7 +72,7 @@ app.get("/journal_entries/:date", (req, res) => {
     res.json(journal_entry ?? null);
 });
 
-app.get("/overview", (req, res) => {
+app.get("/overview", requireAuth, (req, res) => {
     const userId = req.session.userId;
 
     const years = db.prepare(`
@@ -85,7 +85,7 @@ app.get("/overview", (req, res) => {
     res.json(years);
 });
 
-app.get("/overview/:year/journal_entries", (req, res) => {
+app.get("/overview/:year/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { year } = req.params;
 
@@ -100,7 +100,7 @@ app.get("/overview/:year/journal_entries", (req, res) => {
     res.json(journal_entries);
 });
 
-app.get("/overview/:year/entries", (req, res) => {
+app.get("/overview/:year/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { year } = req.params;
 
@@ -117,7 +117,7 @@ app.get("/overview/:year/entries", (req, res) => {
     res.json(entries);
 });
 
-app.get("/overview/:year", (req, res) => {
+app.get("/overview/:year", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { year } = req.params;
 
@@ -132,7 +132,7 @@ app.get("/overview/:year", (req, res) => {
     res.json(journal_entries);
 })
 
-app.get("/entries", (req, res) => {
+app.get("/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
 
     const entries = db.prepare(`
@@ -146,7 +146,7 @@ app.get("/entries", (req, res) => {
     res.json(entries);
 });
 
-app.get("/entries/:date", (req, res) => {
+app.get("/entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
@@ -162,7 +162,7 @@ app.get("/entries/:date", (req, res) => {
     res.json(entries);
 });
 
-app.get("/calendars", (req, res) => {
+app.get("/calendars", requireAuth, (req, res) => {
     const userId = req.session.userId;
 
     const calendars = db.prepare(`
@@ -179,7 +179,7 @@ app.get("/calendars", (req, res) => {
     res.json(calendars)
 });
 
-app.get("/calendars/:calendarId", (req, res) => {
+app.get("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
@@ -193,7 +193,7 @@ app.get("/calendars/:calendarId", (req, res) => {
     res.json(calendar);
 });
 
-app.get("/calendars/:calendarId/colors", (req, res) => {
+app.get("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
@@ -207,7 +207,7 @@ app.get("/calendars/:calendarId/colors", (req, res) => {
     res.json(colors);
 });
 
-app.get("/calendars/:calendarId/average", (req, res) => {
+app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
@@ -333,7 +333,7 @@ app.post("/register", async (req, res) => {
     });
 }) 
 
-app.post("/journal_entries", (req, res) => {
+app.post("/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date, journal_text } = req.body;
 
@@ -354,7 +354,7 @@ app.post("/journal_entries", (req, res) => {
     });
 });
 
-app.post("/entries", (req, res) => {
+app.post("/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
 
     const { calendar_id, date, rating } = req.body;
@@ -376,7 +376,7 @@ app.post("/entries", (req, res) => {
     });
 });
 
-app.post("/calendars", (req, res) => {
+app.post("/calendars", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { name, max_rating } = req.body;
 
@@ -408,7 +408,7 @@ app.post("/calendars", (req, res) => {
     });
 });
 
-app.post("/calendars/:calendarId/colors", (req, res) => {
+app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 
@@ -426,7 +426,7 @@ app.post("/calendars/:calendarId/colors", (req, res) => {
 
 // DELETE -----------------------------------------------------------------------------------------------------------------
 
-app.delete("/entries/:calendarId/:date", (req, res) => {
+app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { date } = req.params;
 
@@ -442,7 +442,7 @@ app.delete("/entries/:calendarId/:date", (req, res) => {
     });
 })
 
-app.delete("/calendars/:calendarId", (req, res) => {
+app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
@@ -465,7 +465,7 @@ app.delete("/calendars/:calendarId", (req, res) => {
     res.json({ success: true })
 });
 
-app.delete("/journal_entries/:date", (req, res) => {
+app.delete("/journal_entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
@@ -479,7 +479,7 @@ app.delete("/journal_entries/:date", (req, res) => {
 });
 
 // PATCH ------------------------------------------------------------------------------------------------------------------
-app.patch("/calendars/:calendarId", (req, res) => {
+app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
@@ -496,7 +496,7 @@ app.patch("/calendars/:calendarId", (req, res) => {
 })
 
 // PUT --------------------------------------------------------------------------------------------------------------------
-app.put("/calendars/:calendarId/colors", (req, res) => {
+app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 
@@ -516,6 +516,17 @@ app.put("/calendars/:calendarId/colors", (req, res) => {
 
     res.json({ success: true });
 })
+
+// Auth -------------------------------------------------------------------------------------------------------------------
+function requireAuth(req, res, next) {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            error: "Authentication required."
+        });
+    }
+
+    next();
+}
 
 // RUN
 app.listen(3000, "0.0.0.0", () => {
