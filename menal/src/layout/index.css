@@ -69,18 +69,34 @@ body {
   padding: 32px;
 }
 
-/* Dark Mode Switch -------------------------------------------------------------------------------------------------------*/
-.theme-switch {
+
+/* Footer -------------------------------------------------------------------------------------------------------*/
+.sidebar-footer {
   margin-top: auto;
 
-  width: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logout-button {
+  width: 64px;
+  height: 28px;
+
+  background-color: var(--color-sidebar-bg);
+  border: 1px solid lightgray;
+  border-radius: 999px;
+}
+
+.theme-switch {
+  width: 64px;
   height: 28px;
 
   padding: 3px;
 
   border: 1px solid lightgray;
   border-radius: 999px;
-  background: #fffbf7;
+  background: var(--color-sidebar-bg);
 
   cursor: pointer;
 

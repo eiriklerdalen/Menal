@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import ThemeSwitch from "../components/ThemeSwitch";
 import { getDate } from "../utils/date";
+import { useAuth } from "../contexts/AuthContext";
 
 type SidebarProps = {
     darkMode: boolean;
@@ -10,6 +11,13 @@ type SidebarProps = {
 
 function Sidebar({darkMode, setDarkMode}: SidebarProps) {
     const navigate = useNavigate();
+
+    const { logout } = useAuth();
+
+    async function handleLogout() {
+        await logout();
+        navigate("/login");
+    }
 
     return (
         <aside className={`sidebar ${darkMode ? "dark-mode" : ""}`}>
@@ -28,10 +36,19 @@ function Sidebar({darkMode, setDarkMode}: SidebarProps) {
                 <button onClick={() => navigate("/settings")}>Innstillinger</button>
             </nav>
 
-            <ThemeSwitch
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-            />
+            <div className="sidebar-footer">
+                <button
+                    className="logout-button"
+                    onClick={handleLogout}
+                >
+                    Logg ut
+                </button>
+
+                <ThemeSwitch
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                />
+            </div>
         </aside>
     );
 }
