@@ -29,7 +29,8 @@ function LogPage() {
 
         async function loadJournalEntry() {
             const res = await fetch(apiURL(`/journal_entries/${selectedDate}`), {
-                signal: controller.signal 
+                signal: controller.signal,
+                credentials: "include",
             });
 
             if (!res.ok) {
