@@ -256,14 +256,25 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
+    // Input-validering
+    if (!areStrings(email, password)) {
+        return badRequest(res);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (cleanEmail === "" || password === "") {
+        return badRequest(res);
+    }
+
     const user = db.prepare(`
         SELECT *
         FROM users
         WHERE email = ?
-    `).get(email);
+    `).get(cleanEmail);
 
     if (!user) {
-        return res.status(401).json({ error: "Invalid email or password."});
+        return unauthorizedLogin(res);
     }
 
     const passwordIsValid = await bcrypt.compare(
@@ -272,23 +283,10 @@ app.post("/login", async (req, res) => {
     );
 
     if (!passwordIsValid) {
-        return res.status(401).json({ error: "Invalid email or password."});
+        return unauthorizedLogin(res);
     }
 
-    req.session.userId = user.id;
-
-    req.session.save((err) => {
-        if (err) {
-            console.log(err);
-            return res.sendStatus(500);
-        }
-
-        res.json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-        });
-    });
+    return createSession(req, res, user);
 });
 
 app.post("/logout", (req, res) => {
@@ -301,22 +299,47 @@ app.post("/logout", (req, res) => {
 
         res.sendStatus(204);
     })
-})
+});
 
 app.post("/register", async (req, res) => {
     const { email, name, password, confirmPassword } = req.body;
 
+    // Input-validering
+    if (!areStrings(email, name, password, confirmPassword)) {
+        return badRequest(res);
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim().toLowerCase();
+
+    if (cleanEmail === "" ||
+        cleanName === "" ||
+        password === ""
+    ) {
+        return badRequest(res);
+    }
+
+    if (cleanName.length > 50) {
+        return badRequest(res, "Navn er for langt.")
+    }
+
+    if (cleanEmail.length > 254) {
+        return badRequest(res, "Email er for lang.")
+    }
+
+    if (password.length < 8) {
+        return badRequest(res, "Passord må være minst 8 karakterer langt.");
+    }
+
     if (password !== confirmPassword) {
-        return res.status(400).json({
-            error: "Passwords do not match.",
-        });
+        return badRequest(res, "Passord mather ikke.");
     }
 
     const existingUser = db.prepare(`
         SELECT id
         FROM users
         WHERE email = ?
-    `).get(email);
+    `).get(cleanEmail);
 
     if (existingUser) {
         return res.status(409).json({
@@ -330,7 +353,7 @@ app.post("/register", async (req, res) => {
         INSERT INTO users
         (name, email, password_hash)
         VALUES (?, ?, ?)
-    `).run(name, email, passwordHash);
+    `).run(cleanName, cleanEmail, passwordHash);
 
     const user = db.prepare(`
         SELECT id, name, email
@@ -338,12 +361,8 @@ app.post("/register", async (req, res) => {
         WHERE id = ?    
     `).get(result.lastInsertRowid);
 
-    res.status(201).json({
-        userId: user.id,
-        name: user.name,
-        email: user.email,
-    });
-}) 
+    return createSession(req, res, user, 201);
+});
 
 app.post("/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
@@ -490,7 +509,7 @@ app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
-    // Ownership check
+    // Ownership check 
     const calendar = db.prepare(`
         SELECT id
         FROM calendars
@@ -603,3 +622,33 @@ function requireAuth(req, res, next) {
 app.listen(3000, "0.0.0.0", () => {
   console.log("Server running on http://10.0.0.79:3000");
 });
+
+// Input-validation --------------------------------------------------------------------------------------------------------
+function areStrings(...values) {
+    return values.every((value) => typeof value === "string");
+}
+
+function badRequest(res, message="Invalid input.") {
+    return res.status(400).json({ error: message });
+}
+
+function unauthorizedLogin(res) {
+    return res.status(401).json({ error: "Invalid email or password."});
+}
+
+function createSession(req, res, user, status = 200) {
+    req.session.userId = user.id;
+
+    req.session.save((err) => {
+        if (err) {
+            console.log(err);
+            return res.sendStatus(500);
+        }
+
+        res.status(status).json({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+        });
+    });
+}
