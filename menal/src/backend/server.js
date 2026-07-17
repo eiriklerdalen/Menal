@@ -197,6 +197,18 @@ app.get("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
+    // Ownership check
+    const calendar = db.prepare(`
+        SELECT id
+        FROM calendars
+        WHERE id = ?
+        AND user_id = ?
+    `).get(calendarId, userId);
+
+    if (!calendar) {
+        return res.sendStatus(404);
+    }
+
     const colors = db.prepare(`
         SELECT *
         FROM calendar_rating_colors
@@ -337,14 +349,12 @@ app.post("/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date, journal_text } = req.body;
 
-    const stmt = db.prepare(`
+    const result = db.prepare(`
         INSERT INTO journal_entries (user_id, date, journal_text)
         VALUES (?, ?, ?)
         ON CONFLICT(user_id, date)
         DO UPDATE SET journal_text = excluded.journal_text;    
-    `);
-
-    const result = stmt.run(userId, date, journal_text);
+    `).run(userId, date, journal_text);
 
     res.json({
         id: result.lastInsertRowid,
@@ -359,14 +369,24 @@ app.post("/entries", requireAuth, (req, res) => {
 
     const { calendar_id, date, rating } = req.body;
 
+    // Ownership check
+    const calendar = db.prepare(`
+        SELECT id
+        FROM calendars
+        WHERE id = ?
+        AND user_id = ?
+    `).get(calendar_id, userId);
+
+    if (!calendar) {
+        return res.sendStatus(404);
+    }
+
     const stmt = db.prepare(`
         INSERT INTO entries (calendar_id, date, rating)
         VALUES (?, ?, ?)
         ON CONFLICT(calendar_id, date)
         DO UPDATE SET rating = excluded.rating;
-    `);
-
-    const result = stmt.run(calendar_id, date, rating);
+    `).run(calendar_id, date, rating);
 
     res.json({
         id: result.lastInsertRowid,
@@ -409,6 +429,7 @@ app.post("/calendars", requireAuth, (req, res) => {
 });
 
 app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
 
@@ -417,18 +438,41 @@ app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
         VALUES (?, ?, ?)
     `);
 
+    // Ownership check
+    const calendar = db.prepare(`
+        SELECT id
+        FROM calendars
+        WHERE id = ?
+        AND user_id = ?
+    `).get(calendarId, userId);
+
+    if (!calendar) {
+        return res.sendStatus(404);
+    }
+
     colors.forEach((color, index) => {
         stmt.run(calendarId, index + 1, color);
     });
 
     res.json({ success: true });
-})
+});
 
 // DELETE -----------------------------------------------------------------------------------------------------------------
-
 app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { date } = req.params;
+
+    // Ownership check
+    const calendar = db.prepare(`
+        SELECT user_id
+        FROM calendars
+        WHERE id = ?
+    `).get(calendarId);
+
+    if (!calendar || calendar.user_id !== userId) {
+        return res.sendStatus(404);
+    }
 
     const result = db.prepare(`
         DELETE FROM entries
@@ -440,28 +484,43 @@ app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
         success: true,
         changes: result.changes,
     });
-})
+});
 
 app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
-    db.prepare(`
-        DELETE FROM entries
-        WHERE calendar_id = ?    
-    `).run(calendarId);
-
-    db.prepare(`
-        DELETE FROM calendar_rating_colors
-        WHERE calendar_id = ?
-    `).run(calendarId);
-
-    db.prepare(`
-        DELETE FROM calendars
+    // Ownership check
+    const calendar = db.prepare(`
+        SELECT id
+        FROM calendars
         WHERE id = ?
-        and user_id = ?
-    `).run(calendarId, userId);
+        AND user_id = ?    
+    `).get(calendarId, userId);
 
+    if (!calendar) {
+        return res.sendStatus(404);
+    }
+
+    const deleteCalendar = db.transaction((calendarId, userId) => {
+        db.prepare(`
+            DELETE FROM entries
+            WHERE calendar_id = ?    
+        `).run(calendarId);
+
+        db.prepare(`
+            DELETE FROM calendar_rating_colors
+            WHERE calendar_id = ?
+        `).run(calendarId);
+
+        db.prepare(`
+            DELETE FROM calendars
+            WHERE id = ?
+            and user_id = ?
+        `).run(calendarId, userId);
+    });
+
+    deleteCalendar(calendarId, userId);
     res.json({ success: true })
 });
 
@@ -497,8 +556,20 @@ app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
 
 // PUT --------------------------------------------------------------------------------------------------------------------
 app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
+    const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body;
+
+    // Ownership check
+    const calendar = db.prepare(`
+        SELECT user_id
+        FROM calendars
+        WHERE id = ?
+    `).get(calendarId);
+
+    if (!calendar || calendar.user_id !== userId) {
+        return res.sendStatus(404);
+    }
 
     db.prepare(`
         DELETE FROM calendar_rating_colors
@@ -515,7 +586,7 @@ app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     });
 
     res.json({ success: true });
-})
+});
 
 // Auth -------------------------------------------------------------------------------------------------------------------
 function requireAuth(req, res, next) {
