@@ -7,6 +7,9 @@ import bcrypt from "bcrypt";
 import cors from "cors";
 import session from "express-session";
 
+const MAX_JOURNAL_LENGTH = 10000
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 const app = express();
 const db = new Database("./src/backend/menal.db");
 
@@ -289,7 +292,7 @@ app.post("/login", async (req, res) => {
 
         return createSession(req, res, user);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.sendStatus(500);
     }
 });
@@ -375,7 +378,7 @@ app.post("/register", async (req, res) => {
 
         return createSession(req, res, user, 201);
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.sendStatus(500);
     }
 });
@@ -384,24 +387,43 @@ app.post("/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date, journal_text } = req.body;
 
-    const result = db.prepare(`
-        INSERT INTO journal_entries (user_id, date, journal_text)
-        VALUES (?, ?, ?)
-        ON CONFLICT(user_id, date)
-        DO UPDATE SET journal_text = excluded.journal_text;    
-    `).run(userId, date, journal_text);
+    // Input-validering
+    if (typeof date !== "string" ||
+        typeof journal_text !== "string"
+    ) {
+        return badRequest(res);
+    }
 
-    res.json({
-        id: result.lastInsertRowid,
-        user_id: userId,
-        date,
-        journal_text
-    });
+    if (journal_text.length > MAX_JOURNAL_LENGTH) {
+        return badRequest(res, "Journaltekst må være mindre enn 10 000 tegn.")
+    }
+
+    if (!DATE_PATTERN.test(date)) {
+        return badRequest(res);
+    }
+
+    try {
+        const result = db.prepare(`
+            INSERT INTO journal_entries (user_id, date, journal_text)
+            VALUES (?, ?, ?)
+            ON CONFLICT(user_id, date)
+            DO UPDATE SET journal_text = excluded.journal_text;    
+        `).run(userId, date, journal_text);
+
+        res.json({
+            id: result.lastInsertRowid,
+            user_id: userId,
+            date,
+            journal_text
+        });
+    } catch (error) {
+        console.error(error);
+        return res.sendStatus(500);
+    }
 });
 
 app.post("/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
-
     const { calendar_id, date, rating } = req.body;
 
     // Ownership check
