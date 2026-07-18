@@ -426,31 +426,60 @@ app.post("/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { calendar_id, date, rating } = req.body;
 
-    // Ownership check
-    const calendar = db.prepare(`
-        SELECT id
-        FROM calendars
-        WHERE id = ?
-        AND user_id = ?
-    `).get(calendar_id, userId);
-
-    if (!calendar) {
-        return res.sendStatus(404);
+    // Input-validering (1)
+    if (typeof calendar_id !== "number" ||
+        typeof date !== "string" ||
+        typeof rating !== "number"
+    ) {
+        return badRequest(res);
     }
 
-    const stmt = db.prepare(`
-        INSERT INTO entries (calendar_id, date, rating)
-        VALUES (?, ?, ?)
-        ON CONFLICT(calendar_id, date)
-        DO UPDATE SET rating = excluded.rating;
-    `).run(calendar_id, date, rating);
+    if (!DATE_PATTERN.test(date)) {
+        return badRequest(res);
+    }
 
-    res.json({
-        id: result.lastInsertRowid,
-        calendar_id,
-        date,
-        rating
-    });
+    if (
+        !Number.isInteger(calendar_id) ||
+        !Number.isInteger(rating)
+    ) {
+        return badRequest(res);
+    }
+
+    try {
+        // Ownership check
+        const calendar = db.prepare(`
+            SELECT id, max_rating
+            FROM calendars
+            WHERE id = ?
+            AND user_id = ?
+        `).get(calendar_id, userId);
+
+        if (!calendar) {
+            return res.sendStatus(404);
+        }
+
+        // Input-validering (2)
+        if (rating < 1 || rating > calendar.max_rating) {
+            return badRequest(res, "Rating må være mellom 1 og max_rating.")
+        }
+
+        const result = db.prepare(`
+            INSERT INTO entries (calendar_id, date, rating)
+            VALUES (?, ?, ?)
+            ON CONFLICT(calendar_id, date)
+            DO UPDATE SET rating = excluded.rating;
+        `).run(calendar_id, date, rating);
+
+        return res.json({
+            id: result.lastInsertRowid,
+            calendar_id,
+            date,
+            rating
+        });
+    } catch (error) {
+        console.error(error);
+        return res.sendStatus(500);
+    }
 });
 
 app.post("/calendars", requireAuth, (req, res) => {
