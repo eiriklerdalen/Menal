@@ -486,32 +486,52 @@ app.post("/calendars", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { name, max_rating } = req.body;
 
-    if (!name || name.trim() === "") {
-        return res.status(400).json({
-            error: "Calendar name is required"
-        });
+    // Input-validering
+    if (typeof name !== "string" ||
+        typeof max_rating !== "number"
+    ) {
+        return badRequest(res);
     }
 
-    const lastPosition = db.prepare(`
-        SELECT MAX(position) AS maxPosition
-        FROM calendars
-        WHERE user_id = ?
-    `).get(userId);
+    const cleanName = name.trim();
 
-    const newPosition = (lastPosition.maxPosition ?? -1) + 1;
+    if (cleanName === "") {
+        return badRequest(res, "Kalender må ha et navn.")
+    }
 
-    const result = db.prepare(`
-        INSERT INTO calendars (user_id, name, max_rating, position)
-        VALUES (?, ?, ?, ?)
-    `).run(userId, name, max_rating, newPosition);
+    if (cleanName.length > 50) {
+        return badRequest(res, "Kalendernavnet kan maks være 50 tegn.")
+    }
 
-    res.json({
-        id: result.lastInsertRowid,
-        userId,
-        name,
-        max_rating,
-        position: newPosition
-    });
+    if (!Number.isInteger(max_rating)) {
+        return badRequest(res);
+    }
+
+    try {
+        const lastPosition = db.prepare(`
+            SELECT MAX(position) AS maxPosition
+            FROM calendars
+            WHERE user_id = ?
+        `).get(userId);
+
+        const newPosition = (lastPosition.maxPosition ?? -1) + 1;
+
+        const result = db.prepare(`
+            INSERT INTO calendars (user_id, name, max_rating, position)
+            VALUES (?, ?, ?, ?)
+        `).run(userId, cleanName, max_rating, newPosition);
+
+        res.status(201).json({
+            id: result.lastInsertRowid,
+            userId,
+            name,
+            max_rating,
+            position: newPosition
+        });
+    } catch (error) {
+        console.error(error);
+        return res.sendStatus(500);
+    }
 });
 
 app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
