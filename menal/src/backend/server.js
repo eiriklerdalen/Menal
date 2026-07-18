@@ -310,7 +310,7 @@ app.post("/register", async (req, res) => {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const cleanName = name.trim().toLowerCase();
+    const cleanName = name.trim();
 
     if (cleanEmail === "" ||
         cleanName === "" ||
@@ -319,20 +319,26 @@ app.post("/register", async (req, res) => {
         return badRequest(res);
     }
 
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(cleanEmail)) {
+        return badRequest(res, "Ugyldig e-postadresse.")
+    }
+
     if (cleanName.length > 50) {
-        return badRequest(res, "Navn er for langt.")
+        return badRequest(res, "Navnet er for langt.")
     }
 
     if (cleanEmail.length > 254) {
-        return badRequest(res, "Email er for lang.")
+        return badRequest(res, "E-postadressen er for lang.")
     }
 
-    if (password.length < 8) {
-        return badRequest(res, "Passord må være minst 8 karakterer langt.");
+    if (password.length < 8 || password.length > 128) {
+        return badRequest(res, "Passord må være mellom 8 og 128 tegn.");
     }
 
     if (password !== confirmPassword) {
-        return badRequest(res, "Passord mather ikke.");
+        return badRequest(res, "Passord matcher ikke.");
     }
 
     const existingUser = db.prepare(`
@@ -343,25 +349,30 @@ app.post("/register", async (req, res) => {
 
     if (existingUser) {
         return res.status(409).json({
-            error: "Email already exists."
+            error: "E-postadresse allerede registrert."
         });
     }
 
-    const passwordHash = await bcrypt.hash(password, 12);
+    try {
+        const passwordHash = await bcrypt.hash(password, 12);
 
-    const result = db.prepare(`
-        INSERT INTO users
-        (name, email, password_hash)
-        VALUES (?, ?, ?)
-    `).run(cleanName, cleanEmail, passwordHash);
+        const result = db.prepare(`
+            INSERT INTO users
+            (name, email, password_hash)
+            VALUES (?, ?, ?)
+        `).run(cleanName, cleanEmail, passwordHash);
 
-    const user = db.prepare(`
-        SELECT id, name, email
-        FROM users
-        WHERE id = ?    
-    `).get(result.lastInsertRowid);
+        const user = db.prepare(`
+            SELECT id, name, email
+            FROM users
+            WHERE id = ?    
+        `).get(result.lastInsertRowid);
 
-    return createSession(req, res, user, 201);
+        return createSession(req, res, user, 201);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
 });
 
 app.post("/journal_entries", requireAuth, (req, res) => {
