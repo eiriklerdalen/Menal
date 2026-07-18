@@ -267,26 +267,31 @@ app.post("/login", async (req, res) => {
         return badRequest(res);
     }
 
-    const user = db.prepare(`
-        SELECT *
-        FROM users
-        WHERE email = ?
-    `).get(cleanEmail);
+    try {
+        const user = db.prepare(`
+            SELECT *
+            FROM users
+            WHERE email = ?
+        `).get(cleanEmail);
 
-    if (!user) {
-        return unauthorizedLogin(res);
+        if (!user) {
+            return unauthorizedLogin(res);
+        }
+
+        const passwordIsValid = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
+
+        if (!passwordIsValid) {
+            return unauthorizedLogin(res);
+        }
+
+        return createSession(req, res, user);
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
     }
-
-    const passwordIsValid = await bcrypt.compare(
-        password,
-        user.password_hash
-    );
-
-    if (!passwordIsValid) {
-        return unauthorizedLogin(res);
-    }
-
-    return createSession(req, res, user);
 });
 
 app.post("/logout", (req, res) => {
