@@ -69,6 +69,15 @@ app.get("/journal_entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
+    // Input-validering
+    if (typeof date !== "string") {
+        return badRequest(res);
+    }
+
+    if (!DATE_PATTERN.test(date)) {
+        return badRequest(res);
+    }
+
     const journal_entry = db.prepare(`
         SELECT *
         FROM journal_entries
@@ -96,6 +105,10 @@ app.get("/overview/:year/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { year } = req.params;
 
+    if (!validateYear(year)) {
+        return badRequest(res);
+    }
+
     const journal_entries = db.prepare(`
         SELECT *
         FROM journal_entries
@@ -110,6 +123,10 @@ app.get("/overview/:year/journal_entries", requireAuth, (req, res) => {
 app.get("/overview/:year/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { year } = req.params;
+
+    if (!validateYear(year)) {
+        return badRequest(res);
+    }
 
     const entries = db.prepare(`
         SELECT entries.*
@@ -127,6 +144,10 @@ app.get("/overview/:year/entries", requireAuth, (req, res) => {
 app.get("/overview/:year", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { year } = req.params;
+
+    if (!validateYear(year)) {
+        return badRequest(res);
+    }
 
     const journal_entries = db.prepare(`
         SELECT *
@@ -156,6 +177,15 @@ app.get("/entries", requireAuth, (req, res) => {
 app.get("/entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
+
+    // Input-validering
+    if (typeof date !== "string") {
+        return badRequest(res);
+    }
+
+    if (!DATE_PATTERN.test(date)) {
+        return badRequest(res);
+    }
 
     const entries = db.prepare(`
         SELECT entries.*
@@ -190,6 +220,11 @@ app.get("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
+    // Input-validering
+    if (typeof calendarId !== "number" || calendarId <= 0) {
+        return badRequest(res);
+    }
+
     const calendar = db.prepare(`
         SELECT id, user_id, name, max_rating
         FROM calendars
@@ -203,6 +238,11 @@ app.get("/calendars/:calendarId", requireAuth, (req, res) => {
 app.get("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
+
+    // Input-validering
+    if (typeof calendarId !== "number" || calendarId <= 0) {
+        return badRequest(res);
+    }
 
     // Ownership check
     const calendar = db.prepare(`
@@ -233,10 +273,25 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
     const from = req.query.from;
     const to = req.query.to;
 
+    // Input-validering
+    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+        return badRequest(res);
+    }
+
     if (!from || !to) {
-        return res.status(400).json({
-            error: "Missing from or to date",
-        });
+        return badRequest(res, "Missing from or to date.");
+    }
+
+    if (typeof from !== "string" || typeof to !== "string") {
+        return badRequest(res);
+    }
+
+    if (!DATE_PATTERN.test(from) || !DATE_PATTERN.test(to)) {
+        return badRequest(res);
+    }
+
+    if (from > to) {
+        return badRequest(res, "From-date cannot be after to-date.");
     }
 
     const result = db.prepare(`
@@ -261,7 +316,7 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
 
 // POST -------------------------------------------------------------------------------------------------------------------
 app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body ?? {};
 
     // Input-validering
     if (!areStrings(email, password)) {
@@ -314,7 +369,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-    const { email, name, password, confirmPassword } = req.body;
+    const { email, name, password, confirmPassword } = req.body ?? {};
 
     // Input-validering
     if (!areStrings(email, name, password, confirmPassword)) {
@@ -389,7 +444,7 @@ app.post("/register", async (req, res) => {
 
 app.post("/journal_entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
-    const { date, journal_text } = req.body;
+    const { date, journal_text } = req.body ?? {};
 
     // Input-validering
     if (typeof date !== "string" ||
@@ -428,24 +483,18 @@ app.post("/journal_entries", requireAuth, (req, res) => {
 
 app.post("/entries", requireAuth, (req, res) => {
     const userId = req.session.userId;
-    const { calendar_id, date, rating } = req.body;
+    const { calendar_id, date, rating } = req.body ?? {};
 
     // Input-validering (1)
-    if (typeof calendar_id !== "number" ||
+    if (!Number.isInteger(calendar_id) ||
+        calendar_id <= 0 ||
         typeof date !== "string" ||
-        typeof rating !== "number"
-    ) {
-        return badRequest(res);
-    }
-
-    if (!DATE_PATTERN.test(date)) {
-        return badRequest(res);
-    }
-
-    if (
-        !Number.isInteger(calendar_id) ||
         !Number.isInteger(rating)
     ) {
+        return badRequest(res);
+        }
+
+    if (!DATE_PATTERN.test(date)) {
         return badRequest(res);
     }
 
@@ -488,11 +537,11 @@ app.post("/entries", requireAuth, (req, res) => {
 
 app.post("/calendars", requireAuth, (req, res) => {
     const userId = req.session.userId;
-    const { name, max_rating } = req.body;
+    const { name, max_rating } = req.body ?? {};
 
     // Input-validering
     if (typeof name !== "string" ||
-        typeof max_rating !== "number"
+        !Number.isInteger(max_rating)
     ) {
         return badRequest(res);
     }
@@ -507,7 +556,7 @@ app.post("/calendars", requireAuth, (req, res) => {
         return badRequest(res, "Kalendernavnet kan maks være 50 tegn.")
     }
 
-    if (!Number.isInteger(max_rating)) {
+    if (max_rating > 7 || max_rating < 1) {
         return badRequest(res);
     }
 
@@ -541,16 +590,16 @@ app.post("/calendars", requireAuth, (req, res) => {
 app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
-    const { colors } = req.body;
+    const { colors } = req.body ?? {};
 
-    const stmt = db.prepare(`
-        INSERT INTO calendar_rating_colors (calendar_id, rating, color)
-        VALUES (?, ?, ?)
-    `);
+    // Input-validering (1)
+    if (!calendarColorsValidation(calendarId, colors)) {
+        return badRequest(res);
+    }
 
     // Ownership check
     const calendar = db.prepare(`
-        SELECT id
+        SELECT id, max_rating
         FROM calendars
         WHERE id = ?
         AND user_id = ?
@@ -559,6 +608,16 @@ app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     if (!calendar) {
         return res.sendStatus(404);
     }
+
+    // Input-validering (2)
+    if (calendar.max_rating !== colors.length) {
+        return badRequest(res);
+    }
+
+    const stmt = db.prepare(`
+        INSERT INTO calendar_rating_colors (calendar_id, rating, color)
+        VALUES (?, ?, ?)
+    `);
 
     colors.forEach((color, index) => {
         stmt.run(calendarId, index + 1, color);
@@ -572,6 +631,19 @@ app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { date } = req.params;
+
+    // Input-validering
+    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+        return badRequest(res);
+    }
+
+    if (typeof date !== "string") {
+        return badRequest(res);
+    }
+
+    if (!DATE_PATTERN.test(date)) {
+        return badRequest(res);
+    }
 
     // Ownership check
     const calendar = db.prepare(`
@@ -599,6 +671,11 @@ app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
 app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
+
+    // Input-validering
+    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+        return badRequest(res);
+    }
 
     // Ownership check 
     const calendar = db.prepare(`
@@ -638,6 +715,14 @@ app.delete("/journal_entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
+    if (typeof date !== "string") {
+        return badRequest(res);
+    }
+
+    if (!DATE_PATTERN.test(date)) {
+        return badRequest(res);
+    }
+
     const result = db.prepare(`
         DELETE FROM journal_entries
         WHERE user_id = ?
@@ -651,34 +736,65 @@ app.delete("/journal_entries/:date", requireAuth, (req, res) => {
 app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
+    const { name } = req.body ?? {};
 
-    const { name } = req.body;
+    // Input-validering
+    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+        return badRequest(res);
+    }
+
+    if (typeof name !== "string") {
+        return badRequest(res);
+    }
+
+    const cleanName = name.trim();
+    if (cleanName.length > 50) {
+        return badRequest(res, "Calendar name can be 50 characters maximum.");
+    }
+
+    if (cleanName === "") {
+        return badRequest(res, "Calendar must have a name");
+    }
     
-    db.prepare(`
+    const result = db.prepare(`
         UPDATE calendars
         SET name = ?
         WHERE id = ?
         AND user_id = ?
-    `).run(name, calendarId, userId);
+    `).run(cleanName, calendarId, userId);
 
-    res.json({ success: true });
-})
+    if (result.changes === 0) {
+        return res.sendStatus(404);
+    }
+
+    return res.json({ success: true });
+});
 
 // PUT --------------------------------------------------------------------------------------------------------------------
 app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
-    const { colors } = req.body;
+    const { colors } = req.body ?? {};
+
+    // Input-validering
+    if (!calendarColorsValidation(calendarId, colors)) {
+        return badRequest(res);
+    }
 
     // Ownership check
     const calendar = db.prepare(`
-        SELECT user_id
+        SELECT user_id, max_rating
         FROM calendars
         WHERE id = ?
     `).get(calendarId);
 
     if (!calendar || calendar.user_id !== userId) {
         return res.sendStatus(404);
+    }
+
+    // Input-validering (2)
+    if (calendar.max_rating !== colors.length) {
+        return badRequest(res);
     }
 
     db.prepare(`
@@ -720,6 +836,32 @@ function badRequest(res, message="Invalid input.") {
 
 function unauthorizedLogin(res) {
     return res.status(401).json({ error: "Invalid email or password."});
+}
+
+function validateYear(year) {
+    const yearPattern = /^\d{4}$/;
+    if (!yearPattern.test(year)) {
+        return false;
+    }
+
+    return true;
+}
+
+function calendarColorsValidation(calendarId, colors) {
+    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+        return false;
+    }
+
+    if (!Array.isArray(colors) || !colors.every((color) => typeof color === "string")) {
+        return false;
+    }
+
+    const colorPattern = /^#[0-9A-Fa-f]{6}$/;
+    if (!colors.every((color) => colorPattern.test(color))) {
+        return false;
+    }
+
+    return true;
 }
 
 function createSession(req, res, user, status = 200) {
