@@ -14,7 +14,11 @@ const app = express();
 const db = new Database("./src/backend/menal.db");
 
 app.use(cors({
-    origin: "http://10.0.0.79:5173",
+    origin: [
+        "http://localhost:5173",
+        "http://10.0.0.80:5173",
+        "http://127.0.0.1:5173",
+    ],
     credentials: true,
 }));
 
@@ -705,11 +709,6 @@ function requireAuth(req, res, next) {
     next();
 }
 
-// RUN
-app.listen(3000, "0.0.0.0", () => {
-  console.log("Server running on http://10.0.0.79:3000");
-});
-
 // Input-validation --------------------------------------------------------------------------------------------------------
 function areStrings(...values) {
     return values.every((value) => typeof value === "string");
@@ -739,3 +738,8 @@ function createSession(req, res, user, status = 200) {
         });
     });
 }
+
+// RUN
+app.listen(3000, "0.0.0.0", () => {
+  console.log("Server running on http://10.0.0.80:3000");
+});
