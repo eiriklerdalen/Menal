@@ -221,7 +221,7 @@ app.get("/calendars/:calendarId", requireAuth, (req, res) => {
     const calendarId = Number(req.params.calendarId);
 
     // Input-validering
-    if (typeof calendarId !== "number" || calendarId <= 0) {
+    if (!validateCalendarId(calendarId)) {
         return badRequest(res);
     }
 
@@ -240,7 +240,7 @@ app.get("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const calendarId = Number(req.params.calendarId);
 
     // Input-validering
-    if (typeof calendarId !== "number" || calendarId <= 0) {
+    if (!validateCalendarId(calendarId)) {
         return badRequest(res);
     }
 
@@ -274,7 +274,7 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
     const to = req.query.to;
 
     // Input-validering
-    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+    if (!validateCalendarId(calendarId)) {
         return badRequest(res);
     }
 
@@ -486,9 +486,11 @@ app.post("/entries", requireAuth, (req, res) => {
     const { calendar_id, date, rating } = req.body ?? {};
 
     // Input-validering (1)
-    if (!Number.isInteger(calendar_id) ||
-        calendar_id <= 0 ||
-        typeof date !== "string" ||
+    if (!validateCalendarId(calendar_id)) {
+        return badRequest(res);
+    }
+
+    if (typeof date !== "string" ||
         !Number.isInteger(rating)
     ) {
         return badRequest(res);
@@ -593,7 +595,11 @@ app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const { colors } = req.body ?? {};
 
     // Input-validering (1)
-    if (!calendarColorsValidation(calendarId, colors)) {
+    if (!validateCalendarId(calendarId)) {
+        return badRequest(res);
+    }
+
+    if (!calendarColorsValidation(colors)) {
         return badRequest(res);
     }
 
@@ -633,7 +639,7 @@ app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
     const { date } = req.params;
 
     // Input-validering
-    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+    if (!validateCalendarId(calendarId)) {
         return badRequest(res);
     }
 
@@ -673,7 +679,7 @@ app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
     const calendarId = Number(req.params.calendarId);
 
     // Input-validering
-    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+    if (!validateCalendarId(calendarId)) {
         return badRequest(res);
     }
 
@@ -739,7 +745,7 @@ app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
     const { name } = req.body ?? {};
 
     // Input-validering
-    if (!Number.isInteger(calendarId) || calendarId <= 0) {
+    if (!validateCalendarId(calendarId)) {
         return badRequest(res);
     }
 
@@ -777,7 +783,11 @@ app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
     const { colors } = req.body ?? {};
 
     // Input-validering
-    if (!calendarColorsValidation(calendarId, colors)) {
+    if (!validateCalendarId(calendarId)) {
+        return badRequest(res);
+    }
+
+    if (!calendarColorsValidation(colors)) {
         return badRequest(res);
     }
 
@@ -838,20 +848,16 @@ function unauthorizedLogin(res) {
     return res.status(401).json({ error: "Invalid email or password."});
 }
 
-function validateYear(year) {
-    const yearPattern = /^\d{4}$/;
-    if (!yearPattern.test(year)) {
-        return false;
-    }
-
-    return true;
+function validateCalendarId(calendarId) {
+    return Number.isInteger(calendarId) && calendarId <= 0;
 }
 
-function calendarColorsValidation(calendarId, colors) {
-    if (!Number.isInteger(calendarId) || calendarId <= 0) {
-        return false;
-    }
+function validateYear(year) {
+    const yearPattern = /^\d{4}$/;
+    return yearPattern.test(year);
+}
 
+function calendarColorsValidation(colors) {
     if (!Array.isArray(colors) || !colors.every((color) => typeof color === "string")) {
         return false;
     }
