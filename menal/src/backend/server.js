@@ -70,11 +70,7 @@ app.get("/journal_entries/:date", requireAuth, (req, res) => {
     const { date } = req.params;
 
     // Input-validering
-    if (typeof date !== "string") {
-        return badRequest(res);
-    }
-
-    if (!DATE_PATTERN.test(date)) {
+    if (!validateDate(date)) {
         return badRequest(res);
     }
 
@@ -179,11 +175,7 @@ app.get("/entries/:date", requireAuth, (req, res) => {
     const { date } = req.params;
 
     // Input-validering
-    if (typeof date !== "string") {
-        return badRequest(res);
-    }
-
-    if (!DATE_PATTERN.test(date)) {
+    if (!validateDate(date)) {
         return badRequest(res);
     }
 
@@ -282,11 +274,7 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
         return badRequest(res, "Missing from or to date.");
     }
 
-    if (typeof from !== "string" || typeof to !== "string") {
-        return badRequest(res);
-    }
-
-    if (!DATE_PATTERN.test(from) || !DATE_PATTERN.test(to)) {
+    if (!validateDate(from) || !validateDate(to)) {
         return badRequest(res);
     }
 
@@ -447,18 +435,16 @@ app.post("/journal_entries", requireAuth, (req, res) => {
     const { date, journal_text } = req.body ?? {};
 
     // Input-validering
-    if (typeof date !== "string" ||
-        typeof journal_text !== "string"
-    ) {
+    if (typeof journal_text !== "string") {
+        return badRequest(res);
+    }
+
+    if (!validateDate(date)) {
         return badRequest(res);
     }
 
     if (journal_text.length > MAX_JOURNAL_LENGTH) {
         return badRequest(res, "Journaltekst må være mindre enn 10 000 tegn.")
-    }
-
-    if (!DATE_PATTERN.test(date)) {
-        return badRequest(res);
     }
 
     try {
@@ -490,13 +476,11 @@ app.post("/entries", requireAuth, (req, res) => {
         return badRequest(res);
     }
 
-    if (typeof date !== "string" ||
-        !Number.isInteger(rating)
-    ) {
+    if (!validateDate(date)) {
         return badRequest(res);
-        }
+    }
 
-    if (!DATE_PATTERN.test(date)) {
+    if (!Number.isInteger(rating)) {
         return badRequest(res);
     }
 
@@ -643,11 +627,7 @@ app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
         return badRequest(res);
     }
 
-    if (typeof date !== "string") {
-        return badRequest(res);
-    }
-
-    if (!DATE_PATTERN.test(date)) {
+    if (!validateDate(date)) {
         return badRequest(res);
     }
 
@@ -721,11 +701,8 @@ app.delete("/journal_entries/:date", requireAuth, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
-    if (typeof date !== "string") {
-        return badRequest(res);
-    }
-
-    if (!DATE_PATTERN.test(date)) {
+    // Input-validering
+    if (!validateDate(date)) {
         return badRequest(res);
     }
 
@@ -850,6 +827,21 @@ function unauthorizedLogin(res) {
 
 function validateCalendarId(calendarId) {
     return Number.isInteger(calendarId) && calendarId <= 0;
+}
+
+function validateDate(date) {
+    if (typeof date !== "string" || !DATE_PATTERN.test(date)) {
+        return false;
+    }
+
+    const [year, month, day] = date.split("-").map(Number);
+    const parsedDate = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+        parsedDate.getUTCFullYear() === year &&
+        parsedDate.getUTCMonth() === month - 1 &&
+        parsedDate.getUTCDay() === day
+    );
 }
 
 function validateYear(year) {
