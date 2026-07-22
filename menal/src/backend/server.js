@@ -368,7 +368,6 @@ app.post("/register", async (req, res) => {
     const cleanName = name.trim();
 
     if (cleanEmail === "" ||
-        cleanName === "" ||
         password === ""
     ) {
         return badRequest(res);
@@ -380,8 +379,8 @@ app.post("/register", async (req, res) => {
         return badRequest(res, "Ugyldig e-postadresse.")
     }
 
-    if (cleanName.length > 50) {
-        return badRequest(res, "Navnet er for langt.")
+    if (!validateName(cleanName)) {
+        return badRequest(res, "Name too long or empty.");
     }
 
     if (cleanEmail.length > 254) {
@@ -534,12 +533,8 @@ app.post("/calendars", requireAuth, (req, res) => {
 
     const cleanName = name.trim();
 
-    if (cleanName === "") {
-        return badRequest(res, "Kalender må ha et navn.")
-    }
-
-    if (cleanName.length > 50) {
-        return badRequest(res, "Kalendernavnet kan maks være 50 tegn.")
+    if (!validateName(cleanName)) {
+        return badRequest(res, "Name too long or empty.");
     }
 
     if (max_rating > 7 || max_rating < 1) {
@@ -731,12 +726,9 @@ app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
     }
 
     const cleanName = name.trim();
-    if (cleanName.length > 50) {
-        return badRequest(res, "Calendar name can be 50 characters maximum.");
-    }
 
-    if (cleanName === "") {
-        return badRequest(res, "Calendar must have a name");
+    if (!validateName(cleanName)) {
+        return badRequest(res, "Name too long or empty.");
     }
     
     const result = db.prepare(`
@@ -847,6 +839,10 @@ function validateDate(date) {
 function validateYear(year) {
     const yearPattern = /^\d{4}$/;
     return yearPattern.test(year);
+}
+
+function validateName(name) {
+    return name === "" || name.length > 50;
 }
 
 function calendarColorsValidation(colors) {
