@@ -14,6 +14,7 @@ function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     async function handleLogin(e: any) {
         e.preventDefault();
@@ -26,6 +27,9 @@ function LoginPage() {
             navigate("/dashboard");
         } catch (err) {
             console.log(err);
+            if (err instanceof Error) {
+                setError(err.message);
+            }
         }
     }
 
@@ -39,15 +43,29 @@ function LoginPage() {
                     type="email"
                     placeholder="E-post"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError("");
+                    }}
                 />
 
                 <input
                     type="password"
                     placeholder="Passord"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError("");
+                    }}
                 />
+
+                <p 
+                    className={`error-message ${error ? "error-message--visible" : ""}`}
+                    role="alert"
+                    aria-live="polite"
+                >
+                    {error || "\u00A0"}
+                </p>
 
                 <button type="submit">
                     Logg inn

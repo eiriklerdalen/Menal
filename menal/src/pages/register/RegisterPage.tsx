@@ -73,15 +73,17 @@ function RegisterPage() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
 
+                <p 
+                    className={`error-message ${error ? "error-message--visible" : ""}`}
+                    role="alert"
+                    aria-live="polite"
+                >
+                    {error || "\u00A0"}
+                </p>
+
                 <button>
                     Opprett bruker
                 </button>
-
-                {error && (
-                    <p className="error-message">
-                        {error}
-                    </p>
-                )}
             </form>
             <p className="login-text">
                 Har du allerede konto?{" "}

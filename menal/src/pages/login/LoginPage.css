@@ -67,3 +67,33 @@
 .register-link:hover {
     text-decoration: underline;
 }
+
+.error-message {
+    min-height: 38px;
+    padding: 8px 12px;
+
+    display: flex;
+    align-items: center;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    color: transparent;
+    background: transparent;
+
+    font-size: 14px;
+    line-height: 20px;
+
+    opacity: 0;
+    transition:
+        opacity 150ms ease,
+        background-color 150ms ease,
+        border-color 150ms ease;
+}
+
+.error-message--visible {
+    color: #b42318;
+    background: #fef3f2;
+    border-color: #fecdca;
+    opacity: 1;
+}
