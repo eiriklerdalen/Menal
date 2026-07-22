@@ -16,6 +16,16 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const app = express();
 const db = new Database("./src/backend/menal.db");
 
+const apiLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    limit: 300,
+
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+
+    message: { error: "Too many requests. Please try again later." }
+})
+
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 10,
@@ -61,6 +71,8 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 30 // 1 month
     }
 }));
+
+app.use(apiLimiter);
 
 // GET --------------------------------------------------------------------------------------------------------------------
 app.get("/me", requireAuth, (req, res) => {
