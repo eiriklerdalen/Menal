@@ -1,17 +1,42 @@
 import "dotenv/config";
 
 import express from "express";
+import session from "express-session";
+import { rateLimit } from "express-rate-limit";
+
 import Database from "better-sqlite3";
 import bcrypt from "bcrypt";
 
 import cors from "cors";
-import session from "express-session";
 
-const MAX_JOURNAL_LENGTH = 10000
+
+const MAX_JOURNAL_LENGTH = 10000;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const app = express();
 const db = new Database("./src/backend/menal.db");
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+
+    skipSuccessfulRequests: true,
+
+    message: { error: "Too many failed login attempts. Try again in 15 minutes." },
+});
+
+const registerLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 5,
+
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+
+    message: { error: "Too many registration attempts. Try again later." },
+})
 
 app.use(cors({
     origin: [
@@ -35,7 +60,7 @@ app.use(session({
         sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24 * 30 // 1 month
     }
-}))
+}));
 
 // GET --------------------------------------------------------------------------------------------------------------------
 app.get("/me", requireAuth, (req, res) => {
@@ -295,7 +320,7 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
 });
 
 // POST -------------------------------------------------------------------------------------------------------------------
-app.post("/login", async (req, res) => {
+app.post("/login", loginLimiter, async (req, res) => {
     const { email, password } = req.body ?? {};
 
     // Input-validering
@@ -348,7 +373,7 @@ app.post("/logout", (req, res) => {
     })
 });
 
-app.post("/register", async (req, res) => {
+app.post("/register", registerLimiter, async (req, res) => {
     const { email, name, password, confirmPassword } = req.body ?? {};
 
     // Input-validering
