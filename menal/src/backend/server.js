@@ -270,16 +270,8 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
         return badRequest(res);
     }
 
-    if (!from || !to) {
-        return badRequest(res, "Missing from or to date.");
-    }
-
-    if (!validateDate(from) || !validateDate(to)) {
-        return badRequest(res);
-    }
-
-    if (from > to) {
-        return badRequest(res, "From-date cannot be after to-date.");
+    if (!validateDateInterval(from, to)) {
+        return badRequest(res, "Invalid date interval.");
     }
 
     const result = db.prepare(`
@@ -578,7 +570,7 @@ app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
         return badRequest(res);
     }
 
-    if (!calendarColorsValidation(colors)) {
+    if (!validateColors(colors)) {
         return badRequest(res);
     }
 
@@ -756,7 +748,7 @@ app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
         return badRequest(res);
     }
 
-    if (!calendarColorsValidation(colors)) {
+    if (!validateColors(colors)) {
         return badRequest(res);
     }
 
@@ -818,7 +810,7 @@ function unauthorizedLogin(res) {
 }
 
 function validateCalendarId(calendarId) {
-    return Number.isInteger(calendarId) && calendarId <= 0;
+    return Number.isInteger(calendarId) && calendarId > 0;
 }
 
 function validateDate(date) {
@@ -842,10 +834,10 @@ function validateYear(year) {
 }
 
 function validateName(name) {
-    return name === "" || name.length > 50;
+    return name !== "" && name.length <= 50;
 }
 
-function calendarColorsValidation(colors) {
+function validateColors(colors) {
     if (!Array.isArray(colors) || !colors.every((color) => typeof color === "string")) {
         return false;
     }
@@ -856,6 +848,14 @@ function calendarColorsValidation(colors) {
     }
 
     return true;
+}
+
+function validateDateInterval(from, to) {
+    return (
+        validateDate(from) &&
+        validateDate(to) &&
+        from <= to
+    );
 }
 
 function createSession(req, res, user, status = 200) {
