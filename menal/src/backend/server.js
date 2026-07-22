@@ -271,7 +271,7 @@ app.get("/calendars/:calendarId/average", requireAuth, (req, res) => {
     }
 
     if (!validateDateInterval(from, to)) {
-        return badRequest(res, "Invalid date interval.");
+        return badRequest(res, "Invalid date range.");
     }
 
     const result = db.prepare(`
@@ -375,8 +375,8 @@ app.post("/register", async (req, res) => {
         return badRequest(res, "Name too long or empty.");
     }
 
-    if (cleanEmail.length > 254) {
-        return badRequest(res, "E-postadressen er for lang.")
+    if (cleanEmail.length > 254 || password.length > 128) {
+        return badRequest(res, "Email or password is too long.")
     }
 
     if (password.length < 8 || password.length > 128) {
@@ -824,7 +824,7 @@ function validateDate(date) {
     return (
         parsedDate.getUTCFullYear() === year &&
         parsedDate.getUTCMonth() === month - 1 &&
-        parsedDate.getUTCDay() === day
+        parsedDate.getUTCDate() === day
     );
 }
 
@@ -834,7 +834,11 @@ function validateYear(year) {
 }
 
 function validateName(name) {
-    return name !== "" && name.length <= 50;
+    return (
+        typeof name === "string" &&
+        name !== "" && 
+        name.length <= 50
+    );
 }
 
 function validateColors(colors) {
