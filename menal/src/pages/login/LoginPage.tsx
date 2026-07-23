@@ -97,11 +97,13 @@ async function login(email: string, password: string) {
         }),
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-        throw new Error("Invalid email or password.");
+        throw new Error(data.error ?? "Kunne ikke logge inn.");
     }
 
-    return res.json();
+    return data;
 }
 
 export default LoginPage;
