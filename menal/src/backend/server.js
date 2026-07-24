@@ -55,7 +55,7 @@ const loginAccountLimiter = rateLimit({
     },
 
     message: { error: "Too many failed login attempts. Try again later." },
-})
+});
 
 const registerLimiter = rateLimit({
     windowMs: 60 * MINUTE,
@@ -65,6 +65,19 @@ const registerLimiter = rateLimit({
     legacyHeaders: false,
 
     message: { error: "Too many registration attempts. Try again later." },
+});
+
+const writeLimiter = rateLimit({
+    windowMs: 15 * MINUTE,
+    limit: 100,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+
+    keyGenerator: (req) => {
+        return `user:${req.session.userId}`;
+    },
+
+    message: { error: "Too many changes in a short amount of time. Please try again later." },
 });
 
 app.use(cors({
@@ -477,7 +490,7 @@ app.post("/register", registerLimiter, async (req, res) => {
     }
 });
 
-app.post("/journal_entries", requireAuth, (req, res) => {
+app.post("/journal_entries", requireAuth, writeLimiter, (req, res) => {
     const userId = req.session.userId;
     const { date, journal_text } = req.body ?? {};
 
@@ -514,7 +527,7 @@ app.post("/journal_entries", requireAuth, (req, res) => {
     }
 });
 
-app.post("/entries", requireAuth, (req, res) => {
+app.post("/entries", requireAuth, writeLimiter, (req, res) => {
     const userId = req.session.userId;
     const { calendar_id, date, rating } = req.body ?? {};
 
@@ -568,7 +581,7 @@ app.post("/entries", requireAuth, (req, res) => {
     }
 });
 
-app.post("/calendars", requireAuth, (req, res) => {
+app.post("/calendars", requireAuth, writeLimiter, (req, res) => {
     const userId = req.session.userId;
     const { name, max_rating } = req.body ?? {};
 
@@ -616,7 +629,7 @@ app.post("/calendars", requireAuth, (req, res) => {
     }
 });
 
-app.post("/calendars/:calendarId/colors", requireAuth, (req, res) => {
+app.post("/calendars/:calendarId/colors", requireAuth, writeLimiter, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body ?? {};
@@ -759,7 +772,7 @@ app.delete("/journal_entries/:date", requireAuth, (req, res) => {
 });
 
 // PATCH ------------------------------------------------------------------------------------------------------------------
-app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
+app.patch("/calendars/:calendarId", requireAuth, writeLimiter, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { name } = req.body ?? {};
@@ -794,7 +807,7 @@ app.patch("/calendars/:calendarId", requireAuth, (req, res) => {
 });
 
 // PUT --------------------------------------------------------------------------------------------------------------------
-app.put("/calendars/:calendarId/colors", requireAuth, (req, res) => {
+app.put("/calendars/:calendarId/colors", requireAuth, writeLimiter, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { colors } = req.body ?? {};
