@@ -1,7 +1,8 @@
 import "dotenv/config";
 
 import { connectRedis, redisClient } from "./redis.js";
-import { RedisStore } from "rate-limit-redis";
+import { RedisStore as RateLimitRedisStore } from "rate-limit-redis";
+import { RedisStore as SessionRedisStore } from "connect-redis";
 
 import express from "express";
 import session from "express-session";
@@ -12,7 +13,6 @@ import bcrypt from "bcrypt";
 
 import cors from "cors";
 
-
 const MAX_JOURNAL_LENGTH = 10000;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -21,8 +21,13 @@ await connectRedis();
 const app = express();
 const db = new Database("./src/backend/menal.db");
 
+const sessionStore = new SessionRedisStore({
+    client: redisClient,
+    prefix: "menal:session:",
+});
+
 function createRateLimitStore(prefix) {
-    return new RedisStore({
+    return new RateLimitRedisStore({
         sendCommand: (...args) => redisClient.sendCommand(args),
         prefix,
     });
@@ -134,6 +139,8 @@ app.use(apiLimiter);
 app.use(express.json());
 
 app.use(session({
+    store: sessionStore,
+
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
