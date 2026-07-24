@@ -912,6 +912,30 @@ function requireAuth(req, res, next) {
     next();
 }
 
+function createSession(req, res, user, status=200) {
+    req.session.regenerate((regenerateError) => {
+        if (regenerateError) {
+            console.error(regenerateError);
+            return res.sendStatus(500);
+        }
+
+        req.session.userId = user.id;
+
+        req.session.save((saveError) => {
+            if (saveError) {
+                console.error(saveError);
+                return res.sendStatus(500);
+            }
+
+            res.status(status).json({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            });
+        });
+    });
+}
+
 // Input-validation --------------------------------------------------------------------------------------------------------
 function areStrings(...values) {
     return values.every((value) => typeof value === "string");
@@ -976,23 +1000,6 @@ function validateDateInterval(from, to) {
         validateDate(to) &&
         from <= to
     );
-}
-
-function createSession(req, res, user, status = 200) {
-    req.session.userId = user.id;
-
-    req.session.save((err) => {
-        if (err) {
-            console.log(err);
-            return res.sendStatus(500);
-        }
-
-        res.status(status).json({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-        });
-    });
 }
 
 // RUN
