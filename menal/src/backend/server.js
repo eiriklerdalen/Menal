@@ -18,7 +18,7 @@ const db = new Database("./src/backend/menal.db");
 
 const apiLimiter = rateLimit({
     windowMs: 15 * MINUTE,
-    limit: 300,
+    limit: 500,
 
     standardHeaders: "draft-8",
     legacyHeaders: false,
@@ -90,17 +90,19 @@ const deleteLimiter = rateLimit({
         return `delete:user:${req.session.userId}`;
     },
 
-    message: { error: "To many deletions during a short time span. Please try again later." },
+    message: { error: "Too many deletions during a short time span. Please try again later." },
 });
 
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "http://10.0.0.80:5173",
+        "http://10.0.0.81:5173",
         "http://127.0.0.1:5173",
     ],
     credentials: true,
 }));
+
+app.use(apiLimiter);
 
 app.use(express.json());
 
@@ -116,8 +118,6 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 30 // 1 month
     }
 }));
-
-app.use(apiLimiter);
 
 // GET --------------------------------------------------------------------------------------------------------------------
 app.get("/me", requireAuth, (req, res) => {
@@ -963,5 +963,5 @@ function createSession(req, res, user, status = 200) {
 
 // RUN
 app.listen(3000, "0.0.0.0", () => {
-  console.log("Server running on http://10.0.0.80:3000");
+  console.log("Server running on http://10.0.0.81:3000");
 });
