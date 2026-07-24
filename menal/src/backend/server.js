@@ -80,6 +80,19 @@ const writeLimiter = rateLimit({
     message: { error: "Too many changes in a short amount of time. Please try again later." },
 });
 
+const deleteLimiter = rateLimit({
+    windowMs: 60 * MINUTE,
+    limit: 30,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+
+    keyGenerator: (req) => {
+        return `delete:user:${req.session.userId}`;
+    },
+
+    message: { error: "To many deletions during a short time span. Please try again later." },
+});
+
 app.use(cors({
     origin: [
         "http://localhost:5173",
@@ -673,7 +686,7 @@ app.post("/calendars/:calendarId/colors", requireAuth, writeLimiter, (req, res) 
 });
 
 // DELETE -----------------------------------------------------------------------------------------------------------------
-app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
+app.delete("/entries/:calendarId/:date", requireAuth, deleteLimiter, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
     const { date } = req.params;
@@ -710,7 +723,7 @@ app.delete("/entries/:calendarId/:date", requireAuth, (req, res) => {
     });
 });
 
-app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
+app.delete("/calendars/:calendarId", requireAuth, deleteLimiter, (req, res) => {
     const userId = req.session.userId;
     const calendarId = Number(req.params.calendarId);
 
@@ -753,7 +766,7 @@ app.delete("/calendars/:calendarId", requireAuth, (req, res) => {
     res.json({ success: true })
 });
 
-app.delete("/journal_entries/:date", requireAuth, (req, res) => {
+app.delete("/journal_entries/:date", requireAuth, deleteLimiter, (req, res) => {
     const userId = req.session.userId;
     const { date } = req.params;
 
