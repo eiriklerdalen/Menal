@@ -1,5 +1,8 @@
 import "dotenv/config";
 
+import { connectRedis, redisClient } from "./redis.js";
+import { RedisStore } from "rate-limit-redis";
+
 import express from "express";
 import session from "express-session";
 import { rateLimit, MINUTE } from "express-rate-limit";
@@ -13,12 +16,23 @@ import cors from "cors";
 const MAX_JOURNAL_LENGTH = 10000;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
+await connectRedis();
+
 const app = express();
 const db = new Database("./src/backend/menal.db");
+
+function createRateLimitStore(prefix) {
+    return new RedisStore({
+        sendCommand: (...args) => redisClient.sendCommand(args),
+        prefix,
+    });
+}
 
 const apiLimiter = rateLimit({
     windowMs: 15 * MINUTE,
     limit: 500,
+
+    store: createRateLimitStore("menal:rate-limit:api:"),
 
     standardHeaders: "draft-8",
     legacyHeaders: false,
@@ -29,6 +43,8 @@ const apiLimiter = rateLimit({
 const loginLimiter = rateLimit({
     windowMs: 15 * MINUTE,
     limit: 10,
+
+    store: createRateLimitStore("menal:rate-limit:login-ip:"),
 
     standardHeaders: "draft-8",
     legacyHeaders: false,
@@ -41,6 +57,9 @@ const loginLimiter = rateLimit({
 const loginAccountLimiter = rateLimit({
     windowMs: 60 * MINUTE,
     limit: 10,
+
+    store: createRateLimitStore("menal:rate-limit:login-account:"),
+
     standardHeaders: "draft-8",
     legacyHeaders: false,
     skipSuccessfulRequests: true,
@@ -61,6 +80,8 @@ const registerLimiter = rateLimit({
     windowMs: 60 * MINUTE,
     limit: 5,
 
+    store: createRateLimitStore("menal:rate-limit:register:"),
+
     standardHeaders: "draft-8",
     legacyHeaders: false,
 
@@ -70,6 +91,9 @@ const registerLimiter = rateLimit({
 const writeLimiter = rateLimit({
     windowMs: 15 * MINUTE,
     limit: 100,
+
+    store: createRateLimitStore("menal:rate-limit:write:"),
+
     standardHeaders: "draft-8",
     legacyHeaders: false,
 
@@ -83,6 +107,9 @@ const writeLimiter = rateLimit({
 const deleteLimiter = rateLimit({
     windowMs: 60 * MINUTE,
     limit: 30,
+
+    store: createRateLimitStore("menal:rate-limit:delete:"),
+
     standardHeaders: "draft-8",
     legacyHeaders: false,
 
@@ -963,5 +990,5 @@ function createSession(req, res, user, status = 200) {
 
 // RUN
 app.listen(3000, "0.0.0.0", () => {
-  console.log("Server running on http://10.0.0.81:3000");
+    console.log("Server running on http://10.0.0.81:3000");
 });
