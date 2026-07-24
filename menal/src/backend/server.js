@@ -19,6 +19,13 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 await connectRedis();
 
 const app = express();
+
+const isProduction = process.env.NODE_ENV === "production";
+
+if (isProduction) {
+    app.set("trust proxy", 1);
+}
+
 const db = new Database("./src/backend/menal.db");
 
 const sessionStore = new SessionRedisStore({
@@ -147,7 +154,7 @@ app.use(session({
 
     cookie: {
         httpOnly: true,
-        secure: false, // change if https
+        secure: isProduction,
         sameSite: "lax",
         maxAge: 1000 * 60 * 60 * 24 * 30 // 1 month
     }
