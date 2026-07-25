@@ -8,6 +8,8 @@ import express from "express";
 import session from "express-session";
 import { rateLimit, MINUTE } from "express-rate-limit";
 
+import { csrfSync } from "csrf-sync";
+
 import Database from "better-sqlite3";
 import bcrypt from "bcrypt";
 
@@ -132,6 +134,8 @@ const deleteLimiter = rateLimit({
     message: { error: "Too many deletions during a short time span. Please try again later." },
 });
 
+const { generateToken, csrfSynchronisedProtection } = csrfSync()
+
 app.use(cors({
     origin: [
         "http://localhost:5173",
@@ -140,6 +144,8 @@ app.use(cors({
     ],
     credentials: true,
 }));
+
+app.use(csrfSynchronisedProtection);
 
 app.use(apiLimiter);
 
@@ -161,6 +167,12 @@ app.use(session({
 }));
 
 // GET --------------------------------------------------------------------------------------------------------------------
+app.get("/csrf-token", (req, res) => {
+    res.json({
+        csrfToken: generateToken(req),
+    });
+});
+
 app.get("/me", requireAuth, (req, res) => {
     if (!req.session.userId) {
         return res.sendStatus(401);
