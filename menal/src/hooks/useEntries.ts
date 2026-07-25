@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { apiURL } from "../config/api";
+import { apiFetch } from "../config/apiFetch";
 
 import type { Entry } from "../types";
 
@@ -8,9 +8,7 @@ function useEntries(date: string) {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/entries/${date}`), {
-            credentials: "include",
-        })
+        apiFetch(`/entries/${date}`)
             .then((res) => res.json())
             .then((data) => setEntries(data))
     }, [date]);

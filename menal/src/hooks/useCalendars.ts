@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { apiURL } from "../config/api";
+import { apiFetch } from "../config/apiFetch";
 
 import type { Calendar } from "../types";
 
@@ -9,9 +9,7 @@ function useCalendars() {
     const [calendarColors, setCalendarColors] = useState<Record<number, string[]>>({});
 
     useEffect(() => {
-        fetch(apiURL("/calendars"), {
-            credentials: "include",
-        })
+        apiFetch("/calendars")
             .then((res) => res.json())
             .then((data) => setCalendars(data))
             .catch((err) => console.log(err));
@@ -32,9 +30,7 @@ function useCalendars() {
 }
 
 async function loadColors(calendarId: number) {
-    return fetch(apiURL(`/calendars/${calendarId}/colors`), {
-        credentials: "include",
-    })
+    return apiFetch(`/calendars/${calendarId}/colors`)
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
