@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../config/api";
-
 import type { Year } from "../../types";
 
 import "/src/pages/overview/OverviewPage.css";
+import { apiFetch } from "../../config/apiFetch";
 
 function OverviewPage() {
 
@@ -13,9 +12,7 @@ function OverviewPage() {
 
     const [years, setYears] = useState<Year[]>([]);
     useEffect(() => {
-        fetch(apiURL("/overview"), {
-            credentials: "include",
-        })
+        apiFetch("/overview")
             .then((res) => res.json())
             .then((data) => setYears(data))
             .catch((err) => console.log(err));

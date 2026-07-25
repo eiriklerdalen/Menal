@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../config/api";
-
 import { getDateWriting, getWeekday } from "../../utils/date";
 
 import useCalendars from "../../hooks/useCalendars";
@@ -10,6 +8,7 @@ import useCalendars from "../../hooks/useCalendars";
 import "/src/pages/overview/OverviewPage.css";
 
 import type { JournalEntry, Entry } from "../../types";
+import { apiFetch } from "../../config/apiFetch";
 
 function YearOverViewPage() {
 
@@ -20,9 +19,7 @@ function YearOverViewPage() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/overview/${year}/journal_entries`), {
-            credentials: "include",
-        })
+        apiFetch(`/overview/${year}/journal_entries`)
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));
@@ -30,9 +27,7 @@ function YearOverViewPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/overview/${year}/entries`), {
-            credentials: "include",
-        })
+        apiFetch(`/overview/${year}/entries`)
             .then((res) => res.json())
             .then((data) => setEntries(data))
             .catch((err) => console.log(err));
