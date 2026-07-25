@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { apiURL } from "../../config/api.js";
 import type { Entry, Calendar } from "../../types.ts";
+import { apiFetch } from "../../config/apiFetch.ts";
 
 type TodayPanelProps = {
     date: string;
@@ -69,9 +70,8 @@ function TodayPanel({
 }
 
 async function hasWrittenLogToday(date: string) {
-    const res = await fetch(apiURL(`/journal_entries/${date}`), {
-        credentials: "include",
-    });
+    const res = await apiFetch(`/journal_entries/${date}`);
+    
     const entry = await res.json();
 
     return !!entry;

@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import type { JournalEntry } from "../../types";
 
-import { apiURL } from "../../config/api";
 import calculateJournalStreak from "../../utils/streak";
+import { apiFetch } from "../../config/apiFetch";
 
 function StatisticsPanel() {
 
     const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
     useEffect(() => {
-        fetch(apiURL("/journal_entries"), {
-            credentials: "include",
-        })
+        apiFetch("/journal_entries")
             .then((res) => res.json())
             .then((data) => setJournalEntries(data))
             .catch((err) => console.log(err));

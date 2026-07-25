@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { apiURL } from "../../config/api";
 import useCalendars from "../../hooks/useCalendars";
 import { periods, getPeriodDates } from "../../utils/periods";
+import { apiFetch } from "../../config/apiFetch";
 
 
 function AverageRatingPanel() {
@@ -89,9 +89,7 @@ function AverageRatingPanel() {
 }
 
 async function getAverageRating(calendarId: number, from: string, to: string) {
-    const res = await fetch(apiURL(`/calendars/${calendarId}/average?from=${from}&to=${to}`), {
-        credentials: "include",
-    });
+    const res = await apiFetch(`/calendars/${calendarId}/average?from=${from}&to=${to}`);
 
     if (!res.ok) {
         throw new Error("Failed to fetch average rating");
