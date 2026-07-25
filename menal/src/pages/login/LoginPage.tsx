@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 import { apiURL } from "../../config/api";
+import { getCSRFToken, clearCSRFToken } from "../../config/csrf";
 
 import "/src/pages/login/LoginPage.css";
 
@@ -85,11 +86,14 @@ function LoginPage() {
 }
 
 async function login(email: string, password: string) {
+    const csrfToken = await getCSRFToken();
+
     const res = await fetch(apiURL("/login"), {
         method: "POST",
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken,
         },
         body: JSON.stringify({
             email,
@@ -102,6 +106,8 @@ async function login(email: string, password: string) {
     if (!res.ok) {
         throw new Error(data.error ?? "Kunne ikke logge inn.");
     }
+
+    clearCSRFToken();
 
     return data;
 }

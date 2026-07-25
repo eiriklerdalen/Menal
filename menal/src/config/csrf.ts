@@ -2,7 +2,7 @@ import { apiURL } from "./api";
 
 let csrfToken: string | null = null;
 
-export async function getCSRFToken() {
+export async function getCSRFToken(): Promise<string> {
     if (csrfToken) {
         return csrfToken;
     }
@@ -16,9 +16,15 @@ export async function getCSRFToken() {
     }
 
     const data = await response.json();
+    const token = data.csrfToken;
+
+    if (typeof data.csrfToken !== "string") {
+        throw new Error("Invalid CSRF token response.");
+    }
+
     csrfToken = data.csrfToken;
 
-    return csrfToken;
+    return token;
 }
 
 export function clearCSRFToken() {

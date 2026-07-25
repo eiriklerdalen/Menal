@@ -134,8 +134,6 @@ const deleteLimiter = rateLimit({
     message: { error: "Too many deletions during a short time span. Please try again later." },
 });
 
-const { generateToken, csrfSynchronisedProtection } = csrfSync()
-
 app.use(cors({
     origin: [
         "http://localhost:5173",
@@ -144,8 +142,6 @@ app.use(cors({
     ],
     credentials: true,
 }));
-
-app.use(csrfSynchronisedProtection);
 
 app.use(apiLimiter);
 
@@ -166,13 +162,26 @@ app.use(session({
     }
 }));
 
-// GET --------------------------------------------------------------------------------------------------------------------
+// CSRF ------------------------------------------------------------------------------------------------------------------
+const { generateToken, csrfSynchronisedProtection } = csrfSync()
+
 app.get("/csrf-token", (req, res) => {
     res.json({
         csrfToken: generateToken(req),
     });
 });
 
+app.use(csrfSynchronisedProtection);
+
+app.use((error, req, res, next) => {
+    if (error.code === "EBADCSRFTOKEN") {
+        return res.status(403).json({
+            error: "Invalid CSRF token.",
+        });
+    }
+});
+
+// GET --------------------------------------------------------------------------------------------------------------------
 app.get("/me", requireAuth, (req, res) => {
     if (!req.session.userId) {
         return res.sendStatus(401);
