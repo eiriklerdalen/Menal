@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../config/api";
-
 import useEntries from "../../hooks/useEntries";
 import useCalendars from "../../hooks/useCalendars";
 
@@ -10,6 +8,7 @@ import { getDate, getDateWriting } from "../../utils/date";
 import type { Entry } from "../../types";
 
 import "/src/pages/log/LogPage.css";
+import { apiFetch } from "../../config/apiFetch";
 
 function LogPage() {
 
@@ -28,9 +27,8 @@ function LogPage() {
         const controller = new AbortController();
 
         async function loadJournalEntry() {
-            const res = await fetch(apiURL(`/journal_entries/${selectedDate}`), {
+            const res = await apiFetch(`/journal_entries/${selectedDate}`, {
                 signal: controller.signal,
-                credentials: "include",
             });
 
             if (!res.ok) {
@@ -81,9 +79,7 @@ function LogPage() {
     }
 
     function loadEntries(date: string) {
-        fetch(apiURL(`/entries/${date}`), {
-            credentials: "include",
-        })
+        apiFetch(`/entries/${date}`)
             .then((res) => res.json())
             .then((data) => {
                 const entriesWithDefaults = calendars.map((calendar) => {
@@ -136,16 +132,14 @@ function LogPage() {
     }
 
     async function deleteEntry(calendarId: number, date: string) {
-        await fetch(apiURL(`/entries/${calendarId}/${date}`), {
+        await apiFetch(`/entries/${calendarId}/${date}`, {
             method: "DELETE",
-            credentials: "include",
-        })
+        });
     }
 
     async function deleteJournalEntry(date: string) {
-        await fetch(apiURL(`/journal_entries/${date}`), {
+        await apiFetch(`/journal_entries/${date}`, {
             method: "DELETE",
-            credentials: "include",
         });
     }
 
@@ -261,11 +255,10 @@ function LogPage() {
 }
 
 async function saveJournalEntry(date: string, text: string) {
-    await fetch(apiURL("/journal_entries"), {
+    await apiFetch("/journal_entries", {
         method: "POST",
-        credentials: "include",
         headers: {
-        "Content-Type": "application/json",
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
             date: date,
@@ -278,11 +271,10 @@ async function saveJournalEntry(date: string, text: string) {
 }
 
 async function saveEntry(calendarId: number, rating: number, date: string) {
-    return await fetch(apiURL("/entries"), {
+    return await apiFetch("/entries", {
         method: "POST",
-        credentials: "include",
         headers: {
-        "Content-Type": "application/json",
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
             calendar_id: calendarId,
