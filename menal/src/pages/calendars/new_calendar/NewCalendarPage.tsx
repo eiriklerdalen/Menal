@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../../config/api";
+import { apiFetch } from "../../../config/apiFetch";
 
 import CalendarHeatMap from "../../../components/CalendarHeatMap";
 import ScaleColorSelector from "../../../components/ScaleColorSelector";
@@ -24,9 +24,8 @@ function NewCalendarPage() {
             return;
         }
 
-        fetch(apiURL("/calendars"), {
+        apiFetch("/calendars", {
             method: "POST",
-            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -37,9 +36,8 @@ function NewCalendarPage() {
         })
             .then((res) => res.json())
             .then((data) => {
-                return fetch(apiURL(`/calendars/${data.id}/colors`), {
+                return apiFetch(`/calendars/${data.id}/colors`, {
                     method: "POST",
-                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },

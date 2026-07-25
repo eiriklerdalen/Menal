@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../config/api";
+import { apiFetch } from "../../config/apiFetch";
 
 import useCalendars from "../../hooks/useCalendars";
 
@@ -27,9 +27,7 @@ function CalendarsPage() {
 
   const [entries, setEntries] = useState<Entry[]>([]);
   useEffect(() => {
-    fetch(apiURL("/entries"), {
-      credentials: "include",
-    })
+    apiFetch("/entries")
         .then((res) => res.json())
         .then((data) => setEntries(data))
         .catch((err) => console.error(err));
@@ -44,9 +42,8 @@ function CalendarsPage() {
       return;
     }
 
-    fetch(apiURL(`/calendars/${calendarId}`), {
+    apiFetch(`/calendars/${calendarId}`, {
       method: "DELETE",
-      credentials: "include",
     })
       .then((res) => res.json())
       .then(() => {

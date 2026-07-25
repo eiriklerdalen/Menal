@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-import { apiURL } from "../../../config/api";
+import { apiFetch } from "../../../config/apiFetch";
 
 import CalendarHeatMap from "../../../components/CalendarHeatMap";
 import ScaleColorSelector from "../../../components/ScaleColorSelector";
@@ -22,9 +22,7 @@ function EditCalendarPage() {
 
     const [maxRating, setMaxRating] = useState(7);
         useEffect(() => {
-        fetch(apiURL(`/calendars/${calendarIdNumber}`), {
-            credentials: "include",
-        })
+        apiFetch(`/calendars/${calendarIdNumber}`)
             .then((res) => res.json())
             .then((calendar) => {
                 setCalendarName(calendar.name);
@@ -34,9 +32,7 @@ function EditCalendarPage() {
 
     const [entries, setEntries] = useState<Entry[]>([]);
     useEffect(() => {
-        fetch(apiURL(`/entries`), {
-            credentials: "include",
-        })
+        apiFetch(`/entries`)
             .then((res) => res.json())
             .then((data) => {
                 const calendarEntries = data.filter(
@@ -99,17 +95,14 @@ function EditCalendarPage() {
 }
 
 async function loadColors(calendarId: number) {
-    return fetch(apiURL(`/calendars/${calendarId}/colors`), {
-        credentials: "include",
-    })
+    return apiFetch(`/calendars/${calendarId}/colors`)
         .then((res) => res.json())
         .then((data) => data.map((row: { rating: number; color: string }) => row.color));
 }
 
 async function saveCalendar(calendarId: number, calendarName: string, colors: string[]) {
-    return fetch(apiURL(`/calendars/${calendarId}`), {
+    return apiFetch(`/calendars/${calendarId}`, {
         method: "PATCH",
-        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
@@ -118,9 +111,8 @@ async function saveCalendar(calendarId: number, calendarName: string, colors: st
         }),
     })
         .then(() => 
-            fetch(apiURL(`/calendars/${calendarId}/colors`), {
+            apiFetch(`/calendars/${calendarId}/colors`, {
                 method: "PUT",
-                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
