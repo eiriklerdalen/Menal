@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 import { apiURL } from "../config/api";
+import { apiFetch } from "../config/apiFetch";
+import { clearCSRFToken } from "../config/csrf";
 
 type User = {
     id: number;
@@ -54,11 +56,11 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
 
     async function logout() {
         try {
-            await fetch(apiURL("/logout"), {
+            await apiFetch("/logout", {
                 method: "POST",
-                credentials: "include",
             });
         } finally {
+            clearCSRFToken();
             setUser(null);
         }
     }

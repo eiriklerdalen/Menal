@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../contexts/AuthContext";
 
-import { apiURL } from "../../config/api";
+import { apiFetch } from "../../config/apiFetch";
+import { clearCSRFToken } from "../../config/csrf";
 
 import "./RegisterPage.css"
 
@@ -99,9 +100,8 @@ function RegisterPage() {
 }
 
 async function register(email: string, name: string, password: string, confirmPassword: string) {
-    const res = await fetch(apiURL("/register"), {
+    const res = await apiFetch("/register", {
         method: "POST",
-        credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
@@ -118,6 +118,8 @@ async function register(email: string, name: string, password: string, confirmPa
     if (!res.ok) {
         throw new Error(data.error);
     }
+
+    clearCSRFToken();
 
     return data;
 }
