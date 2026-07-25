@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../contexts/AuthContext";
 
-import { apiURL } from "../../config/api";
-import { getCSRFToken, clearCSRFToken } from "../../config/csrf";
+import { clearCSRFToken } from "../../config/csrf";
+import { apiFetch } from "../../config/apiFetch";
 
 import "/src/pages/login/LoginPage.css";
 
@@ -86,14 +86,10 @@ function LoginPage() {
 }
 
 async function login(email: string, password: string) {
-    const csrfToken = await getCSRFToken();
-
-    const res = await fetch(apiURL("/login"), {
+    const res = await apiFetch("/login", {
         method: "POST",
-        credentials: "include",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRF-Token": csrfToken,
         },
         body: JSON.stringify({
             email,
