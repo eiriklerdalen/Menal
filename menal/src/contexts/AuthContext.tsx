@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-import { apiURL } from "../config/api";
 import { apiFetch } from "../config/apiFetch";
 import { clearCSRFToken } from "../config/csrf";
 
@@ -28,9 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
     useEffect(() => {
         async function loadCurrentUser() {
             try {
-                const res = await fetch(apiURL("/me"), {
-                    credentials: "include",
-                });
+                const res = await apiFetch("/me");
 
                 if (!res.ok) {
                     setUser(null);

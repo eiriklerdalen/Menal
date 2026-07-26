@@ -8,6 +8,8 @@ import express from "express";
 import session from "express-session";
 import { rateLimit, MINUTE } from "express-rate-limit";
 
+import helmet from "helmet";
+
 import { csrfSync } from "csrf-sync";
 
 import Database from "better-sqlite3";
@@ -21,6 +23,8 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 await connectRedis();
 
 const app = express();
+
+app.use(helmet);
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -179,6 +183,8 @@ app.use((error, req, res, next) => {
             error: "Invalid CSRF token.",
         });
     }
+
+    return next(error);
 });
 
 // GET --------------------------------------------------------------------------------------------------------------------
