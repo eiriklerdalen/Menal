@@ -6,7 +6,6 @@ export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
 
     router.use(requireAuth);
 
-    // GET /entries
     router.get("/", (req, res) => {
         const userId = req.session.userId;
         
