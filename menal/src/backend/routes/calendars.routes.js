@@ -8,9 +8,9 @@ import {
     validateColors, 
     validateMaxRating, 
     validateColorCount,
-    areStrings, 
     areStrings
 } from "../validation/validators.js";
+import { badRequest } from "../utils/httpResponses.js";
 
 export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
     const router = Router();
@@ -316,7 +316,7 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
         }
     
         // Input-validering (2)
-        if (calendar.max_rating !== colors.length) {
+        if (!validateColorCount(colors, calendar.max_rating)) {
             return badRequest(res);
         }
     

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
 import { areStrings, validateName, validateEmail, validatePassword } from "../validation/validators.js";
+import { badRequest, unauthorizedLogin } from "../utils/httpResponses.js";
 
 import bcrypt from "bcrypt";
 

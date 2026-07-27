@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
 import { validateDate, validateJournalText } from "../validation/validators.js";
+import { badRequest } from "../utils/httpResponses.js";
 
 export function createJournalRouter({ db, writeLimiter, deleteLimiter }) {
     const router = Router();

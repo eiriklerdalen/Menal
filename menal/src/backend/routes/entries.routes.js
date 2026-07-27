@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
 import { validateDate, validateCalendarId, validateMaxRating, validateRating } from "../validation/validators.js";
+import { badRequest } from "../utils/httpResponses.js";
 
 export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
     const router = Router();
