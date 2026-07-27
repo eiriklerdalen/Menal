@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
+import { areStrings, validateName, validateEmail, validatePassword } from "../validation/validators.js";
+
 import bcrypt from "bcrypt";
 
 export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, registerLimiter }) {
     const router = Router();
-
 
     router.get("/me", requireAuth, (req, res) => {
         if (!req.session.userId) {
@@ -30,9 +31,13 @@ export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, regist
         }
     
         const cleanEmail = email.trim().toLowerCase();
-    
-        if (cleanEmail === "" || password === "") {
-            return badRequest(res);
+
+        if (!validateEmail(cleanEmail)) {
+            return badRequest(res, "Invalid email or password.");
+        }
+
+        if (!validatePassword(password)) {
+            return badRequest(res, "Invalid email or password.");
         }
     
         try {
@@ -84,33 +89,21 @@ export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, regist
     
         const cleanEmail = email.trim().toLowerCase();
         const cleanName = name.trim();
-    
-        if (cleanEmail === "" ||
-            password === ""
-        ) {
-            return badRequest(res);
+
+        if (!validateEmail(cleanEmail)) {
+            return badRequest(res, "Invalid email adress.");
         }
-    
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-        if (!emailPattern.test(cleanEmail)) {
-            return badRequest(res, "Ugyldig e-postadresse.")
-        }
-    
+
         if (!validateName(cleanName)) {
             return badRequest(res, "Name too long or empty.");
         }
-    
-        if (cleanEmail.length > 254 || password.length > 128) {
-            return badRequest(res, "Email or password is too long.")
-        }
-    
-        if (password.length < 8 || password.length > 128) {
-            return badRequest(res, "Passord må være mellom 8 og 128 tegn.");
+
+        if (!validatePassword(password)) {
+            return badRequest(res, "Invalid password.");
         }
     
         if (password !== confirmPassword) {
-            return badRequest(res, "Passord matcher ikke.");
+            return badRequest(res, "Passwords does not match.");
         }
     
         const existingUser = db.prepare(`

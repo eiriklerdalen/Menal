@@ -1,6 +1,17 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
+import { 
+    validateCalendarId,
+    validateDateInterval,
+    validateName, 
+    validateColors, 
+    validateMaxRating, 
+    validateColorCount,
+    areStrings, 
+    areStrings
+} from "../validation/validators.js";
+
 export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
     const router = Router();
 
@@ -116,20 +127,17 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
         const { name, max_rating } = req.body ?? {};
     
         // Input-validering
-        if (typeof name !== "string" ||
-            !Number.isInteger(max_rating)
-        ) {
+        if (!areStrings(name)) {
+            return badRequest(res);
+        }
+
+        if (!validateMaxRating(max_rating)) {
             return badRequest(res);
         }
     
         const cleanName = name.trim();
-    
         if (!validateName(cleanName)) {
             return badRequest(res, "Name too long or empty.");
-        }
-    
-        if (max_rating > 7 || max_rating < 1) {
-            return badRequest(res);
         }
     
         try {
@@ -186,7 +194,7 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
         }
     
         // Input-validering (2)
-        if (calendar.max_rating !== colors.length) {
+        if (!validateColorCount(colors, calendar.max_rating)) {
             return badRequest(res);
         }
     
@@ -257,7 +265,7 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
             return badRequest(res);
         }
     
-        if (typeof name !== "string") {
+        if (!areStrings(name)) {
             return badRequest(res);
         }
     

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
+import { validateYear } from "../validation/validators.js";
+
 export function createOverviewRouter({ db }) {
     const router = Router();
 

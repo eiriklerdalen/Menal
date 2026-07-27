@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
+import { validateDate, validateCalendarId, validateMaxRating, validateRating } from "../validation/validators.js";
+
 export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
     const router = Router();
 
@@ -53,9 +55,9 @@ export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
         if (!validateDate(date)) {
             return badRequest(res);
         }
-    
-        if (!Number.isInteger(rating)) {
-            return badRequest(res);
+
+        if (!validateMaxRating(rating)) {
+            return badRequest(res, "Invalid rating.");
         }
     
         try {
@@ -72,10 +74,10 @@ export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
             }
     
             // Input-validering (2)
-            if (rating < 1 || rating > calendar.max_rating) {
-                return badRequest(res, "Rating må være mellom 1 og max_rating.")
+            if (!validateRating(rating, calendar.max_rating)) {
+                return badRequest(res, "Rating must be in range 1 to max rating.");
             }
-    
+
             const result = db.prepare(`
                 INSERT INTO entries (calendar_id, date, rating)
                 VALUES (?, ?, ?)

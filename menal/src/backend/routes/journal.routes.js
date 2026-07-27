@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/requireAuth.js";
 
+import { validateDate, validateJournalText } from "../validation/validators.js";
+
 export function createJournalRouter({ db, writeLimiter, deleteLimiter }) {
     const router = Router();
 
@@ -45,16 +47,12 @@ export function createJournalRouter({ db, writeLimiter, deleteLimiter }) {
         const { date, journal_text } = req.body ?? {};
     
         // Input-validering
-        if (typeof journal_text !== "string") {
+        if (!validateJournalText(journal_text)) {
             return badRequest(res);
         }
     
         if (!validateDate(date)) {
             return badRequest(res);
-        }
-    
-        if (journal_text.length > MAX_JOURNAL_LENGTH) {
-            return badRequest(res, "Journaltekst må være mindre enn 10 000 tegn.")
         }
     
         try {
