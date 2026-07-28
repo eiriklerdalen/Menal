@@ -23,7 +23,7 @@ export function createApp({
 }) {
     const app = express();
 
-    if (!isProduction) {
+    if (isProduction) {
         app.set("trust proxy", 1);
     }
 
@@ -36,6 +36,8 @@ export function createApp({
         credentials: true,
     }));
 
+    app.use(helmet());
+
     app.use(limiters.apiLimiter);
     app.use(express.json());
 
@@ -47,7 +49,7 @@ export function createApp({
     app.use(session({
         store: sessionStore,
     
-        secret: process.env.SESSION_SECRET,
+        secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
     
