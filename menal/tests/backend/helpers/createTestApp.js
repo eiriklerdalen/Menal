@@ -1,7 +1,7 @@
-import { createTestDatabase } from "./createTestDatabase";
-import { redisClient } from "../../../backend/redis";
-import { createApp } from "../../../../src/backend/app.js";
-import { createRateLimiters } from "../../../backend/security/rateLimiters";
+import { createTestDatabase } from "./createTestDatabase.js";
+import { redisClient } from "../../../src/backend/redis.js";
+import { createApp } from "../../../src/backend/app.js";
+import { createRateLimiters } from "../../../src/backend/security/rateLimiters.js";
 
 export function createTestApp() {
     const db = createTestDatabase();

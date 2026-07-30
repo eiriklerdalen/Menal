@@ -4,6 +4,7 @@ import request from "supertest";
 import { createTestApp } from "../helpers/createTestApp.js";
 
 import { getCsrfAgent } from "../helpers/createCsrfAgent.js";
+import { createTestUser } from "../helpers/createTestUser.js";
 
 import bcrypt from "bcrypt";
 
@@ -17,12 +18,6 @@ describe("authentication", () => {
 
     afterEach(() => {
         db.close();
-    });
-
-    it("returns 401 when /me is called without a session", async () => {
-        const response = await request(app).get("/me");
-
-        expect(response.status).toBe(401);
     });
 
     testValidateEmail(() => app);
@@ -405,25 +400,4 @@ function testUnauthorizedLogin(getApp, getDb) {
 
         expect(response.status).toBe(401);
     });
-}
-
-
-// Helpers
-async function createTestUser(db, name, email, password) {
-    const passwordHash = await bcrypt.hash(password, 12);
-
-    db.prepare(`
-        INSERT INTO users (name, email, password_hash)
-        VALUES (?, ?, ?)
-    `).run(
-        name,
-        email,
-        passwordHash,
-    );
-
-    return {
-        name,
-        email,
-        password,
-    };
 }

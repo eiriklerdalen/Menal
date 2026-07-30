@@ -10,7 +10,7 @@ const {
     connectRedis,
     disconnectRedis,
     redisClient,
-} = await import("../../../src/backend/redis.js");
+} = await import("../../src/backend/redis.js");
 
 if (!process.env.SESSION_SECRET) {
     throw new Error("Session secret is not configured.");
