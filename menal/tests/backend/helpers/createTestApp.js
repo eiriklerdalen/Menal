@@ -3,8 +3,7 @@ import { redisClient } from "../../../src/backend/redis.js";
 import { createApp } from "../../../src/backend/app.js";
 import { createRateLimiters } from "../../../src/backend/security/rateLimiters.js";
 
-export function createTestApp() {
-    const db = createTestDatabase();
+export function createTestApp({db=createTestDatabase()} = {}) {
     const limiters = createRateLimiters(redisClient);
 
     const app = createApp({
