@@ -117,7 +117,7 @@ export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, regist
     
         if (existingUser) {
             return res.status(409).json({
-                error: "E-postadresse allerede registrert."
+                error: "Email adress already registered."
             });
         }
     

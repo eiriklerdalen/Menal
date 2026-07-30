@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { beforeAll, afterAll } from "vitest";
+import { beforeAll, beforeEach, afterAll } from "vitest";
 
 dotenv.config({
     path: ".env.test",
@@ -18,8 +18,11 @@ if (!process.env.SESSION_SECRET) {
 
 beforeAll(async () => {
     await connectRedis();
-    await redisClient.flushDb();
 });
+
+beforeEach(async () => {
+    await redisClient.flushDb();
+})
 
 afterAll(async () => {
     await redisClient.flushDb();
