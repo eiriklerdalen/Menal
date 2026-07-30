@@ -50,8 +50,12 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
             WHERE id = ?
             AND user_id = ?
         `).get(calendarId, userId);
+
+        if (!calendar) {
+            res.sendStatus(404);
+        }
     
-        res.json(calendar);
+        return res.json(calendar);
     });
 
     router.get("/:calendarId/colors", (req, res) => {

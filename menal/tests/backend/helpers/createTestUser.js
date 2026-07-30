@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 export async function createTestUser(db, name, email, password) {
     const passwordHash = await bcrypt.hash(password, 12);
 
-    db.prepare(`
+    const result = db.prepare(`
         INSERT INTO users (name, email, password_hash)
         VALUES (?, ?, ?)
     `).run(
@@ -13,6 +13,7 @@ export async function createTestUser(db, name, email, password) {
     );
 
     return {
+        id: Number(result.lastInsertRowid),
         name,
         email,
         password,
