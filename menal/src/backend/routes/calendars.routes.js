@@ -86,7 +86,11 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
             ORDER BY rating
         `).all(calendarId);
     
-        res.json(colors);
+        if (!colors) {
+            res.sendStatus(404);
+        }
+
+        return res.json(colors);
     });
 
     router.get("/:calendarId/average", (req, res) => {
