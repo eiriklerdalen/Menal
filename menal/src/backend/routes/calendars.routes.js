@@ -108,6 +108,18 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
         if (!validateDateInterval(from, to)) {
             return badRequest(res, "Invalid date range.");
         }
+
+        // Ownership check
+        const calendar = db.prepare(`
+            SELECT id
+            FROM calendars
+            WHERE id = ?
+            and user_id = ?    
+        `).get(calendarId, userId);
+
+        if (!calendar) {
+            return res.sendStatus(404);
+        }
     
         const result = db.prepare(`
             SELECT AVG(entries.rating) AS average,

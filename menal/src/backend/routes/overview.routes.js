@@ -62,24 +62,5 @@ export function createOverviewRouter({ db }) {
         res.json(entries);
     });
 
-    router.get("/:year", (req, res) => {
-        const userId = req.session.userId;
-        const { year } = req.params;
-    
-        if (!validateYear(year)) {
-            return badRequest(res);
-        }
-    
-        const journal_entries = db.prepare(`
-            SELECT *
-            FROM journal_entries
-            WHERE user_id = ?
-            AND date LIKE ?
-            ORDER BY date DESC
-        `).all(userId, `${year}-%`);
-    
-        res.json(journal_entries);
-    });
-
     return router;
 }
