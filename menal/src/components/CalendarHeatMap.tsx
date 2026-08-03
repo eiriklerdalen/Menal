@@ -98,8 +98,8 @@ function CalendarHeatMap(
 
         <div className="heatmap-content">
           <div className="month-row">
-            {weeks.map((week) => (
-              <div className="month-label">
+            {weeks.map((week, weekIndex) => (
+              <div className="month-label" key={weekIndex}>
                 {getMonthLabel(week)}
               </div>
             ))}

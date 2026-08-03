@@ -43,7 +43,10 @@ function TodayPanel({
                 );
 
                 return (
-                    <div className="calendar-rating-container">
+                    <div 
+                        key={calendar.id}
+                        className="calendar-rating-container"
+                    >
                         <p>{calendar.name}</p>
                         <div 
                             className="selected-rating"
