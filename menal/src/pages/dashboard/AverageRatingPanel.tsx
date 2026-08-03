@@ -9,14 +9,10 @@ function AverageRatingPanel() {
 
     const { calendars } = useCalendars();
     const [selectedCalendarId, setSelectedCalendarId] = useState<number | null>(null);
-    useEffect(() => {
-        if (calendars.length > 0 && selectedCalendarId === null) {
-            setSelectedCalendarId(calendars[0].id);
-        }
-    }, [calendars, setSelectedCalendarId]);
+    const activeCalendarId = selectedCalendarId ?? calendars[0]?.id ?? null;
 
     const selectedCalendar = calendars.find(
-        (calendar) => calendar.id === selectedCalendarId
+        (calendar) => calendar.id === activeCalendarId
     );
 
     const [selectedPeriod, setSelectedPeriod] = useState<string>("week");
@@ -27,16 +23,16 @@ function AverageRatingPanel() {
     const [count, setCount] = useState(0);
     useEffect(() => {
         async function loadAverage() {
-            if (selectedCalendarId === null) return;
+            if (activeCalendarId === null) return;
 
-            const result = await getAverageRating(selectedCalendarId, from, to);
+            const result = await getAverageRating(activeCalendarId, from, to);
 
             setAverage(result.average);
             setCount(result.count);
         }
 
         loadAverage();
-    }, [selectedCalendarId, selectedPeriod]);
+    }, [activeCalendarId, from, to]);
 
     const completion = Math.round((count / days) * 100);
 
@@ -46,7 +42,7 @@ function AverageRatingPanel() {
             <div className="average-parameters">
                 <select
                     className="parameter-selector"
-                    value={selectedCalendarId ?? ""}
+                    value={activeCalendarId ?? ""}
                     onChange={(e) => setSelectedCalendarId(Number(e.target.value))}
                 >
                     {calendars.map((calendar) => (
@@ -85,7 +81,7 @@ function AverageRatingPanel() {
                 <span>{completion}%</span>
             </div>
         </div>
-    )
+    );
 }
 
 async function getAverageRating(calendarId: number, from: string, to: string) {

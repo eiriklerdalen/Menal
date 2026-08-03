@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import type { SubmitEvent } from "react";
+
 import { useAuth } from "../../hooks/useAuth.ts";
 
 import { apiFetch } from "../../config/apiFetch";
@@ -20,7 +22,7 @@ function RegisterPage() {
     
     const [error, setError] = useState("");
 
-    async function handleRegistration(e: any) {
+    async function handleRegistration(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         if (password !== confirmPassword) {

@@ -23,6 +23,28 @@ function LogPage() {
     const [text, setText] = useState("");
     const [userHasEdited, setUserHasEdited] = useState(false);
 
+    async function deleteEntry(calendarId: number, date: string) {
+        await apiFetch(`/entries/${calendarId}/${date}`, {
+            method: "DELETE",
+        });
+    }
+
+    async function deleteJournalEntry(date: string) {
+        await apiFetch(`/journal_entries/${date}`, {
+            method: "DELETE",
+        });
+    }
+
+    function changeDate(numDays: number) {
+        const date = new Date(selectedDate);
+
+        date.setDate(date.getDate() + numDays);
+        const newDate = getDate(date);
+
+        setSelectedDate(newDate);
+        navigate(`/log/${newDate}`);
+    }
+
     useEffect(() => {
         const controller = new AbortController();
 
@@ -78,8 +100,10 @@ function LogPage() {
         return entry?.rating ?? 0;
     }
 
-    function loadEntries(date: string) {
-        apiFetch(`/entries/${date}`)
+    useEffect(() => {
+        if (calendars.length === 0) return;
+
+        apiFetch(`/entries/${selectedDate}`)
             .then((res) => res.json())
             .then((data) => {
                 const entriesWithDefaults = calendars.map((calendar) => {
@@ -90,7 +114,7 @@ function LogPage() {
                     return existingEntry ?? {
                         id: 0,
                         calendar_id: calendar.id,
-                        date,
+                        date: selectedDate,
                         rating: 0,
                     };
                 });
@@ -98,12 +122,7 @@ function LogPage() {
                 setEntries(entriesWithDefaults);
             })
         .catch((err) => console.log(err));
-    }
-    useEffect(() => {
-        if (calendars.length > 0) {
-            loadEntries(selectedDate);
-        }
-    }, [selectedDate]);
+    }, [selectedDate, calendars, setEntries]);
     
     function updateEntry(calendarId: number, rating: number, date: string) {
         setEntries((prevEntries) => {
@@ -129,28 +148,6 @@ function LogPage() {
                 },
             ];
         });
-    }
-
-    async function deleteEntry(calendarId: number, date: string) {
-        await apiFetch(`/entries/${calendarId}/${date}`, {
-            method: "DELETE",
-        });
-    }
-
-    async function deleteJournalEntry(date: string) {
-        await apiFetch(`/journal_entries/${date}`, {
-            method: "DELETE",
-        });
-    }
-
-    function changeDate(numDays: number) {
-        const date = new Date(selectedDate);
-
-        date.setDate(date.getDate() + numDays);
-        const newDate = getDate(date);
-
-        setSelectedDate(newDate);
-        navigate(`/log/${newDate}`);
     }
 
     return (

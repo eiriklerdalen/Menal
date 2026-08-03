@@ -13,7 +13,6 @@ import "/src/pages/dashboard/DashboardPage.css";
 function DashboardPage() {
     const user = useRequiredUser();
     const name = user.name;
-    const userId = user.userId;
 
     const date = getDate();
 

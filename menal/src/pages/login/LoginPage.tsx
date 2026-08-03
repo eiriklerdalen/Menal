@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import type { SubmitEvent } from "react";
+
 import { useAuth } from "../../hooks/useAuth.ts";
 
 import { clearCSRFToken } from "../../config/csrf";
@@ -17,7 +19,7 @@ function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    async function handleLogin(e: any) {
+    async function handleLogin(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
         try {

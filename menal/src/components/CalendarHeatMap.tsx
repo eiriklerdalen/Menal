@@ -32,7 +32,7 @@ function CalendarHeatMap(
       endDate = new Date(selectedYear, 11, 31);
   }
 
-  const weeks = getYear(entries, numDays, startDate, endDate);
+  const weeks = getYear(entries, startDate, endDate);
 
   function getMonthLabel(week: Day[]) {
     const firstDayOfMonth = week.find((day) => {
@@ -155,7 +155,7 @@ function getRatingForDate(date: string, entries: Entry[]) {
   return 0
 }
 
-function getYear(entries: Entry[], numDays: number, startDate: Date, endDate: Date) {
+function getYear(entries: Entry[], startDate: Date, endDate: Date) {
   const weeks: { date: string; rating: number }[][] = [];
 
   const current = new Date(startDate);
