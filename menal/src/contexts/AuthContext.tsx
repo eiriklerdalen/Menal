@@ -1,24 +1,11 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { apiFetch } from "../config/apiFetch";
 import { clearCSRFToken } from "../config/csrf";
 
-type User = {
-    id: number;
-    userId: number;
-    name: string;
-    email: string;
-}
+import { AuthContext } from "./AuthProvider";
 
-type AuthContextType = {
-    user: User | null;
-    loading: boolean;
-    //isLoggedIn: boolean;
-    login: (user: User) => void;
-    logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
+import type { User } from "../types";
 
 export function AuthProvider({ children }: { children: React.ReactNode}) {
     const [user, setUser] = useState<User | null>(null);
@@ -75,14 +62,4 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
             {children}
         </AuthContext.Provider>
     )
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-
-    if (!context) {
-        throw new Error("useAuth must be used inside AuthProvider");
-    }
-
-    return context;
 }

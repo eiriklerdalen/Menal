@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import ThemeSwitch from "../components/ThemeSwitch";
 import { getDate } from "../utils/date";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth.ts";
 
 type SidebarProps = {
     darkMode: boolean;

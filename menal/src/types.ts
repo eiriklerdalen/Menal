@@ -22,5 +22,19 @@ export type Calendar = {
 };
 
 export type Year = {
-    year: string;
+  year: string;
 };
+
+export type AuthContextType = {
+  user: User | null;
+  loading: boolean;
+  login: (user: User) => void;
+  logout: () => void;
+}
+
+export type User = {
+  id: number;
+  userId: number;
+  name: string;
+  email: string;
+}
