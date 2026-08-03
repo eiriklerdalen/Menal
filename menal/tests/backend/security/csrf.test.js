@@ -51,7 +51,7 @@ function testPostCsrf(getApp, getDb) {
             .get("/calendars");
 
         expect(checkForUpdateResponse.status).toBe(200);
-        expect(checkForUpdateResponse.body).toMatchObject([])
+        expect(checkForUpdateResponse.body).toEqual([])
     });
 
     it("rejects POST requests with an invalid CSRF token", async () => {
