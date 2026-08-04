@@ -43,6 +43,11 @@ function SettingsPage() {
         }
     }
 
+    async function handleNewPassword(e: SubmitEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+    }
+
     return (
         <div className="settings-page">
             <h1>Innstillinger</h1>
@@ -74,6 +79,7 @@ function SettingsPage() {
 
                     <form 
                         className="settings-section"
+                        onSubmit={handleNewPassword}
                     >
                         <h2>Endre passord</h2>
 

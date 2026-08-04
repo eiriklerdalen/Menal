@@ -73,8 +73,8 @@ export function validatePassword(password) {
     return (
         typeof password === "string" &&
         password !== "" &&
-        password.length <= 128  // && !!! HUSK å legge til denne igjen!
-        // password.length >= 8
+        password.length <= 128 &&
+        password.length >= 8
     );
 }
 
