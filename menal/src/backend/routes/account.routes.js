@@ -8,12 +8,12 @@ import { badRequest, unauthorizedLogin } from "../utils/httpResponses.js";
 
 import bcrypt from "bcrypt";
 
-export function createAccountRouter({ db, writeLimiter }) {
+export function createAccountRouter({ db, nameChangeLimiter, passwordChangeLimiter, writeLimiter }) {
     const router = Router();
 
     router.use(requireAuth);
 
-    router.patch("/name", writeLimiter, (req, res) => {
+    router.patch("/name", nameChangeLimiter, writeLimiter, (req, res) => {
         const userId = req.session.userId;
 
         const { name } = req.body ?? {};
@@ -40,7 +40,7 @@ export function createAccountRouter({ db, writeLimiter }) {
         });
     });
 
-    router.patch("/password", writeLimiter, async (req, res) => {
+    router.patch("/password", passwordChangeLimiter, writeLimiter, async (req, res) => {
         const userId = req.session.userId;
 
         const { password, newPassword, confirmPassword } = req.body ?? {};

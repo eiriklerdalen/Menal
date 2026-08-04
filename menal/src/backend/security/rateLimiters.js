@@ -103,6 +103,39 @@ export function createRateLimiters(redisClient) {
         message: { error: "Too many deletions during a short time span. Please try again later." },
     });
 
+    const nameChangeLimiter = rateLimit({
+        windowMs: 60 * MINUTE,
+        limit: 10,
+
+        store: createRateLimitStore("menal:rate-limit:name-change"),
+
+        standardHeaders: "draft-8",
+        legacyHeaders: false,
+
+        keyGenerator: (req) => {
+            return `user:${req.session.userId}`;
+        },
+
+        message: { error: "Too many name changes" },
+    });
+
+    const passwordChangeLimiter = rateLimit({
+        windowMs: 30 * MINUTE,
+        limit: 5,
+
+        store: createRateLimitStore("menal:rate-limit:password-change"),
+
+        standardHeaders: "draft-8",
+        legacyHeaders: false,
+        skipFailedRequests: true,
+
+        keyGenerator: (req) => {
+            return `user${req.session.userId}`;
+        },
+
+        message: { error: "Too many password attempts. Try again later." },
+    });
+
     return {
         apiLimiter,
         loginLimiter,
@@ -110,5 +143,7 @@ export function createRateLimiters(redisClient) {
         registerLimiter,
         writeLimiter,
         deleteLimiter,
+        nameChangeLimiter,
+        passwordChangeLimiter,
     };
 }

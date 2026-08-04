@@ -106,6 +106,8 @@ export function createApp({
     app.use("/account", createAccountRouter({
         db,
         writeLimiter: limiters.writeLimiter,
+        nameChangeLimiter: limiters.nameChangeLimiter,
+        passwordChangeLimiter: limiters.passwordChangeLimiter,
     }));
 
     app.use((error, req, res, next) => {
