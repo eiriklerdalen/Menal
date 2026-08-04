@@ -34,8 +34,8 @@ export function validateYear(year) {
 export function validateName(name) {
     return (
         typeof name === "string" &&
-        name !== "" && 
-        name.length <= 50
+        name.trim() !== "" && 
+        name.trim().length <= 50
     );
 }
 

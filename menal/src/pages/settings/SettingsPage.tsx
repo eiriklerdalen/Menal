@@ -1,19 +1,30 @@
 import { useState } from "react";
 
+import type { SubmitEvent } from "react";
+
 import useRequiredUser from "../../hooks/useRequiredUser";
 
 import "./SettingsPage.css";
 
 function SettingsPage() {
     const user = useRequiredUser();
+    const oldName = user.name;
     const [name, setName] = useState(user.name);
+
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const [error, setError] = useState("");
 
     return (
         <div className="settings-page">
             <h1>Innstillinger</h1>
             <div className="settings-content">
                 <main className="settings-card">
-                    <form className="settings-section">
+                    <form 
+                        className="settings-section"
+                    >
                         <h2>Profil</h2>
                         <div className="settings-field">
                             <label htmlFor="name">Navn</label>
@@ -34,7 +45,9 @@ function SettingsPage() {
                         </button>
                     </form>
 
-                    <form className="settings-section">
+                    <form 
+                        className="settings-section"
+                    >
                         <h2>Endre passord</h2>
 
                         <div className="settings-field">
@@ -43,6 +56,7 @@ function SettingsPage() {
                                 id="current-password"
                                 name="currentPassword"
                                 type="password"
+                                onChange={(e) => setCurrentPassword(e.target.value)}
                                 autoComplete="current-password"
                                 required
                             />
@@ -54,6 +68,7 @@ function SettingsPage() {
                                 id="new-password"
                                 name="newPassword"
                                 type="password"
+                                onChange={(e) => setNewPassword(e.target.value)}
                                 autoComplete="new-password"
                                 minLength={8}
                                 maxLength={128}
@@ -67,6 +82,7 @@ function SettingsPage() {
                                 id="confirm-password"
                                 name="confirmPassword"
                                 type="password"
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 autoComplete="confirm-password"
                                 minLength={8}
                                 maxLength={128}

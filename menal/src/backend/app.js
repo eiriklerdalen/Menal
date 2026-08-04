@@ -13,6 +13,7 @@ import { createCalendarsRouter } from "./routes/calendars.routes.js";
 import { createEntriesRouter } from "./routes/entries.routes.js";
 import { createJournalRouter } from "./routes/journal.routes.js";
 import { createOverviewRouter } from "./routes/overview.routes.js";
+import { createAccountRouter } from "./routes/account.routes.js";
 
 export function createApp({
     db,
@@ -100,6 +101,11 @@ export function createApp({
 
     app.use("/overview", createOverviewRouter({
         db,
+    }));
+    
+    app.use("/account", createAccountRouter({
+        db,
+        writeLimiter,
     }));
 
     app.use((error, req, res, next) => {
