@@ -7,6 +7,7 @@ import CalendarPage from "../pages/calendars/CalendarsPage";
 import LogPage from "../pages/log/LogPage";
 import NewCalendarPage from "../pages/calendars/new_calendar/NewCalendarPage"
 import EditCalendarPage from "../pages/calendars/edit_calendar/EditCalendarPage";
+import SettingsPage from "../pages/settings/SettingsPage";
 
 import Sidebar from "./Sidebar";
 
@@ -32,7 +33,7 @@ function AppLayout({darkMode, setDarkMode}: AppLayoutProps) {
                     <Route path="/calendars" element={<CalendarPage />} />
                     <Route path="/calendars/new" element={<NewCalendarPage />} />
                     <Route path="calendars/:calendarId/edit" element={<EditCalendarPage />} />
-                    <Route path="/settings" element={<h1>Innstillinger</h1>} />
+                    <Route path="/settings" element={<SettingsPage />} />
                 </Routes>
             </main>
         </div>
