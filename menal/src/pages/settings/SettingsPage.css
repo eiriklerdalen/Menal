@@ -104,3 +104,18 @@
         width: 100%;
     }
 }
+
+.settings-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+
+    padding: 12px 18px;
+    border-radius: 9px;
+
+    color: white;
+    background: #2e9d55;
+
+    box-shadow: 0 4px 14px rgb(0 0 0 / 20%);
+}

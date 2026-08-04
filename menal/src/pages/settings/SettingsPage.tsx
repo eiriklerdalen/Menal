@@ -20,6 +20,7 @@ function SettingsPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     async function handleNameChange(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -29,12 +30,16 @@ function SettingsPage() {
             return;
         }
 
+        setError("");
+
         try {
             const updatedUser = await changeName(name);
 
             updateUser({
                 name: updatedUser.name,
             });
+
+            showSuccess("Navnet ble oppdatert.");
         } catch (err) {
             console.error(err);
             if (err instanceof Error) {
@@ -46,11 +51,45 @@ function SettingsPage() {
     async function handleNewPassword(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
+        if (newPassword !== confirmPassword) {
+            setError("Nytt passord er ikke like.");
+            return;
+        }
+
+        setError("");
+
+        try {
+            await changePassword(currentPassword, newPassword, confirmPassword);
+
+            setCurrentPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+
+            showSuccess("Passorder ble oppdatert.");
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                setError(err.message);
+            }
+        }
+    }
+
+    function showSuccess(message: string) {
+        setSuccessMessage(message);
+
+        setTimeout(() => {
+            setSuccessMessage("");
+        }, 3000);
     }
 
     return (
         <div className="settings-page">
             <h1>Innstillinger</h1>
+            {successMessage && (
+                <div className="settings-toast" role="status">
+                    {successMessage}
+                </div>
+            )}
             <div className="settings-content">
                 <main className="settings-card">
                     <form 
@@ -89,6 +128,7 @@ function SettingsPage() {
                                 id="current-password"
                                 name="currentPassword"
                                 type="password"
+                                value={currentPassword}
                                 onChange={(e) => setCurrentPassword(e.target.value)}
                                 autoComplete="current-password"
                                 required
@@ -101,6 +141,7 @@ function SettingsPage() {
                                 id="new-password"
                                 name="newPassword"
                                 type="password"
+                                value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 autoComplete="new-password"
                                 minLength={8}
@@ -115,6 +156,7 @@ function SettingsPage() {
                                 id="confirm-password"
                                 name="confirmPassword"
                                 type="password"
+                                value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 autoComplete="confirm-password"
                                 minLength={8}
@@ -159,6 +201,25 @@ async function changeName(newName: string) {
     }
 
     return data;
+}
+
+async function changePassword(currentPassword: string, newPassword: string, confirmPassword: string) {
+    const res = await apiFetch("/account/password", {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            password: currentPassword,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword,
+        }),
+    });
+
+    if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Kunne ikke endre passord.");
+    }
 }
 
 export default SettingsPage;
