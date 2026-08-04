@@ -4,7 +4,7 @@ import Database from "better-sqlite3";
 
 import { createApp } from "./app.js";
 import { connectRedis, redisClient } from "./redis.js";
-import { createRateLimiters } from "./security/rateLimiters.js"
+import { createRateLimiters } from "./security/rateLimiters.js";
 
 const PORT = process.env.PORT ?? 3000;
 const isProduction = process.env.NODE_ENV === "production";
@@ -23,10 +23,10 @@ const app = createApp({
     sessionSecret: process.env.SESSION_SECRET,
     isProduction,
     limiters,
-})
+});
 
 
 // RUN
-app.listen(3000, "0.0.0.0", () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log("Server running on http://10.0.0.81:3000");
 });

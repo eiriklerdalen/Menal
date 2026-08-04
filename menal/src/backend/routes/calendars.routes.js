@@ -52,7 +52,7 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
         `).get(calendarId, userId);
 
         if (!calendar) {
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
     
         return res.json(calendar);
