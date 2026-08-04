@@ -29,6 +29,7 @@ export type AuthContextType = {
   user: User | null;
   loading: boolean;
   login: (user: User) => void;
+  updateUser: (updates: Partial<User>) => void;
   logout: () => void;
 }
 

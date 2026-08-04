@@ -105,7 +105,7 @@ export function createApp({
     
     app.use("/account", createAccountRouter({
         db,
-        writeLimiter,
+        writeLimiter: limiters.writeLimiter,
     }));
 
     app.use((error, req, res, next) => {

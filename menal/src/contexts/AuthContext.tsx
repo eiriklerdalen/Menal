@@ -38,6 +38,19 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
         setUser(user);
     }
 
+    function updateUser(updates: Partial<User>) {
+        setUser((currentUser) => {
+            if (currentUser === null) {
+                return null;
+            }
+
+            return {
+                ...currentUser,
+                ...updates,
+            };
+        });
+    }
+
     async function logout() {
         try {
             await apiFetch("/logout", {
@@ -54,8 +67,8 @@ export function AuthProvider({ children }: { children: React.ReactNode}) {
             value={{
                 user,
                 loading,
-                //isLoggedIn: user !== null,
                 login,
+                updateUser,
                 logout
             }}
         >

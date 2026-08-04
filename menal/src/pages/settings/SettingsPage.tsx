@@ -3,10 +3,14 @@ import { useState } from "react";
 import type { SubmitEvent } from "react";
 
 import useRequiredUser from "../../hooks/useRequiredUser";
+import { useAuth } from "../../hooks/useAuth";
 
 import "./SettingsPage.css";
+import { apiFetch } from "../../config/apiFetch";
 
 function SettingsPage() {
+    const { updateUser } = useAuth();
+
     const user = useRequiredUser();
     const oldName = user.name;
     const [name, setName] = useState(user.name);
@@ -17,6 +21,28 @@ function SettingsPage() {
 
     const [error, setError] = useState("");
 
+    async function handleNameChange(e: SubmitEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        if (name === oldName) {
+            setError("Nytt navn kan ikke være likt det gamle.");
+            return;
+        }
+
+        try {
+            const updatedUser = await changeName(name);
+
+            updateUser({
+                name: updatedUser.name,
+            });
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                setError(err.message);
+            }
+        }
+    }
+
     return (
         <div className="settings-page">
             <h1>Innstillinger</h1>
@@ -24,6 +50,7 @@ function SettingsPage() {
                 <main className="settings-card">
                     <form 
                         className="settings-section"
+                        onSubmit={handleNameChange}
                     >
                         <h2>Profil</h2>
                         <div className="settings-field">
@@ -94,10 +121,38 @@ function SettingsPage() {
                             Oppdater passord
                         </button>
                     </form>
+
+                    <p 
+                        className={`error-message ${error ? "error-message--visible" : ""}`}
+                        role="alert"
+                        aria-live="polite"
+                    >
+                        {error || "\u00A0"}
+                    </p>
                 </main>
             </div>
         </div>
     )
+}
+
+async function changeName(newName: string) {
+    const res = await apiFetch("/account/name", {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            name: newName,
+        }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error(data.error ?? "Kunne ikke endre navn.");
+    }
+
+    return data;
 }
 
 export default SettingsPage;
