@@ -39,17 +39,18 @@ function Sidebar({darkMode, setDarkMode, isOpen, onToggle}: SidebarProps) {
             </nav>
 
             <div className="sidebar-footer">
+
+                <ThemeSwitch
+                    darkMode={darkMode}
+                    setDarkMode={setDarkMode}
+                />
+                
                 <button
                     className="logout-button"
                     onClick={handleLogout}
                 >
                     Logg ut
                 </button>
-
-                <ThemeSwitch
-                    darkMode={darkMode}
-                    setDarkMode={setDarkMode}
-                />
             </div>
         </aside>
     );
