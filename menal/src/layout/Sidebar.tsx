@@ -7,9 +7,11 @@ import { useAuth } from "../hooks/useAuth.ts";
 type SidebarProps = {
     darkMode: boolean;
     setDarkMode: (value: boolean) => void;
+    isOpen: boolean;
+    onToggle: () => void;
 };
 
-function Sidebar({darkMode, setDarkMode}: SidebarProps) {
+function Sidebar({darkMode, setDarkMode, isOpen, onToggle}: SidebarProps) {
     const navigate = useNavigate();
 
     const { logout } = useAuth();
@@ -20,7 +22,7 @@ function Sidebar({darkMode, setDarkMode}: SidebarProps) {
     }
 
     return (
-        <aside className={`sidebar ${darkMode ? "dark-mode" : ""}`}>
+        <aside className={`sidebar ${isOpen ? "open" : "collapsed"} ${darkMode ? "dark-mode" : ""}`}>
             <h1
                 className="menal-title"
                 onClick={() => navigate("/")}

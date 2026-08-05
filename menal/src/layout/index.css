@@ -17,6 +17,7 @@ body {
 
 /* Layout -----------------------------------------------------------------------------------------------------------------*/
 .app-layout {
+  position: relative;
   display: flex;
   width: 100%;
   min-height: 100vh;
@@ -29,6 +30,27 @@ body {
   color: inherit;
 }
 
+.main-content {
+  flex: 1;
+  padding: 32px;
+}
+
+/* Sidebar -----------------------------------------------------------------------------------------------------------------*/
+.sidebar-toggle {
+  position: absolute;
+
+  align-self: flex-start;
+  margin: 16px 0 0 16px;
+  padding: 8px;
+
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
 .sidebar {
   width: 260px;
   padding: 20px;
@@ -38,6 +60,20 @@ body {
 
   border-right: 2px solid var(--color-sidebar-border);
   background: var(--color-sidebar-bg);
+
+  overflow: hidden;
+
+  transition:
+    width 200ms ease,
+    padding 200ms ease,
+    border-width 200ms ease;
+}
+
+.sidebar.collapsed {
+  width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-right-width: 0;
 }
 
 .sidebar nav {
@@ -64,13 +100,8 @@ body {
   background: var(--color-sidebar-button-hover);
 }
 
-.main-content {
-  flex: 1;
-  padding: 32px;
-}
 
-
-/* Footer -------------------------------------------------------------------------------------------------------*/
+/* Sidebar Footer -------------------------------------------------------------------------------------------------------*/
 .sidebar-footer {
   margin-top: auto;
 

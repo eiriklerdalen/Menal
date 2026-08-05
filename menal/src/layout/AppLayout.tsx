@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import DashboardPage from "../pages/dashboard/DashboardPage";
@@ -17,11 +18,26 @@ type AppLayoutProps = {
 };
 
 function AppLayout({darkMode, setDarkMode}: AppLayoutProps) {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
     return (
-        <div className={`app-layout ${darkMode ? "dark-mode" : ""}`}>
+        <div className={`app-layout ${sidebarOpen ? "" : "sidebar-collapsed"} ${darkMode ? "dark-mode" : ""}`}>
+
+            <button
+                type="button"
+                className="sidebar-toggle"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                aria-expanded={sidebarOpen}
+                aria-label={sidebarOpen ? "Lukk sidemenyen" : "Åpne sidemenyen"}
+            >
+                <span aria-hidden="true">☰</span>
+            </button>
+
             <Sidebar
                 darkMode={ darkMode }
                 setDarkMode={ setDarkMode }
+                isOpen={ sidebarOpen }
+                onToggle={ () => setSidebarOpen(!sidebarOpen)}
             />
 
             <main className={`main-content ${darkMode ? "dark-mode" : ""}`}>
