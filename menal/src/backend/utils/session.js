@@ -1,4 +1,4 @@
-export function createSession(req, res, user, status=200) {
+export function createSession(req, res, user, status=200, sessionRegistry) {
     req.session.regenerate((regenerateError) => {
         if (regenerateError) {
             console.error(regenerateError);
@@ -7,7 +7,7 @@ export function createSession(req, res, user, status=200) {
 
         req.session.userId = user.id;
 
-        req.session.save((saveError) => {
+        req.session.save(async (saveError) => {
             if (saveError) {
                 console.error(saveError);
                 return res.sendStatus(500);
@@ -18,6 +18,8 @@ export function createSession(req, res, user, status=200) {
                 name: user.name,
                 email: user.email,
             });
+
+            await sessionRegistry.addSession(user.id, req.sessionID);
         });
     });
 }

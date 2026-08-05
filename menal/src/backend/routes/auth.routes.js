@@ -8,7 +8,7 @@ import { createSession } from "../utils/session.js";
 
 import bcrypt from "bcrypt";
 
-export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, registerLimiter }) {
+export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccountLimiter, registerLimiter }) {
     const router = Router();
 
     router.get("/me", requireAuth, (req, res) => {
@@ -63,23 +63,29 @@ export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, regist
                 return unauthorizedLogin(res);
             }
     
-            return createSession(req, res, user);
+            return createSession(req, res, user, 200, sessionRegistry);
         } catch (error) {
             console.error(error);
             return res.sendStatus(500);
         }
     });
 
-    router.post("/logout", requireAuth, (req, res) => {
-        req.session.destroy((err) => {
-            if (err) {
-                return res.sendStatus(500);
-            }
+    router.post("/logout", requireAuth, async (req, res) => {
+        try {
+            await sessionRegistry.removeSession(req.session.userId, req.sessionID);
 
-            res.clearCookie("connect.sid");
+            req.session.destroy((err) => {
+                if (err) {
+                    return res.sendStatus(500);
+                }
 
-            res.sendStatus(204);
-        });
+                res.clearCookie("connect.sid");
+                return res.sendStatus(204);
+            });
+        } catch (err) {
+            console.error(err);
+            return res.sendStatus(500);
+        }
     });
 
     router.post("/register", registerLimiter, async (req, res) => {
@@ -136,7 +142,7 @@ export function createAuthRouter({ db, loginLimiter, loginAccountLimiter, regist
                 WHERE id = ?    
             `).get(result.lastInsertRowid);
     
-            return createSession(req, res, user, 201);
+            return createSession(req, res, user, 201, sessionRegistry);
         } catch (error) {
             console.error(error);
             return res.sendStatus(500);

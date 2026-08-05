@@ -8,6 +8,8 @@ import helmet from "helmet";
 
 import { csrfSync } from "csrf-sync";
 
+import { createSessionRegistry } from "./sessions/sessionRegistry.js";
+
 import { createAuthRouter } from "./routes/auth.routes.js";
 import { createCalendarsRouter } from "./routes/calendars.routes.js";
 import { createEntriesRouter } from "./routes/entries.routes.js";
@@ -33,6 +35,7 @@ export function createApp({
             "http://localhost:5173",
             "http://10.0.0.81:5173",
             "http://127.0.0.1:5173",
+            "http://192.168.0.28:5173",
         ],
         credentials: true,
     }));
@@ -62,6 +65,8 @@ export function createApp({
         }
     }));
 
+    const sessionRegistry = createSessionRegistry(redisClient);
+
     // CSRF ------------------------------------------------------------------------------------------------------------------
     const { generateToken, csrfSynchronisedProtection } = csrfSync()
     
@@ -76,6 +81,7 @@ export function createApp({
     // Routes ----------------------------------------------------------------------------------------------------------------
     app.use("/", createAuthRouter({
         db,
+        sessionRegistry,
         loginLimiter: limiters.loginLimiter,
         loginAccountLimiter: limiters.loginAccountLimiter,
         registerLimiter: limiters.registerLimiter,
@@ -105,6 +111,7 @@ export function createApp({
     
     app.use("/account", createAccountRouter({
         db,
+        sessionRegistry,
         writeLimiter: limiters.writeLimiter,
         nameChangeLimiter: limiters.nameChangeLimiter,
         passwordChangeLimiter: limiters.passwordChangeLimiter,

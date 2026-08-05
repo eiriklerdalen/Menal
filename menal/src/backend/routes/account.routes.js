@@ -8,7 +8,7 @@ import { badRequest, unauthorizedLogin } from "../utils/httpResponses.js";
 
 import bcrypt from "bcrypt";
 
-export function createAccountRouter({ db, nameChangeLimiter, passwordChangeLimiter, writeLimiter }) {
+export function createAccountRouter({ db, sessionRegistry, nameChangeLimiter, passwordChangeLimiter, writeLimiter }) {
     const router = Router();
 
     router.use(requireAuth);
@@ -90,6 +90,11 @@ export function createAccountRouter({ db, nameChangeLimiter, passwordChangeLimit
             if (result.changes === 0) {
                 return res.sendStatus(404);
             }
+
+            await sessionRegistry.revokeOtherSessions(
+                userId,
+                req.sessionID,
+            )
 
             return res.sendStatus(204);
         } catch (error) {
