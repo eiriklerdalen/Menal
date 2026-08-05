@@ -1,5 +1,5 @@
 import { apiURL } from "./api";
-import { getCSRFToken } from "./csrf";
+import { clearCSRFToken, getCSRFToken } from "./csrf";
 
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
@@ -14,10 +14,21 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
         );
     }
 
-    return fetch(apiURL(path), {
+    const response = await fetch(apiURL(path), {
         ...options,
         method,
         headers,
         credentials: "include",
     });
+
+    if (response.status === 401) {
+        const data = await response.clone().json()
+
+        if (data?.code === "SESSION_REQUIRED" && path !== "/me") {
+            clearCSRFToken();
+            window.location.assign("/login");
+        }
+    }
+
+    return response;
 }
