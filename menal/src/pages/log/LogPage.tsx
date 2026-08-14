@@ -184,6 +184,7 @@ function LogPage() {
                     Skriv om dagen:
                     <textarea
                         className="journal-input"
+                        placeholder="Hva skjedde i dag?"
                         value={text}
                         onChange={(e) => {
                             setText(e.target.value);
@@ -216,7 +217,10 @@ function LogPage() {
 
                             <div className="rating-button-row">
                                 <button
-                                    className="reset-button rating-button" 
+                                    type="button"
+                                    className={`reset-button rating-button ${currentRating === 0 ? "selected" : ""}`}
+                                    aria-label={`Nullstill rating for ${calendar.name}`}
+                                    aria-pressed={currentRating === 0}
                                     onClick={() => {
                                         updateEntry(calendar.id, 0, selectedDate);
                                         deleteEntry(calendar.id, selectedDate);
@@ -227,8 +231,11 @@ function LogPage() {
 
                                 {Array.from({ length: calendar.max_rating}, (_, i) => i + 1).map((rating) => (
                                     <button 
-                                        className="rating-button"
+                                        type="button"
+                                        className={`rating-button ${currentRating === rating ? "selected" : ""}`}
                                         key={rating}
+                                        aria-label={`Gi ${calendar.name} rating ${rating} av ${calendar.max_rating}`}
+                                        aria-pressed={currentRating === rating}
                                         style={{
                                             backgroundColor:
                                                 calendarColors[calendar.id]?.[rating-1] ?? "lightgray"

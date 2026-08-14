@@ -8,10 +8,10 @@ type SidebarProps = {
     darkMode: boolean;
     setDarkMode: (value: boolean) => void;
     isOpen: boolean;
-    onToggle: () => void;
+    onNavigate: () => void;
 };
 
-function Sidebar({darkMode, setDarkMode, isOpen, onToggle}: SidebarProps) {
+function Sidebar({darkMode, setDarkMode, isOpen, onNavigate}: SidebarProps) {
     const navigate = useNavigate();
 
     const { logout } = useAuth();
@@ -21,21 +21,26 @@ function Sidebar({darkMode, setDarkMode, isOpen, onToggle}: SidebarProps) {
         navigate("/login");
     }
 
+    function handleNavigation(path: string) {
+        navigate(path);
+        onNavigate();
+    }
+
     return (
         <aside className={`sidebar ${isOpen ? "open" : "collapsed"} ${darkMode ? "dark-mode" : ""}`}>
             <h1
                 className="menal-title"
-                onClick={() => navigate("/")}
+                onClick={() => handleNavigation("/")}
             >
                 Menal
             </h1>
 
             <nav>
-                <button onClick={() => navigate("/dashboard")}>Dashbord</button>
-                <button onClick={() => navigate("/overview")}>Oversikt</button>
-                <button onClick={() => navigate(`/log/${getDate()}`)}>Logg</button>
-                <button onClick={() => navigate("/calendars")}>Kalendre</button>
-                <button onClick={() => navigate("/settings")}>Innstillinger</button>
+                <button onClick={() => handleNavigation("/dashboard")}>Dashbord</button>
+                <button onClick={() => handleNavigation("/overview")}>Oversikt</button>
+                <button onClick={() => handleNavigation(`/log/${getDate()}`)}>Logg</button>
+                <button onClick={() => handleNavigation("/calendars")}>Kalendre</button>
+                <button onClick={() => handleNavigation("/settings")}>Innstillinger</button>
             </nav>
 
             <div className="sidebar-footer">

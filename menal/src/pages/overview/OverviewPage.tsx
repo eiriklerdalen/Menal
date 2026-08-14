@@ -19,7 +19,7 @@ function OverviewPage() {
     }, [])
 
     return (
-        <div>
+        <div className="overview-page">
             <h1
                 className="over-view-back-button"
                 onClick={() => navigate("/overview")}

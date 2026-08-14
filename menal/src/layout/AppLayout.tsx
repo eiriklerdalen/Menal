@@ -18,26 +18,41 @@ type AppLayoutProps = {
 };
 
 function AppLayout({darkMode, setDarkMode}: AppLayoutProps) {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(() => {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+            return true;
+        }
+
+        return !window.matchMedia("(max-width: 700px)").matches;
+    });
 
     return (
         <div className={`app-layout ${sidebarOpen ? "" : "sidebar-collapsed"} ${darkMode ? "dark-mode" : ""}`}>
 
-            <button
-                type="button"
-                className="sidebar-toggle"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                aria-expanded={sidebarOpen}
-                aria-label={sidebarOpen ? "Lukk sidemenyen" : "Åpne sidemenyen"}
-            >
-                <span aria-hidden="true">☰</span>
-            </button>
+            <header className="mobile-header">
+                <button
+                    type="button"
+                    className="sidebar-toggle"
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    aria-expanded={sidebarOpen}
+                    aria-label={sidebarOpen ? "Lukk sidemenyen" : "Åpne sidemenyen"}
+                >
+                    <span aria-hidden="true">☰</span>
+                </button>
+            </header>
 
             <Sidebar
                 darkMode={ darkMode }
                 setDarkMode={ setDarkMode }
                 isOpen={ sidebarOpen }
-                onToggle={ () => setSidebarOpen(!sidebarOpen)}
+                onNavigate={() => {
+                    if (
+                        typeof window.matchMedia === "function"
+                        && window.matchMedia("(max-width: 700px)").matches
+                    ) {
+                        setSidebarOpen(false);
+                    }
+                }}
             />
 
             <main className={`main-content ${darkMode ? "dark-mode" : ""}`}>

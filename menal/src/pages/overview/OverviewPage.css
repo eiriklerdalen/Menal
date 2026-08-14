@@ -1,35 +1,73 @@
+.overview-page,
+.year-overview-page {
+  width: 100%;
+  min-width: 0;
+}
+
 .over-view-back-button {
+  margin-block: 0 clamp(1.25rem, 3vw, 2rem);
   cursor: pointer;
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+  line-height: 1.2;
+}
+
+.overview-years {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 240px), 1fr)
+  );
+  gap: clamp(12px, 2vw, 20px);
+  width: 100%;
 }
 
 .year-button {
     width: 100%;
+    min-width: 0;
 
-    padding: 16px;
-    margin-bottom: 16px;
+    padding: clamp(14px, 2vw, 20px);
+    margin: 0;
 
     border-radius: 15px;
     background: var(--color-year-button-bg);
     border: 1px solid var(--color-year-button-border);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-    font-family: var(---quicksand);
-    font-size: 24px;
+    font-family: var(--quicksand);
+    font-size: clamp(18px, 2vw, 24px);
+    cursor: pointer;
+
+    transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.year-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.13);
+}
+
+.week-container {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: clamp(12px, 2vw, 16px);
 }
 
 .week-button {
   width: 100%;
+  min-width: 0;
 
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: clamp(14px, 2vw, 16px);
+  margin: 0;
 
   border-radius: 15px;
   background: var(--color-week-button-bg);
   border: 1px solid var(--color-week-button-border);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  font-family: var(---quicksand);
-  font-size: 24px;
+  font-family: var(--quicksand);
+  font-size: clamp(18px, 2vw, 24px);
+  cursor: pointer;
+
+  transition: background-color 150ms ease, box-shadow 150ms ease;
 }
 
 .week-button:hover {
@@ -41,13 +79,24 @@
   color: var(--color-week-button-active-font);
 }
 
-.journal-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.week-entries {
+  display: grid;
+  gap: clamp(12px, 2vw, 16px);
+  width: 100%;
+  min-width: 0;
+  padding-top: clamp(12px, 2vw, 16px);
+}
 
-  padding: 16px;
-  margin-bottom: 16px;
+.journal-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: flex-start;
+  gap: clamp(16px, 3vw, 28px);
+  width: 100%;
+  min-width: 0;
+
+  padding: clamp(14px, 2vw, 20px);
+  margin: 0;
 
   border-radius: 15px;
   background: var(--color-journal-entry-bg);
@@ -59,6 +108,18 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
+}
+
+.journal-content h4,
+.journal-content p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.journal-content p {
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 
 .journal-actions {
@@ -66,6 +127,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .edit-journal-button {
@@ -82,7 +144,7 @@
 }
 
 .overview-ratings {
-  width: 28px;
+  width: clamp(24px, 3vw, 28px);
 
   display: flex;
   flex-direction: column;
@@ -91,7 +153,21 @@
 }
 
 .overview-rating-box {
-  width: 14px;
-  height: 14px;
+  width: clamp(12px, 1.5vw, 14px);
+  aspect-ratio: 1;
   border-radius: 3px;
+}
+
+.year-button:focus-visible,
+.week-button:focus-visible,
+.edit-journal-button:focus-visible {
+  outline: 3px solid rgba(79, 142, 247, 0.35);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .year-button,
+  .week-button {
+    transition: none;
+  }
 }

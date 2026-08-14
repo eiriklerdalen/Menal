@@ -1,3 +1,15 @@
+.heatmap-content,
+.heatmap-layout {
+  min-width: 0;
+}
+
+.heatmap.default,
+.heatmap.preview {
+  display: flex;
+  width: 100%;
+  gap: 1px;
+}
+
 .heatmap-instance {
   position: relative;
 
@@ -10,53 +22,66 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Month row ------------------------------------------------------------------------------------------------------------*/
 .month-row {
   display: flex;
-  gap: 3px;
-  margin-left: 10px;
+  justify-content: safe center;
+  gap: 1px;
   margin-bottom: 4px;
-  justify-content: center;
 }
 
 .month-label {
-  width: 12px;
+  flex: 1 1 14px;
+  min-width: 6px;
+  max-width: 14px;
   font-size: 10px;
   color: #888;
 }
+/* ------------------------------------------------------------------------------------------------------------*/
 
 .heatmap-layout {
-  display: flex;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: clamp(76px, 9vw, 100px) minmax(0, 1fr);
+  gap: clamp(12px, 2vw, 24px);
   align-items: flex-start;
 }
 
 .heatmap-content {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
 .year-buttons.preview {
   display: none;
 }
 
+.year-buttons.preview + .heatmap-content {
+  grid-column: 1 / -1;
+}
+
 .year-buttons {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 40px;
+  gap: clamp(6px, 1vw, 8px);
+  width: 100%;
+  min-width: 0;
+  margin-top: clamp(28px, 4vw, 40px);
 }
 
 .year-buttons button {
-  width: 100px;
-  height: 42px;
-  padding: 6px 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: clamp(36px, 4vw, 42px);
+  padding: 6px clamp(6px, 1vw, 12px);
   border: 1px solid #d0d7de;
   border-radius: 6px;
   background: var(--color-year-buttons-bg);
   color: var(--color-font);
   cursor: pointer;
-  font-size: 13px;
+  font-size: clamp(11px, 1.2vw, 13px);
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
@@ -73,6 +98,8 @@
 /* Year Select ------------------------------------------------------------------------------------------------------------*/
 
 .year-select {
+  width: 100%;
+  min-width: 0;
   padding: 6px 10px;
   border: 1px solid var(--color-year-select-border);
   border-radius: 8px;
@@ -89,12 +116,11 @@
 }
 
 /* -----------------------------------------------------------------------------------------------------------------------*/
-
-
 .calendar.default {
   display: flex;
   flex-direction: column;
-  padding-left: 50px;
+  min-width: 0;
+  padding-left: clamp(0px, 3vw, 50px);
 }
 
 .calendarName.default {
@@ -105,7 +131,7 @@
 .heatmap.default {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: safe center;
   gap: 1px;
 }
 
@@ -121,14 +147,18 @@
 
 .week {
   display: flex;
+  flex: 1 1 14px;
+  min-width: 6px;
+  max-width: 14px;
   flex-direction: column;
   gap: 1px;
 }
 
 .day {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 20%;
 }
 
 .day:hover {
