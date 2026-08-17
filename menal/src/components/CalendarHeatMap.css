@@ -167,3 +167,44 @@
 }
 
 .rating-0 {background: gray;}
+
+/* Mobile heatmap -------------------------------------------------------------------------------------------------------*/
+@media (max-width: 700px) {
+  .heatmap-instance {
+    padding: 16px;
+  }
+
+  .calendar.default {
+    padding-left: 0;
+  }
+
+  .heatmap-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .year-buttons.default {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .year-buttons.default button,
+  .year-buttons.default .year-select {
+    width: auto;
+    min-width: 76px;
+    min-height: 36px;
+    flex: 0 1 auto;
+  }
+
+  .heatmap-content {
+    overflow-x: hidden;
+  }
+
+  .week,
+  .month-label {
+    min-width: 0;
+  }
+}
