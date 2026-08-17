@@ -1,5 +1,6 @@
 import express from "express";
 import session from "express-session";
+import path from "node:path";
 
 import { RedisStore } from "connect-redis";
 
@@ -23,6 +24,8 @@ export function createApp({
     sessionSecret,
     isProduction,
     limiters,
+    apiPrefix = "",
+    staticDir = null,
 }) {
     const app = express();
 
@@ -30,20 +33,26 @@ export function createApp({
         app.set("trust proxy", 1);
     }
 
-    app.use(cors({
-        origin: [
-            "http://localhost:5173",
-            "http://10.0.0.81:5173",
-            "http://127.0.0.1:5173",
-            "http://192.168.0.28:5173",
-            "http://192.168.0.117:5173",
-        ],
-        credentials: true,
-    }));
+    if (!isProduction) {
+        app.use(cors({
+            origin: [
+                "http://localhost:5173",
+                "http://10.0.0.81:5173",
+                "http://127.0.0.1:5173",
+                "http://192.168.0.28:5173",
+                "http://192.168.0.117:5173",
+            ],
+            credentials: true,
+        }));
+    }
 
     app.use(helmet());
 
-    app.use(limiters.apiLimiter);
+    app.get(`${apiPrefix}/health`, (req, res) => {
+        res.json({ status: "ok" });
+    });
+
+    app.use(apiPrefix, limiters.apiLimiter);
     app.use(express.json());
 
     const sessionStore = new RedisStore({
@@ -71,16 +80,16 @@ export function createApp({
     // CSRF ------------------------------------------------------------------------------------------------------------------
     const { generateToken, csrfSynchronisedProtection } = csrfSync()
     
-    app.get("/csrf-token", (req, res) => {
+    app.get(`${apiPrefix}/csrf-token`, (req, res) => {
         res.json({
             csrfToken: generateToken(req),
         });
     });
 
-    app.use(csrfSynchronisedProtection);
+    app.use(apiPrefix, csrfSynchronisedProtection);
 
     // Routes ----------------------------------------------------------------------------------------------------------------
-    app.use("/", createAuthRouter({
+    app.use(apiPrefix, createAuthRouter({
         db,
         sessionRegistry,
         loginLimiter: limiters.loginLimiter,
@@ -88,35 +97,46 @@ export function createApp({
         registerLimiter: limiters.registerLimiter,
     }));
 
-    app.use("/calendars", createCalendarsRouter({
+    app.use(`${apiPrefix}/calendars`, createCalendarsRouter({
         db,
         writeLimiter: limiters.writeLimiter,
         deleteLimiter: limiters.deleteLimiter,
     }));
 
-    app.use("/entries", createEntriesRouter({
+    app.use(`${apiPrefix}/entries`, createEntriesRouter({
         db,
         writeLimiter: limiters.writeLimiter,
         deleteLimiter: limiters.deleteLimiter,
     }));
 
-    app.use("/journal_entries", createJournalRouter({
+    app.use(`${apiPrefix}/journal_entries`, createJournalRouter({
         db,
         writeLimiter: limiters.writeLimiter,
         deleteLimiter: limiters.deleteLimiter,
     }));
 
-    app.use("/overview", createOverviewRouter({
+    app.use(`${apiPrefix}/overview`, createOverviewRouter({
         db,
     }));
     
-    app.use("/account", createAccountRouter({
+    app.use(`${apiPrefix}/account`, createAccountRouter({
         db,
         sessionRegistry,
         writeLimiter: limiters.writeLimiter,
         nameChangeLimiter: limiters.nameChangeLimiter,
         passwordChangeLimiter: limiters.passwordChangeLimiter,
     }));
+
+    if (staticDir) {
+        app.use(apiPrefix, (req, res) => {
+            res.status(404).json({ error: "Not found." });
+        });
+
+        app.use(express.static(staticDir));
+        app.get("/{*splat}", (req, res) => {
+            res.sendFile(path.join(staticDir, "index.html"));
+        });
+    }
 
     app.use((error, req, res, next) => {
         if (error.code === "EBADCSRFTOKEN") {
@@ -125,7 +145,8 @@ export function createApp({
             });
         }
 
-        return next(error);
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error." });
     });
 
     return app;

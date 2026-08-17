@@ -127,10 +127,8 @@ export function createRateLimiters(redisClient) {
 
         standardHeaders: "draft-8",
         legacyHeaders: false,
-        skipFailedRequests: true,
-
         keyGenerator: (req) => {
-            return `user${req.session.userId}`;
+            return `user:${req.session.userId}`;
         },
 
         message: { error: "Too many password attempts. Try again later." },
