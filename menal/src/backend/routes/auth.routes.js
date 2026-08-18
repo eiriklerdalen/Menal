@@ -8,6 +8,8 @@ import { createSession } from "../utils/session.js";
 
 import bcrypt from "bcrypt";
 
+export const MAX_NUM_USERS = 20;
+
 export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccountLimiter, registerLimiter }) {
     const router = Router();
 
@@ -124,6 +126,17 @@ export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccou
         if (existingUser) {
             return res.status(409).json({
                 error: "Email adress already registered."
+            });
+        }
+
+        const { count: numUsers } = db.prepare(`
+            SELECT COUNT(*) AS count
+            FROM users    
+        `).get();
+
+        if (numUsers >= MAX_NUM_USERS) {
+            return res.status(503).json({
+                error: "Registration is currently unavailable.",
             });
         }
     

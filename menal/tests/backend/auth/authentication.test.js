@@ -5,6 +5,7 @@ import { createTestApp } from "../helpers/createTestApp.js";
 
 import { getCsrfAgent } from "../helpers/createCsrfAgent.js";
 import { createTestUser } from "../helpers/createTestUser.js";
+import { MAX_NUM_USERS } from "../../../src/backend/routes/auth.routes.js";
 
 import bcrypt from "bcrypt";
 
@@ -245,6 +246,48 @@ function testValidateRegisterRoute(getApp, getDb) {
         
         expect(response.status).toBe(409);
         expect(response.body.error).toBe("Email adress already registered.");
+    });
+
+    it("returns 503 and does not create a user when the user limit is reached", async () => {
+        const db = getDb();
+        const insertUser = db.prepare(`
+            INSERT INTO users (name, email, password_hash)
+            VALUES (?, ?, ?)
+        `);
+
+        const fillUserLimit = db.transaction(() => {
+            for (let index = 0; index < MAX_NUM_USERS; index += 1) {
+                insertUser.run(
+                    `Test User ${index + 1}`,
+                    `user${index + 1}@test.com`,
+                    "unused-password-hash",
+                );
+            }
+        });
+
+        fillUserLimit();
+
+        const response = await agent
+            .post("/register")
+            .set("X-CSRF-Token", csrfToken)
+            .send({
+                email: "one-too-many@test.com",
+                name: "One User Too Many",
+                password: "password123",
+                confirmPassword: "password123",
+            });
+
+        expect(response.status).toBe(503);
+        expect(response.body).toEqual({
+            error: "Registration is currently unavailable.",
+        });
+
+        const { count } = db.prepare(`
+            SELECT COUNT(*) AS count
+            FROM users
+        `).get();
+
+        expect(count).toBe(MAX_NUM_USERS);
     });
 }
 
