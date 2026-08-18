@@ -4,6 +4,8 @@ import { requireAuth } from "../middleware/requireAuth.js";
 import { validateDate, validateCalendarId, validateMaxRating, validateRating } from "../validation/validators.js";
 import { badRequest } from "../utils/httpResponses.js";
 
+export const NUM_MAX_ENTRIES = 365;
+
 export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
     const router = Router();
 
@@ -60,7 +62,7 @@ export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
         if (!validateMaxRating(rating)) {
             return badRequest(res, "Invalid rating.");
         }
-    
+
         try {
             // Ownership check
             const calendar = db.prepare(`
@@ -72,6 +74,27 @@ export function createEntriesRouter({db, writeLimiter, deleteLimiter}) {
     
             if (!calendar) {
                 return res.sendStatus(404);
+            }
+
+            const existingEntry = db.prepare(`
+                SELECT id
+                FROM entries
+                WHERE calendar_id = ?
+                AND date = ?
+            `).get(calendar_id, date);
+
+            if (!existingEntry) {
+                const { count: numExistingEntries } = db.prepare(`
+                    SELECT COUNT(*) AS count
+                    FROM entries
+                    WHERE calendar_id = ?
+                `).get(calendar_id);
+
+                if (numExistingEntries >= NUM_MAX_ENTRIES) {
+                    return res.status(409).json({
+                        error: "Maximum number of entries for calendar has been reached.",
+                    });
+                }
             }
     
             // Input-validering (2)

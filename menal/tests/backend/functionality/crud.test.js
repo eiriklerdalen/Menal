@@ -4,6 +4,7 @@ import { createTestApp } from "../helpers/createTestApp.js";
 import { createTestUser } from "../helpers/createTestUser.js";
 import { createAuthenticatedAgent } from "../helpers/createAuthenticatedAgent.js";
 import { MAX_NUM_CALENDARS } from "../../../src/backend/routes/calendars.routes.js";
+import { NUM_MAX_ENTRIES } from "../../../src/backend/routes/entries.routes.js";
 
 describe("functional CRUD behavior", () => {
     let app;
@@ -197,6 +198,63 @@ function testEntryBehavior(getApp, getDb) {
             date,
             rating: 4,
         });
+    });
+
+    it("rejects a new entry when the calendar has reached the entry limit", async () => {
+        const { agent, csrfToken, user } = await createTestAgent(getApp, getDb);
+        const db = getDb();
+        const calendarId = createCalendar(db, user.id, 5);
+        const firstDate = "2025-01-01";
+
+        const insertEntry = db.prepare(`
+            INSERT INTO entries (calendar_id, date, rating)
+            VALUES (?, ?, ?)
+        `);
+
+        const fillCalendar = db.transaction(() => {
+            const startDate = new Date(`${firstDate}T00:00:00Z`);
+
+            for (let index = 0; index < NUM_MAX_ENTRIES; index += 1) {
+                const date = new Date(startDate);
+                date.setUTCDate(startDate.getUTCDate() + index);
+                insertEntry.run(calendarId, date.toISOString().slice(0, 10), 3);
+            }
+        });
+
+        fillCalendar();
+
+        const createResponse = await agent
+            .post("/entries")
+            .set("X-CSRF-Token", csrfToken)
+            .send({
+                calendar_id: calendarId,
+                date: "2026-01-01",
+                rating: 4,
+            });
+
+        expect(createResponse.status).toBe(409);
+        expect(createResponse.body).toEqual({
+            error: "Maximum number of entries for calendar has been reached.",
+        });
+
+        const updateResponse = await agent
+            .post("/entries")
+            .set("X-CSRF-Token", csrfToken)
+            .send({
+                calendar_id: calendarId,
+                date: firstDate,
+                rating: 5,
+            });
+
+        expect(updateResponse.status).toBe(200);
+
+        const { count } = db.prepare(`
+            SELECT COUNT(*) AS count
+            FROM entries
+            WHERE calendar_id = ?
+        `).get(calendarId);
+
+        expect(count).toBe(NUM_MAX_ENTRIES);
     });
 }
 
