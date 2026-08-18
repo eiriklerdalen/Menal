@@ -4,6 +4,8 @@ import { requireAuth } from "../middleware/requireAuth.js";
 import { validateDate, validateJournalText } from "../validation/validators.js";
 import { badRequest } from "../utils/httpResponses.js";
 
+export const MAX_NUM_JOURNALS = 365;
+
 export function createJournalRouter({ db, writeLimiter, deleteLimiter }) {
     const router = Router();
 
@@ -55,8 +57,29 @@ export function createJournalRouter({ db, writeLimiter, deleteLimiter }) {
         if (!validateDate(date)) {
             return badRequest(res);
         }
-    
+
         try {
+            const existingJournal = db.prepare(`
+                SELECT id
+                FROM journal_entries
+                WHERE user_id = ?
+                AND date = ?
+            `).get(userId, date);
+
+            if (!existingJournal) {
+                const { count: numExistingLogs } = db.prepare(`
+                    SELECT COUNT(*) AS count
+                    FROM journal_entries
+                    WHERE user_id = ?
+                `).get(userId);
+
+                if (numExistingLogs >= MAX_NUM_JOURNALS) {
+                    return res.status(409).json({
+                        error: "Maximum number of journal entries has been reached.",
+                    });
+                }
+            }
+
             const result = db.prepare(`
                 INSERT INTO journal_entries (user_id, date, journal_text)
                 VALUES (?, ?, ?)

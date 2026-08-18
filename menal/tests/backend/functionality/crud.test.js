@@ -5,6 +5,7 @@ import { createTestUser } from "../helpers/createTestUser.js";
 import { createAuthenticatedAgent } from "../helpers/createAuthenticatedAgent.js";
 import { MAX_NUM_CALENDARS } from "../../../src/backend/routes/calendars.routes.js";
 import { NUM_MAX_ENTRIES } from "../../../src/backend/routes/entries.routes.js";
+import { MAX_NUM_JOURNALS } from "../../../src/backend/routes/journal.routes.js";
 
 describe("functional CRUD behavior", () => {
     let app;
@@ -297,6 +298,64 @@ function testJournalBehavior(getApp, getDb) {
             date,
             journal_text: "Updated text",
         });
+    });
+
+    it("rejects a new journal entry when the user has reached the journal limit", async () => {
+        const { agent, csrfToken, user } = await createTestAgent(getApp, getDb);
+        const db = getDb();
+        const firstDate = "2025-01-01";
+
+        const insertJournal = db.prepare(`
+            INSERT INTO journal_entries (user_id, date, journal_text)
+            VALUES (?, ?, ?)
+        `);
+
+        const fillJournals = db.transaction(() => {
+            const startDate = new Date(`${firstDate}T00:00:00Z`);
+
+            for (let index = 0; index < MAX_NUM_JOURNALS; index += 1) {
+                const date = new Date(startDate);
+                date.setUTCDate(startDate.getUTCDate() + index);
+                insertJournal.run(
+                    user.id,
+                    date.toISOString().slice(0, 10),
+                    `Journal ${index + 1}`,
+                );
+            }
+        });
+
+        fillJournals();
+
+        const createResponse = await agent
+            .post("/journal_entries")
+            .set("X-CSRF-Token", csrfToken)
+            .send({
+                date: "2026-01-01",
+                journal_text: "One journal too many",
+            });
+
+        expect(createResponse.status).toBe(409);
+        expect(createResponse.body).toEqual({
+            error: "Maximum number of journal entries has been reached.",
+        });
+
+        const updateResponse = await agent
+            .post("/journal_entries")
+            .set("X-CSRF-Token", csrfToken)
+            .send({
+                date: firstDate,
+                journal_text: "Updated while at the limit",
+            });
+
+        expect(updateResponse.status).toBe(200);
+
+        const { count } = db.prepare(`
+            SELECT COUNT(*) AS count
+            FROM journal_entries
+            WHERE user_id = ?
+        `).get(user.id);
+
+        expect(count).toBe(MAX_NUM_JOURNALS);
     });
 }
 
