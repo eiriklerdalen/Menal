@@ -12,6 +12,8 @@ import {
 } from "../validation/validators.js";
 import { badRequest } from "../utils/httpResponses.js";
 
+export const MAX_NUM_CALENDARS = 5;
+
 export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
     const router = Router();
 
@@ -158,6 +160,18 @@ export function createCalendarsRouter({ db, writeLimiter, deleteLimiter }) {
         const cleanName = name.trim();
         if (!validateName(cleanName)) {
             return badRequest(res, "Name too long or empty.");
+        }
+
+        const { count: numExistingCalendars } = db.prepare(`
+            SELECT COUNT(*) AS count
+            FROM calendars
+            WHERE user_id = ?
+        `).get(userId);
+
+        if (numExistingCalendars >= MAX_NUM_CALENDARS) {
+            return res.status(409).json({
+                error: "Maximum number of calendars has been reached",
+            });
         }
     
         try {

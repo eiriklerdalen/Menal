@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestApp } from "../helpers/createTestApp.js";
 import { createTestUser } from "../helpers/createTestUser.js";
 import { createAuthenticatedAgent } from "../helpers/createAuthenticatedAgent.js";
+import { MAX_NUM_CALENDARS } from "../../../src/backend/routes/calendars.routes.js";
 
 describe("functional CRUD behavior", () => {
     let app;
@@ -70,6 +71,39 @@ function testCalendarBehavior(getApp, getDb) {
             0,
             1,
         ]);
+    });
+
+    it("rejects creating a calendar when the user has reached the limit", async () => {
+        const { agent, csrfToken, user } = await createTestAgent(getApp, getDb);
+        const db = getDb();
+
+        for (let position = 0; position < MAX_NUM_CALENDARS; position += 1) {
+            db.prepare(`
+                INSERT INTO calendars (user_id, name, max_rating, position)
+                VALUES (?, ?, ?, ?)
+            `).run(user.id, `Calendar ${position + 1}`, 3, position);
+        }
+
+        const response = await agent
+            .post("/calendars")
+            .set("X-CSRF-Token", csrfToken)
+            .send({
+                name: "One Calendar Too Many",
+                max_rating: 3,
+            });
+
+        expect(response.status).toBe(409);
+        expect(response.body).toEqual({
+            error: "Maximum number of calendars has been reached",
+        });
+
+        const { count } = db.prepare(`
+            SELECT COUNT(*) AS count
+            FROM calendars
+            WHERE user_id = ?
+        `).get(user.id);
+
+        expect(count).toBe(MAX_NUM_CALENDARS);
     });
 
     it("deletes a calendar with its entries and colors", async () => {
