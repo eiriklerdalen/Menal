@@ -1,7 +1,7 @@
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const MAX_JOURNAL_LENGTH = 10_000;
+const MAX_JOURNAL_LENGTH = 5_000;
 
 export function areStrings(...values) {
     return values.every((value) => typeof value === "string");
