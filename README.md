@@ -56,3 +56,24 @@ npm run dev
 ```
 
 ---
+### Structure
+```
+src/
+├── backend/        # Express, database and API routes
+├── components/     # Reusable React components
+├── config/         # Configuration for API calls and CSRF tokens
+├── contexts/       # Authentication
+├── hooks/          # Custom React hooks
+├── pages/          # Webapps pages
+└── utils/          # Date, periode and streak functions
+
+tests/backend/      # API, security and functionality tests
+```
+
+---
+### TO-DO
+- Create landing page that explains what Menal is and its functionality
+- Improve statistics-panel in `DashboardPage`
+- When creating a new user, one calendar should already exist
+- "Average" in `AverageRatingPanel` should count non-registered days as a rating 0
+    - For example: boolean calendar with only 1 entry displays "Average" as "1/1", but should be "1/7"
