@@ -1,0 +1,93 @@
+.landing-page {
+    min-height: 100dvh;
+    background-color: var(--surface-bg);
+    color: var(--color-font);
+}
+
+.landing-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 5rem;
+
+    background-color: var(--color-sidebar-bg);
+    border-bottom: 1px solid var(--color-sidebar-border);
+    box-shadow: 0 2px 10px rgba(23, 34, 33, 0.08);
+}
+
+.landing-page .menal-title {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.landing-page .menal-title img {
+    width: 2rem;
+    height: 2rem;
+}
+
+.landing-page .menal-title span {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.registration {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.registration button {
+    min-height: 2.5rem;
+    padding: 0.625rem 1rem;
+
+    border: 2px solid var(--color-write-log-button);
+    border-radius: 0.625rem;
+
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        transform 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.sign-in-button {
+    background-color: transparent;
+    color: #209c55;
+}
+
+.sign-in-button:hover {
+    background-color: rgba(46, 204, 113, 0.12);
+}
+
+.register-button {
+    background-color: var(--color-write-log-button);
+    color: #10261a;
+    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.24);
+}
+
+.register-button:hover {
+    background-color: #27b863;
+    border-color: #27b863;
+}
+
+.registration button:hover {
+    transform: translateY(-1px);
+}
+
+.registration button:focus-visible,
+.landing-page .menal-title:focus-visible {
+    outline: 3px solid rgba(46, 204, 113, 0.35);
+    outline-offset: 3px;
+}

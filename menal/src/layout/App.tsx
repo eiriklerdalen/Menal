@@ -8,6 +8,7 @@ import AppLayout from "./AppLayout";
 import "./theme.css";
 import ProtectedRoute from "../ProtectedRoute";
 import RegisterPage from "../pages/register/RegisterPage";
+import LandingPage from "../pages/landing/LandingPage";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -15,6 +16,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 

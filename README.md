@@ -77,3 +77,4 @@ tests/backend/      # API, security and functionality tests
 - When creating a new user, one calendar should already exist
 - "Average" in `AverageRatingPanel` should count non-registered days as a rating 0
     - For example: boolean calendar with only 1 entry displays "Average" as "1/1", but should be "1/7"
+- Users should be able to switch languages
