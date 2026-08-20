@@ -1,4 +1,4 @@
-# Menal
+# ![Menal logo](/menal/public/favicon-menal-small.svg) Menal
 A personal journal and tracking application. Users can write about their day and give custom ratings in various ascepts of their day. Such as:
 * How was your day? (Rating 1 - 6)
 * Did you work out today? (Rating y/n)
