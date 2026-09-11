@@ -1,12 +1,18 @@
 import { useNavigate } from "react-router-dom";
 
 import "./LandingPage.css";
+import ThemeSwitch from "../../components/ThemeSwitch";
 
-function LandingPage() {
+type LandingPageProps = {
+    darkMode: boolean;
+    setDarkMode: (value: boolean) => void;
+}
+
+function LandingPage({darkMode, setDarkMode}: LandingPageProps) {
     const navigate = useNavigate();
 
     return (
-        <div className="landing-page">
+        <div className={`landing-page ${darkMode ? "dark-mode" : ""}`}>
             <header className="landing-page-header">
                 <button
                     type="button"
@@ -14,8 +20,8 @@ function LandingPage() {
                     onClick={() => navigate("/")}
                 >
                     <img 
-                        src="/favicon-menal-small.svg"
-                        alt="" 
+                        src="favicon-menal-small.svg"
+                        alt=""
                         aria-hidden="true" 
                     />
                     <span>
@@ -39,6 +45,11 @@ function LandingPage() {
                     >
                         Opprett konto
                     </button>
+
+                    <ThemeSwitch
+                        darkMode={darkMode}
+                        setDarkMode={setDarkMode}
+                    />
                 </nav>
             </header>
         </div>

@@ -16,7 +16,12 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<HomeRedirect />} />
-      <Route path="/landing" element={<LandingPage />} />
+      <Route path="/landing" element={
+        <LandingPage 
+          darkMode={ darkMode }
+          setDarkMode={ setDarkMode }
+        />
+      } />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
@@ -26,7 +31,7 @@ function App() {
                   <ProtectedRoute>
                     <AppLayout
                       darkMode={ darkMode }
-                      setDarkMode={ setDarkMode}
+                      setDarkMode={ setDarkMode }
                     />
                   </ProtectedRoute>
                 }
