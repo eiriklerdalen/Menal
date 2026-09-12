@@ -1,9 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
-import "./LandingHeader.tsx";
+import LandingHeader from "./LandingHeader.tsx";
+import LandingBox from "./LandingBox.tsx";
 
 import "./LandingPage.css";
-import LandingHeader from "./LandingHeader.tsx";
+
+import lockIcon from "../../assets/landing/lock.svg";
+import lightningIcon from "../../assets/landing/lightning.svg"
+import heartIcon from "../../assets/landing/heart.svg";
+import chartIcon from "../../assets/landing/chart.svg";
 
 type LandingPageProps = {
     darkMode: boolean;
@@ -11,8 +14,6 @@ type LandingPageProps = {
 }
 
 function LandingPage({darkMode, setDarkMode}: LandingPageProps) {
-    const navigate = useNavigate();
-
     return (
         <div className={`landing-page ${darkMode ? "dark-mode" : ""}`}>
             <LandingHeader
@@ -23,6 +24,29 @@ function LandingPage({darkMode, setDarkMode}: LandingPageProps) {
             <div className="landing-page-content">
                 <h1>Bli bedre kjent med dagene dine.</h1>
                 <p>Observer humør, vaner og tanker.</p>
+
+                <div className="info-boxes">
+                    <LandingBox
+                        imagePath={ lockIcon }
+                        darkMode={ darkMode }
+                        text="Privat"
+                    />
+                    <LandingBox
+                        imagePath={ lightningIcon }
+                        darkMode={ darkMode }
+                        text="Enkelt"
+                    />
+                    <LandingBox
+                        imagePath={ heartIcon }
+                        darkMode={ darkMode }
+                        text="Ditt tempo"
+                    />
+                    <LandingBox
+                        imagePath={ chartIcon }
+                        darkMode={ darkMode }
+                        text="Oversikt"
+                    />
+                </div>
             </div>
         </div>
     )

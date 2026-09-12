@@ -15,3 +15,11 @@
     font-weight: 400;
     color: grey;
 }
+
+.info-boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1.25rem;
+    width: min(72rem, calc(100% - 3rem));
+    margin: 4rem auto 0;
+}
