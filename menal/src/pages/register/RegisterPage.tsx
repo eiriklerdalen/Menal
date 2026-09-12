@@ -10,7 +10,11 @@ import { clearCSRFToken } from "../../config/csrf";
 
 import "./RegisterPage.css"
 
-function RegisterPage() {
+type RegisterPageProps = {
+    darkMode: boolean;
+}
+
+function RegisterPage({ darkMode }: RegisterPageProps) {
     const { login: authLogin } = useAuth();
 
     const navigate = useNavigate();
@@ -43,7 +47,7 @@ function RegisterPage() {
     }
 
     return (
-        <div className="register-page">
+        <div className={`register-page ${darkMode ? "dark-mode" : ""}`}>
             <form className="register-card" onSubmit={handleRegistration}>
                 <h1>Menal</h1>
                 <p>Registrer bruker for å fortsette</p>
