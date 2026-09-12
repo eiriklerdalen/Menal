@@ -19,6 +19,11 @@ function LandingPage({darkMode, setDarkMode}: LandingPageProps) {
                 darkMode={ darkMode }
                 setDarkMode={ setDarkMode }
             />
+
+            <div className="landing-page-content">
+                <h1>Bli bedre kjent med dagene dine.</h1>
+                <p>Observer humør, vaner og tanker.</p>
+            </div>
         </div>
     )
 }

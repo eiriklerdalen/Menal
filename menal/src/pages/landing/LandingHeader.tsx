@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import ThemeSwitch from "../../components/ThemeSwitch";
 
+import "./LandingHeader.css";
+
 type LandingHeaderProps = {
     darkMode: boolean;
     setDarkMode: (value: boolean) => void;
