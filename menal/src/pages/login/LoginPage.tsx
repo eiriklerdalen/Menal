@@ -10,7 +10,11 @@ import { apiFetch } from "../../config/apiFetch";
 
 import "/src/pages/login/LoginPage.css";
 
-function LoginPage() {
+type LoginPageProps = {
+    darkMode: boolean;
+}
+
+function LoginPage({ darkMode }: LoginPageProps) {
     const { login: authLogin } = useAuth();
     
     const navigate = useNavigate();
@@ -37,7 +41,7 @@ function LoginPage() {
     }
 
     return (
-        <div className="login-page">
+        <div className={`login-page ${darkMode ? "dark-mode" : ""}`}>
             <form className="login-card" onSubmit={handleLogin}>
                 <h1>Menal</h1>
                 <p>Logg inn for å fortsette</p>

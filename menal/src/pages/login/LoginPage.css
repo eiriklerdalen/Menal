@@ -8,6 +8,7 @@
     flex-direction: column;
 
     background: var(--color-bg);
+    color: var(--color-font);
 }
 
 .login-card {
