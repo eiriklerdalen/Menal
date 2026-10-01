@@ -148,12 +148,32 @@ export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccou
                 (name, email, password_hash)
                 VALUES (?, ?, ?)
             `).run(cleanName, cleanEmail, passwordHash);
+
+            const userId = Number(result.lastInsertRowid);
     
             const user = db.prepare(`
                 SELECT id, name, email
                 FROM users
                 WHERE id = ?    
-            `).get(result.lastInsertRowid);
+            `).get(userId);
+
+            const calendarResult = db.prepare(`
+                INSERT INTO calendars
+                (user_id, name, max_rating, position)
+                VALUES (?, ?, ?, ?)    
+            `).run(userId, "Hvordan var dagen?", 6, 0);
+
+            const calendarId = Number(calendarResult.lastInsertRowid);
+
+            const insertColor = db.prepare(`
+                INSERT INTO calendar_rating_colors
+                (calendar_id, rating, color)
+                VALUES (?, ?, ?)    
+            `);
+            
+            colors.forEach((color, index) => {
+                insertColor.run(calendarId, index+1, color);
+            });
     
             return createSession(req, res, user, 201, sessionRegistry);
         } catch (error) {
@@ -164,3 +184,12 @@ export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccou
 
     return router;
 }
+
+const colors = [
+    "#FF4D4D",
+    "#FF8A3D",
+    "#FFD93D",
+    "#C7F464",
+    "#6EEB83",
+    "#2ECC71",
+]
