@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import ThemeSwitch from "../../../frontend/components/ThemeSwitch";
 
-import faviconSmall from "../../assets/favicon-menal-small.svg";
+import faviconSmall from "../../../../public/favicon-menal-small.svg";
 
 import "./LandingHeader.css";
 
