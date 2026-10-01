@@ -19,7 +19,7 @@ type LandingPageProps = {
 }
 
 function LandingPage({darkMode, setDarkMode}: LandingPageProps) {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
         <div className={`landing-page ${darkMode ? "dark-mode" : ""}`}>

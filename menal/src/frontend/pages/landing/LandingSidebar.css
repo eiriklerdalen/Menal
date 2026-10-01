@@ -84,3 +84,42 @@
     outline: 3px solid rgba(46, 204, 113, 0.35);
     outline-offset: 2px;
 }
+
+@media (max-width: 700px) {
+    .landing-sidebar {
+        z-index: 40;
+
+        width: 100%;
+        padding: 2rem;
+
+        background-color: var(--surface-bg);
+    }
+
+    .landing-sidebar nav {
+        right: auto;
+        left: 50%;
+
+        width: min(16rem, calc(100% - 4rem));
+        align-items: center;
+
+        transform: translate(-50%, -50%);
+    }
+
+    .landing-sidebar nav button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .landing-sidebar-footer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .landing-sidebar-toggle {
+        z-index: 50;
+    }
+
+    .landing-sidebar-toggle.open {
+        left: calc(100% - 3rem);
+    }
+}
