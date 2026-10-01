@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import ThemeSwitch from "../../components/ThemeSwitch";
 
+import faviconSmall from "../../assets/favicon-menal-small.svg";
+
 import "./LandingHeader.css";
 
 type LandingHeaderProps = {
@@ -19,7 +21,7 @@ function LandingHeader({darkMode, setDarkMode}: LandingHeaderProps) {
                 onClick={() => navigate("/")}
             >
                 <img 
-                    src="favicon-menal-small.svg"
+                    src={ faviconSmall }
                     alt=""
                     aria-hidden="true" 
                 />
