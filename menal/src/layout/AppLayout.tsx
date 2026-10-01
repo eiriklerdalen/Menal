@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import OverviewPage from "../pages/overview/OverviewPage";
 import YearOverviewPage from "../pages/overview/YearOverviewPage";
-import CalendarPage from "../pages/calendars/CalendarsPage";
 import LogPage from "../pages/log/LogPage";
 import NewCalendarPage from "../pages/calendars/new_calendar/NewCalendarPage"
 import EditCalendarPage from "../pages/calendars/edit_calendar/EditCalendarPage";
 import SettingsPage from "../pages/settings/SettingsPage";
 
 import Sidebar from "./Sidebar";
+
+const CalendarPage = lazy(() => import("../pages/calendars/CalendarsPage"))
 
 type AppLayoutProps = {
     darkMode: boolean;

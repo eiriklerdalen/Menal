@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import HomeRedirect from "./HomeRedirect";
 import LoginPage from "../pages/login/LoginPage";
-import AppLayout from "./AppLayout";
 
 import "./theme.css";
 import ProtectedRoute from "../ProtectedRoute";
 import RegisterPage from "../pages/register/RegisterPage";
 import LandingPage from "../pages/landing/LandingPage";
+
+const AppLayout = lazy(() => import("./AppLayout"))
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
