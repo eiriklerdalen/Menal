@@ -4,18 +4,69 @@
     color: var(--color-font);
 }
 
-.landing-page-content h1 {
+.landing-page-content {
+    min-height: 100dvh;
+    padding: 3rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
     text-align: center;
-    padding-top: 10%;
-    font-weight: 800;
 }
 
-.landing-page p {
-    text-align: center;
+.landing-page-title {
+    margin: 0;
+
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 1.25rem;
+
+    font-size: clamp(1.75rem, 2.4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.landing-page-name {
+    color: var(--color-write-log-button);
+    font-family: var(--courgette);
+}
+
+.landing-page-description {
+    margin: 4rem 0 0;
+
+    font-size: 1.35rem;
     font-weight: 400;
-    color: grey;
 }
 
+.landing-page-login-link {
+    margin-top: 3rem;
+
+    color: var(--color-font);
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration-color: var(--color-write-log-button);
+    text-underline-offset: 0.35rem;
+}
+
+.landing-page-login-link:hover {
+    color: var(--color-write-log-button);
+}
+
+.landing-page-footer {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+
+    color: var(--color-font);
+    font-size: 0.8rem;
+    transform: translateX(-50%);
+}
+
+/*
 .info-boxes {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
@@ -23,3 +74,4 @@
     width: min(72rem, calc(100% - 3rem));
     margin: 4rem auto 0;
 }
+*/

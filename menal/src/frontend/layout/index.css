@@ -10,6 +10,7 @@ body {
 
 :root {
   --quicksand: 'Quicksand', sans-serif;
+  --courgette: 'Courgette', sans-serif;
 
   font: 18px/145% var(--quicksand);
   letter-spacing: 0.2px;
