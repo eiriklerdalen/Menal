@@ -3,18 +3,21 @@ import { useNavigate } from "react-router-dom";
 
 import type { SubmitEvent } from "react";
 
+import LandingHeader from "../landing/LandingHeader.tsx";
+
 import { useAuth } from "../../hooks/useAuth.ts";
 
 import { clearCSRFToken } from "../../../frontend/config/csrf.ts";
 import { apiFetch } from "../../../frontend/config/apiFetch.ts";
 
-import "/src/frontend/pages/login/LoginPage.css";
+import "./LoginPage.css";
 
 type LoginPageProps = {
     darkMode: boolean;
+    setDarkMode: (value: boolean) => void;
 }
 
-function LoginPage({ darkMode }: LoginPageProps) {
+function LoginPage({ darkMode, setDarkMode }: LoginPageProps) {
     const { login: authLogin } = useAuth();
     
     const navigate = useNavigate();
@@ -41,53 +44,60 @@ function LoginPage({ darkMode }: LoginPageProps) {
     }
 
     return (
-        <div className={`login-page ${darkMode ? "dark-mode" : ""}`}>
-            <form className="login-card" onSubmit={handleLogin}>
-                <h1>Menal</h1>
-                <p>Logg inn for å fortsette</p>
+        <>
+            <LandingHeader
+                darkMode={ darkMode }
+                setDarkMode={ setDarkMode }
+            />
 
-                <input
-                    type="email"
-                    placeholder="E-post"
-                    value={email}
-                    onChange={(e) => {
-                        setEmail(e.target.value);
-                        setError("");
-                    }}
-                />
+            <div className={`login-page ${darkMode ? "dark-mode" : ""}`}>
+                <form className="login-card" onSubmit={handleLogin}>
+                    <h1>Menal</h1>
+                    <p>Logg inn for å fortsette</p>
 
-                <input
-                    type="password"
-                    placeholder="Passord"
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError("");
-                    }}
-                />
+                    <input
+                        type="email"
+                        placeholder="E-post"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setError("");
+                        }}
+                    />
 
-                <p 
-                    className={`error-message ${error ? "error-message--visible" : ""}`}
-                    role="alert"
-                    aria-live="polite"
-                >
-                    {error || "\u00A0"}
+                    <input
+                        type="password"
+                        placeholder="Passord"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            setError("");
+                        }}
+                    />
+
+                    <p 
+                        className={`error-message ${error ? "error-message--visible" : ""}`}
+                        role="alert"
+                        aria-live="polite"
+                    >
+                        {error || "\u00A0"}
+                    </p>
+
+                    <button type="submit">
+                        Logg inn
+                    </button>
+                </form>
+                <p className="register-text">
+                    Har du ikke konto?{" "}
+                    <span
+                        className="register-link"
+                        onClick={() => navigate("/register")}
+                    >
+                        Opprett konto
+                    </span>
                 </p>
-
-                <button type="submit">
-                    Logg inn
-                </button>
-            </form>
-            <p className="register-text">
-                Har du ikke konto?{" "}
-                <span
-                    className="register-link"
-                    onClick={() => navigate("/register")}
-                >
-                    Opprett konto
-                </span>
-            </p>
-        </div>
+            </div>
+        </>
     )
 }
 
