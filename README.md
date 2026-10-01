@@ -5,7 +5,7 @@ A personal journal and tracking application. Users can write about their day and
 
 ---
 
-![Dashboard view](/menal/src/assets//dashboard.png)
+![Dashboard view](menal/public/dashboard.png)
 
 ---
 #### Main functions
