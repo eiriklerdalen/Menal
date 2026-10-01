@@ -24,7 +24,7 @@ function App() {
         />
       } />
       <Route path="/login" element={ <LoginPage darkMode={ darkMode } setDarkMode={ setDarkMode }/> } />
-      <Route path="/register" element={<RegisterPage darkMode={ darkMode } />} />
+      <Route path="/register" element={<RegisterPage darkMode={ darkMode } setDarkMode={ setDarkMode }/>} />
 
       <Route
         path="/*"

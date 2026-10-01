@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import type { SubmitEvent } from "react";
 
+import LandingHeader from "../landing/LandingHeader.tsx";
+
 import { useAuth } from "../../hooks/useAuth.ts";
 
 import { apiFetch } from "../../../frontend/config/apiFetch.ts";
@@ -12,9 +14,10 @@ import "./RegisterPage.css"
 
 type RegisterPageProps = {
     darkMode: boolean;
+    setDarkMode: (value: boolean) => void;
 }
 
-function RegisterPage({ darkMode }: RegisterPageProps) {
+function RegisterPage({ darkMode, setDarkMode }: RegisterPageProps) {
     const { login: authLogin } = useAuth();
 
     const navigate = useNavigate();
@@ -47,61 +50,68 @@ function RegisterPage({ darkMode }: RegisterPageProps) {
     }
 
     return (
-        <div className={`register-page ${darkMode ? "dark-mode" : ""}`}>
-            <form className="register-card" onSubmit={handleRegistration}>
-                <h1>Menal</h1>
-                <p>Registrer bruker for å fortsette</p>
+        <>
+            <LandingHeader
+                darkMode={ darkMode }
+                setDarkMode={ setDarkMode }
+            />
+            
+            <div className={`register-page ${darkMode ? "dark-mode" : ""}`}>
+                <form className="register-card" onSubmit={handleRegistration}>
+                    <h1>Menal</h1>
+                    <p>Registrer bruker for å fortsette</p>
 
-                <input
-                    type="email"
-                    placeholder="E-post"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
+                    <input
+                        type="email"
+                        placeholder="E-post"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
 
-                <input
-                    type="name"
-                    placeholder="Ditt navn"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
+                    <input
+                        type="name"
+                        placeholder="Ditt navn"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
 
-                <input
-                    type="password"
-                    placeholder="Passord"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                    <input
+                        type="password"
+                        placeholder="Passord"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
 
-                <input
-                    type="password"
-                    placeholder="Bekreft passord"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                    <input
+                        type="password"
+                        placeholder="Bekreft passord"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
 
-                <p 
-                    className={`error-message ${error ? "error-message--visible" : ""}`}
-                    role="alert"
-                    aria-live="polite"
-                >
-                    {error || "\u00A0"}
+                    <p 
+                        className={`error-message ${error ? "error-message--visible" : ""}`}
+                        role="alert"
+                        aria-live="polite"
+                    >
+                        {error || "\u00A0"}
+                    </p>
+
+                    <button>
+                        Opprett bruker
+                    </button>
+                </form>
+                <p className="login-text">
+                    Har du allerede konto?{" "}
+                    <span
+                        className="login-link"
+                        onClick={() => navigate("/login")}
+                    >
+                        Logg inn
+                    </span>
                 </p>
-
-                <button>
-                    Opprett bruker
-                </button>
-            </form>
-            <p className="login-text">
-                Har du allerede konto?{" "}
-                <span
-                    className="login-link"
-                    onClick={() => navigate("/login")}
-                >
-                    Logg inn
-                </span>
-            </p>
-        </div>
+            </div>
+        </>
     )
 }
 
