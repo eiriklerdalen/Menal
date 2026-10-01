@@ -6,6 +6,8 @@ import { areStrings, validateName, validateEmail, validatePassword } from "../va
 import { badRequest, unauthorizedLogin } from "../utils/httpResponses.js";
 import { createSession } from "../utils/session.js";
 
+import { DEFAULT_CALENDAR } from "../config/defaultCalendar.js"
+
 import bcrypt from "bcrypt";
 
 export const MAX_NUM_USERS = 20;
@@ -161,7 +163,7 @@ export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccou
                 INSERT INTO calendars
                 (user_id, name, max_rating, position)
                 VALUES (?, ?, ?, ?)    
-            `).run(userId, "Hvordan var dagen?", 6, 0);
+            `).run(userId, DEFAULT_CALENDAR.name, DEFAULT_CALENDAR.rating, DEFAULT_CALENDAR.position);
 
             const calendarId = Number(calendarResult.lastInsertRowid);
 
@@ -171,7 +173,7 @@ export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccou
                 VALUES (?, ?, ?)    
             `);
             
-            colors.forEach((color, index) => {
+            DEFAULT_CALENDAR.colors.forEach((color, index) => {
                 insertColor.run(calendarId, index+1, color);
             });
     
@@ -184,12 +186,3 @@ export function createAuthRouter({ db, sessionRegistry, loginLimiter, loginAccou
 
     return router;
 }
-
-const colors = [
-    "#FF4D4D",
-    "#FF8A3D",
-    "#FFD93D",
-    "#C7F464",
-    "#6EEB83",
-    "#2ECC71",
-]
